@@ -15,8 +15,8 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-    title: "NextJS Template",
-    description: "Enjooooy!",
+    title: "Agro Control",
+    description: "Sistema Integrado de Colheira Agrícola",
 };
 
 export default function RootLayout({
