@@ -44,6 +44,15 @@ pnpm install
 pnpm run dev
 ```
 
+### Commiting
+To commit you have to:
+
+```
+git add .
+pnpm commit
+follow the cli rules
+```
+
 ### Structure
 
 ```
