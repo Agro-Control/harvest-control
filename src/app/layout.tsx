@@ -27,7 +27,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${poppins.variable} ${jakarta.variable} flex h-screen w-screen flex-col overflow-y-auto overflow-x-hidden bg-steel-950 font-jakarta`}
+                className={`${poppins.variable} ${jakarta.variable} bg-background text-dark font-jakarta flex h-screen w-screen flex-col overflow-y-auto overflow-x-hidden`}
             >
                 <SpeedInsights />
                 {children}

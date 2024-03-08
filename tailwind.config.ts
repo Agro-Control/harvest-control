@@ -18,19 +18,24 @@ const config = {
                 jakarta: "var(--font-jakarta)",
             },
             colors: {
-                steel: {
-                    50: "#f7fafc",
-                    100: "#eaeef4",
-                    200: "#d0dae7",
-                    300: "#a7bbd2",
-                    400: "#7798b9",
-                    500: "#567ba1",
-                    600: "#426187",
-                    700: "#374f6d",
-                    800: "#30445c",
-                    900: "#2c3b4e",
-                    950: "#0d1117",
+                background: "#f5f6f8 ",
+                sidebar: "#ffffff",
+                divider: "#e4e4e7",
+                dark: "#0d1117",
+                green: {
+                    50: "#f0fdf5",
+                    100: "#dcfce8",
+                    200: "#bbf7d1",
+                    300: "#86efad",
+                    400: "#4ade81",
+                    500: "#22c55e",
+                    600: "#16a34a",
+                    700: "#15803c",
+                    800: "#166533",
+                    900: "#14532b",
+                    950: "#052e14",
                 },
+
                 black: {
                     50: "#777676",
                     100: "#888787",
@@ -44,6 +49,9 @@ const config = {
                     900: "#040406",
                     950: "#030303",
                 },
+            },
+            dropShadow: {
+                side: "0 2px 2px rgba(0, 0, 0, 0.2)",
             },
             keyframes: {
                 "accordion-down": {
