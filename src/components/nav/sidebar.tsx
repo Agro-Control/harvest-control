@@ -7,7 +7,6 @@ const Sidebar = () => {
             <SidebarHeader />
 
             <div className="flex flex-col gap-3 px-8 ">
-                <p className="pb-4 font-jakarta text-xl font-medium text-green-950 px-2" >General</p>
 
                 <NavButton />
                 <NavButton />
