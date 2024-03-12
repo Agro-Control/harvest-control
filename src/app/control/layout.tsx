@@ -6,11 +6,11 @@ export default function ControlLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex flex-row w-full">
+        <div className="flex w-full flex-row items-center">
             <Sidebar />
-            <div className="flex h-full w-full flex-col overflow-y-auto overflow-x-hidden">
-            {children}
-          </div>
+            <div className="flex h-full ml-[16vw] w-full flex-col overflow-y-auto overflow-x-hidden">
+                {children}
+            </div>
         </div>
     );
 }
