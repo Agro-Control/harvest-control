@@ -1,17 +1,17 @@
-"use client";
+// "use client";
 
-// import {IconType} from "@lib";
-import {Horse, ChartPie} from "@phosphor-icons/react";
+import {Icon} from "@phosphor-icons/react";
 
-// interface NavButtonProps {
-//     Icon: IconType;
-// }
+interface NavButtonProps {
+    title: string;
+    Icon: Icon;
+}
 
-const NavButton = () => {
+const NavButton = ({Icon, title}: NavButtonProps) => {
     return (
-        <div className="flex h-[40px] w-full cursor-pointer flex-row items-center justify-start gap-2 px-3 rounded-xl transition-colors  hover:bg-divider ">
-            <ChartPie className="h-6 w-6" />
-            <p className="font-jakarta text-lg text-green-950">Dashboard</p>
+        <div className="flex h-[46px] w-full cursor-pointer flex-row items-center justify-start gap-3 rounded-xl px-6 transition-colors  hover:bg-divider ">
+            <Icon className="h-6 w-6" weight="fill" color="#052e14" />
+            <p className="font-jakarta text-md font-medium text-green-950">{title}</p>
         </div>
     );
 };
