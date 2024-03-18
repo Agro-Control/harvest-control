@@ -1,7 +1,8 @@
 // "use client";
 
-import {Icon} from "@phosphor-icons/react";
 import {usePathname} from "next/navigation";
+import {Icon} from "@phosphor-icons/react";
+import Link from "next/link";
 
 interface NavButtonProps {
     title: string;
@@ -18,10 +19,14 @@ const NavButton = ({Icon, title, path}: NavButtonProps) => {
         : "flex h-[46px] w-full cursor-pointer flex-row items-center justify-start gap-3 rounded-xl px-6 transition-colors  hover:bg-divider  select-none ";
 
     return (
+        <Link href={path} className={`${
+            isActive ? "pointer-events-none" : ""
+        }`}  >
         <div className={`${activeStyle}`}>
             <Icon className="h-6 w-6" weight="fill" color="#052e14" />
             <p className="text-md font-jakarta font-medium  text-green-950 ">{title}</p>
         </div>
+        </Link>
     );
 };
 export default NavButton;

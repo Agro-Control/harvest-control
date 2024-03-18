@@ -29,10 +29,7 @@ const Sidebar = () => {
                 <NavButton Icon={Buildings} title="Gestão de empresas" path="/control/companies" />
             </div>
             <div className="mt-auto flex h-[14vh] w-full flex-col justify-end gap-3 self-end bg-transparent px-2">
-                <div className="group flex h-[40px] w-full cursor-pointer flex-row items-center justify-start gap-3 rounded-xl px-6 transition-colors  hover:bg-divider ">
-                    <GearSix className="h-6 w-6 text-green-950 " weight="fill" />
-                    <p className="text-md font-jakarta font-medium text-green-950">Configuração</p>
-                </div>
+                
                 <div className="group flex h-[40px] w-full cursor-pointer flex-row items-center justify-start gap-3 rounded-xl px-6 transition-colors  hover:bg-divider ">
                     <SignOut className="h-6 w-6 text-green-950  " weight="fill" />
                     <p className="text-md font-jakarta font-medium text-green-950">Sair</p>
