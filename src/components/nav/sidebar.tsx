@@ -16,7 +16,7 @@ import {
 
 const Sidebar = () => {
     return (
-        <div className="fixed left-0 top-0 flex h-screen w-[16vw] flex-col justify-start gap-12 bg-sidebar py-6 drop-shadow-side">
+        <div className="fixed left-0 top-0 flex h-screen w-[308px] flex-col justify-start gap-12 bg-sidebar py-6 drop-shadow-side">
             <SidebarHeader />
             <div className="flex w-full flex-col gap-3 px-2  ">
                 <NavButton Icon={WindowsLogo} title="Painel de controle" />

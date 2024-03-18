@@ -8,7 +8,7 @@ export default function ControlLayout({
     return (
         <div className="flex w-full flex-row items-center">
             <Sidebar />
-            <div className="flex h-full ml-[16vw] w-full flex-col overflow-y-auto overflow-x-hidden">
+            <div className="flex h-full ml-[308px] w-full flex-col overflow-y-auto overflow-x-hidden">
                 {children}
             </div>
         </div>
