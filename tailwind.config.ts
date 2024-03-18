@@ -13,6 +13,11 @@ const config = {
             },
         },
         extend: {
+            backgroundImage: {
+                machine: "url('../assets/machine.png')",
+                operator: "url('../assets/operator.png')",
+                dashboard: "url('../assets/dashboard.png')",
+            },
             fontFamily: {
                 poppins: "var(--font-poppins)",
                 jakarta: "var(--font-jakarta)",
