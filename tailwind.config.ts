@@ -14,9 +14,9 @@ const config = {
         },
         extend: {
             backgroundImage: {
-                machine: "url('../assets/machine.png')",
-                operator: "url('../assets/operator.png')",
-                dashboard: "url('../assets/dashboard.png')",
+                machine: "url('../assets/machine-lg.png')",
+                operator: "url('../assets/operator-lg.png')",
+                dashboard: "url('../assets/dashboard-lg.png')",
             },
             fontFamily: {
                 poppins: "var(--font-poppins)",
