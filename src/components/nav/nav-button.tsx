@@ -1,5 +1,3 @@
-// "use client";
-
 import {usePathname} from "next/navigation";
 import {Icon} from "@phosphor-icons/react";
 import Link from "next/link";

@@ -11,7 +11,6 @@ import {
     MapPin,
     Buildings,
     SignOut,
-    GearSix,
 } from "@phosphor-icons/react";
 
 const Sidebar = () => {

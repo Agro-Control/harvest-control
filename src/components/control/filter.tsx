@@ -16,7 +16,11 @@ const Filter = ({filter}: FilterProps) => {
             </SelectTrigger>
             <SelectContent>
                 {items.map((item) => {
-                    return <SelectItem value={item.value}>{item.key}</SelectItem>;
+                    return (
+                        <SelectItem key={item.value} value={item.value}>
+                            {item.key}
+                        </SelectItem>
+                    );
                 })}
             </SelectContent>
         </Select>
