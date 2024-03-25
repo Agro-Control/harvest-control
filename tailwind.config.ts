@@ -25,7 +25,7 @@ const config = {
             colors: {
                 background: "#f5f6f8 ",
                 sidebar: "#ffffff",
-                divider: "#e4e4e7",
+                divider: "#d2d2d2",
                 dark: "#0d1117",
                 green: {
                     50: "#f0fdf5",
