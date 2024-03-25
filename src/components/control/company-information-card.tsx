@@ -2,7 +2,7 @@
 import {mockcompany} from "@/app/control/page";
 import logoRounded from "@/assets/logo-rounded.svg";
 
-import {Buildings, EnvelopeSimple, House, AddressBook, Pencil, GlobeHemisphereEast} from "@phosphor-icons/react";
+import {Buildings, EnvelopeSimple, House, GlobeHemisphereEast} from "@phosphor-icons/react";
 
 interface CompanyInformationCardProps {
     company: mockcompany;

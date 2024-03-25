@@ -3,6 +3,7 @@ import {mockuser} from "@/app/control/page";
 import logoRounded from "@/assets/logo-rounded.svg";
 
 import {User, EnvelopeSimple, House, AddressBook, Pencil} from "@phosphor-icons/react";
+import EditUserModal from "./edit-user-modal";
 
 interface UserInformationCardProps {
     user: mockuser;
@@ -13,8 +14,10 @@ const UserInformationCard = ({user}: UserInformationCardProps) => {
         <div className="flex w-full flex-col items-start justify-start gap-4">
             <div className="flex w-full flex-row items-center justify-start gap-2">
                 <img src={logoRounded.src} className="h-[24px] w-[24px]" />
-                <p className="font-medium">Informações do usuário</p>
-                <Pencil className="h-4 w-4" weight="fill" color="#000" />
+                    <p className="font-medium">Informações do usuário</p>
+                <EditUserModal>
+                <Pencil className="h-4 w-4 cursor-pointer " weight="fill" color="#000" />
+                </EditUserModal>
             </div>
             <div className="flex h-[2px]  w-full flex-none bg-divider" />
 
