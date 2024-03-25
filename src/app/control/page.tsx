@@ -1,5 +1,4 @@
 import FastAccessCard from "@/components/control/fast-access-card";
-import logoRounded from "@/assets/logo-rounded.svg";
 import UserInformationCard from "@/components/control/user-information-card";
 import CompanyInformationCard from "@/components/control/company-information-card";
 export interface mockuser {
@@ -57,6 +56,9 @@ const company:mockcompany = {
 
 }
 
+
+
+
 export default function Home() {
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10  px-6 pt-10 text-green-950 ">
@@ -76,7 +78,9 @@ export default function Home() {
 
             <UserInformationCard user={user} />
             <CompanyInformationCard company={company} />
-            
+            <div> 
+
+            </div>
         </div>
     );
 }
