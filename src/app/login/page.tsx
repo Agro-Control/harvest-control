@@ -13,10 +13,10 @@ import logo2 from "@/assets/logo-row.svg";
 
 const FormSchema = z.object({
     register: z.string().min(2, {
-        message: "A matrícula é obrigatória",
+        message: "Campo obrigatório",
     }),
     password: z.string().min(2, {
-        message: "Matrícula ou senha é incorreta",
+        message: "Os campos não podem estar vazios",
     }),
 });
 
@@ -50,7 +50,7 @@ const Login = () => {
                                     <FormControl>
                                         <Input
                                             className="min-h-[40px] border-green-950 transition-colors focus:border-black-200 focus:outline-none focus:ring-0"
-                                            placeholder="Matrícula"
+                                            placeholder="Email"
                                             {...field}
                                         />
                                     </FormControl>
@@ -76,7 +76,7 @@ const Login = () => {
                         />
                         <Button
                             type="submit"
-                            className="rounded-xl bg-green-500 py-5 font-poppins font-regular text-green-950 ring-0 transition-colors hover:bg-green-600"
+                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                         >
                             Entrar
                         </Button>
