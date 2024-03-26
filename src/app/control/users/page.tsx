@@ -1,12 +1,10 @@
 "use client";
+import CreateUserModal from "@/components/control/create-user-modal";
 import Filter from "@/components/control/filter";
 import SearchBar from "@/components/control/search-bar";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {
-    Plus,
-
-} from "@phosphor-icons/react";
+import {Plus} from "@phosphor-icons/react";
 interface FilterItem {
     key: string;
     value: string;
@@ -68,7 +66,6 @@ const userList = [
         contract: "12/12/2000",
     },
 ];
-
 export default function Users() {
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -79,13 +76,14 @@ export default function Users() {
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} />
                 <Filter filter={profileFilter} />
-                <Button
-                    type="button"
-                    className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                >
-                     {/* <Plus className="h-6 w-6 text-green-950"  /> */}
-                     Criar
-                </Button>
+                <CreateUserModal>
+                    <Button
+                        type="button"
+                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                    >
+                        Criar
+                    </Button>
+                </CreateUserModal>
             </div>
 
             <Table>
