@@ -49,7 +49,7 @@ const Login = () => {
                                 <FormItem>
                                     <FormControl>
                                         <Input
-                                            className="min-h-[40px] border-green-950 transition-colors focus:border-black-200 focus:outline-none focus:ring-0"
+                                            className="min-h-[40px] border-green-950 bg-white transition-colors focus:border-black-200 focus:outline-none focus:ring-0"
                                             placeholder="Email"
                                             {...field}
                                         />
@@ -64,7 +64,7 @@ const Login = () => {
                                 <FormItem>
                                     <FormControl>
                                         <Input
-                                            className="min-h-[40px] border-green-950"
+                                            className="min-h-[40px] border-green-950 bg-white focus:border-black-200 focus:outline-none focus:ring-0"
                                             placeholder="Senha"
                                             type="password"
                                             {...field}
