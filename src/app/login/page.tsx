@@ -1,15 +1,15 @@
 "use client";
 
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
+import { PasswordInput } from "@/components/ui/password-input";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useForm} from "react-hook-form";
-import {useRouter} from "next/navigation";
-import {z} from "zod";
-
 import {Button} from "@/components/ui/button";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import Image from "next/image";
+import {useRouter} from "next/navigation";
 import logo2 from "@/assets/logo-row.svg";
+import {useForm} from "react-hook-form";
+import Image from "next/image";
+import {z} from "zod";
 
 const FormSchema = z.object({
     register: z.string().min(2, {
@@ -49,7 +49,7 @@ const Login = () => {
                                 <FormItem>
                                     <FormControl>
                                         <Input
-                                            className="min-h-[40px] border-green-950 bg-white transition-colors focus:border-black-200 focus:outline-none focus:ring-0"
+                                            className="min-h-[40px] bg-white transition-colors"
                                             placeholder="Email"
                                             {...field}
                                         />
@@ -63,12 +63,7 @@ const Login = () => {
                             render={({field}) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input
-                                            className="min-h-[40px] border-green-950 bg-white focus:border-black-200 focus:outline-none focus:ring-0"
-                                            placeholder="Senha"
-                                            type="password"
-                                            {...field}
-                                        />
+                                        <PasswordInput {...field} placeholder="Senha" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

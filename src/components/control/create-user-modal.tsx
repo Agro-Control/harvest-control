@@ -11,12 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {ReactNode, useState} from "react";
+import { PasswordInput } from "@/components/ui/password-input";
 import {Eye, EyeClosed} from "@phosphor-icons/react";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {ReactNode, useState} from "react";
+import {useForm} from "react-hook-form";
 import {z} from "zod";
 
 interface DialogDemoProps {
@@ -152,25 +153,7 @@ const CreateUserModal = ({children}: DialogDemoProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <div className="relative w-full">
-                                            <div
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 transform cursor-pointer"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                            >
-                                                {showPassword ? (
-                                                    <Eye className="h-5 w-5" color="#052e14" />
-                                                ) : (
-                                                    <EyeClosed className="h-5 w-5" color="#052e14" />
-                                                )}
-                                            </div>
-                                            <Input
-                                                id="password"
-                                                type={showPassword ? "text" : "password"}
-                                                placeholder="Senha"
-                                                className="pr-9"
-                                                {...field}
-                                            />
-                                        </div>
+                                    <PasswordInput {...field} placeholder="Senha" />
                                     </FormControl>
                                 </FormItem>
                             )}
