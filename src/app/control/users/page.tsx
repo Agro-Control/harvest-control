@@ -1,10 +1,12 @@
 "use client";
 import CreateUserModal from "@/components/control/create-user-modal";
+import EditUserModal from "@/components/control/edit-user-modal";
 import Filter from "@/components/control/filter";
 import SearchBar from "@/components/control/search-bar";
+import ViewUserModal from "@/components/control/view-user-modal";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Plus} from "@phosphor-icons/react";
+import {Eye, Pencil, Plus} from "@phosphor-icons/react";
 interface FilterItem {
     key: string;
     value: string;
@@ -106,7 +108,19 @@ export default function Users() {
                                 <TableCell className="">{user.profile}</TableCell>
                                 <TableCell className="">{user.status}</TableCell>
                                 <TableCell className="">{user.contract}</TableCell>
-                                <TableCell className="">X</TableCell>
+                                <TableCell className="w-28">
+                                    <div className="-ml-1 flex w-full flex-row items-center gap-3">
+                                        <EditUserModal userInformation={user}>
+                                            <Pencil
+                                                className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
+                                                weight="fill"
+                                            />
+                                        </EditUserModal>
+                                        <ViewUserModal userInformation={user}>
+                                            <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
+                                        </ViewUserModal>
+                                    </div>
+                                </TableCell>
                             </TableRow>
                         );
                     })}
