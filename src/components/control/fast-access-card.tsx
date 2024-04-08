@@ -1,4 +1,4 @@
-type CardType = "machine" | "operator" | "dashboard";
+type CardType = "machine" | "company" | "unity" | "operator" | "dashboard";
 
 interface FastAcessCardProps {
     title: string;
@@ -6,7 +6,7 @@ interface FastAcessCardProps {
 }
 
 const FastAccessCard = ({title, image}: FastAcessCardProps) => {
-    const bgImage = image === "machine" ? "bg-machine" : image === "operator" ? "bg-operator" : "bg-dashboard";
+    const bgImage = image === "machine" ? "bg-machine" : image === "company" ? "bg-company" : image === "unity" ? "bg-unity" : image === "operator" ? "bg-operator" : "bg-dashboard";
 
     return (
         <div

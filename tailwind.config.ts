@@ -17,6 +17,8 @@ const config = {
                 machine: "url('../assets/machine-lg.png')",
                 operator: "url('../assets/operator-lg.png')",
                 dashboard: "url('../assets/dashboard-lg.png')",
+                company: "url('../assets/company.png')",
+                unity: "url('../assets/unity2.png')",
             },
             fontFamily: {
                 poppins: "var(--font-poppins)",
