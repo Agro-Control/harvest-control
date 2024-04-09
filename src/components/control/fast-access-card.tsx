@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-type CardType = "machines" | "users" | "dashboard";
+type CardType = "machines" | "companies" | "unity" | "users" | "dashboard";
 
 interface FastAcessCardProps {
     title: string;
@@ -8,10 +8,13 @@ interface FastAcessCardProps {
 }
 
 const FastAccessCard = ({title, image}: FastAcessCardProps) => {
-    const bgImage = image === "machines" ? "bg-machine" : image === "users" ? "bg-operator" : "bg-dashboard";
-
+    const bgImage = image === "machines" ? "bg-machine" : image === "companies" ? "bg-company" : image === "unity" ? "bg-unity" : image === "users" ? "bg-operator" : "bg-dashboard";
+    var path = "control/";
+    if (image === "unity" || image === "companies" )
+       path = "business-management/";
+    
     return (
-        <Link href={`control/${image}`}>
+        <Link href={`${path}${image}`}>
         <div
             className={`${bgImage} ${image === "dashboard" ? "col-span-2 lg:col-span-1" : ""} flex min-h-[192px] w-full cursor-pointer flex-col items-center justify-center rounded-xl bg-center bg-no-repeat transition-opacity hover:opacity-80`}
             

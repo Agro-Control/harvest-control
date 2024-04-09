@@ -25,7 +25,7 @@ const Sidebar = () => {
                 <NavButton Icon={UsersThree} title="Gestão de usuarios" path="/control/users" />
                 <NavButton Icon={Truck} title="Máquinas" path="/control/machines" />
                 <NavButton Icon={MapPin} title="Talhões" path="/control/field" />
-                <NavButton Icon={Buildings} title="Gestão de empresas" path="/control/companies" />
+                <NavButton Icon={Buildings} title="Gestão de empresas" path="/control/business-management" />
             </div>
             <div className="mt-auto flex h-[14vh] w-full flex-col justify-end gap-3 self-end bg-transparent px-2">
                 
