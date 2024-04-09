@@ -9,6 +9,7 @@ import ViewUserModal from "@/components/control/view-user-modal";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import Company from "@/types/company";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import {Eye, Pencil, Plus} from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 interface FilterItem {
@@ -75,6 +76,8 @@ function convertEmpresaToCompany(empresa: Empresa): Company {
 
 export default function Companies() {
     const [companyList, setCompanyList] = useState<Company[]>([]);
+
+    //  const {data} = useGetCompanies();
 
     useEffect(() => {
       const fetchData = async () => {
