@@ -8,7 +8,7 @@ interface Company {
     state?: string;
     city?: string;
     neighborhood?: string;
-    street?: string;
+    adress?: string;
     number?: string;
     complement?: string;
     status?: string;

@@ -1,5 +1,6 @@
 "use client";
 import { fetchDataFromAPI } from "@/app/api/api";
+import EditCompanyModal from "@/components/control/company/edit-company-modal";
 import CreateUserModal from "@/components/control/create-user-modal";
 import EditUserModal from "@/components/control/edit-user-modal";
 import Filter from "@/components/control/filter";
@@ -60,7 +61,7 @@ function convertEmpresaToCompany(empresa: Empresa): Company {
       state: empresa.estado,
       city: empresa.cidade,
       neighborhood: empresa.bairro,
-      street: empresa.logradouro,
+      adress: empresa.logradouro,
       number: empresa.numero,
       complement: empresa.complemento,
       status: empresa.status,
@@ -130,13 +131,13 @@ export default function Companies() {
                                 <TableCell className="">{company.status}</TableCell>
                                 <TableCell className="w-28">
                                     <div className="-ml-1 flex w-full flex-row items-center gap-3">
-                                    {/*   <EditCompanyModal companyInformation={company}>
+                                      <EditCompanyModal company={company}>
                                             <Pencil
                                                 className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
                                                 weight="fill"
                                             />
                                         </EditCompanyModal>
-                                        <ViewCompanyModal companyInformation={company}>
+                                      {/* <ViewCompanyModal companyInformation={company}>
                                             <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
                         </ViewCompanyModal>*/}
                                     </div>

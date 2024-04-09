@@ -18,33 +18,38 @@ import {Input} from "@/components/ui/input";
 import {ReactNode} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {createUserSchema} from "@/utils/validations/createUserSchema";
+import Company from "@/types/company";
+import { editCompanySchema } from "@/utils/validations/editCompanySchema";
 
-interface CreateUserModalProps {
+interface CreateCompanyProps {
+    company: Company;
     children: ReactNode;
 }
 
-const CreateUserModal = ({children}: CreateUserModalProps) => {
-    const form = useForm<z.infer<typeof createUserSchema>>({
-        resolver: zodResolver(createUserSchema),
+const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
+    const form = useForm<z.infer<typeof editCompanySchema>>({
+        resolver: zodResolver(editCompanySchema),
         defaultValues: {
             name: "",
-            email: "",
-            role: "",
-            password: "",
-            identifier: "",
+            cnpj: "",
             phone: "",
-            address: "",
+            zipCode: "",
             state: "",
             city: "",
             neighborhood: "",
-            street: "",
+            adress: "",
             number: "",
-            company: "",
-        },
+            complement: "",
+            responsiblePhone: "",
+            responsibleEmail: "",
+            responsibleName: "",
+        }
     });
 
-    function onSubmit(data: z.infer<typeof createUserSchema>) {
+
+
+
+    function onSubmit(data: z.infer<typeof editCompanySchema>) {
         console.log(data);
     }
 
@@ -53,83 +58,32 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="font-poppins text-green-950">Criar usuário</DialogTitle>
-                    <DialogDescription>Insira as informações do novo usuário.</DialogDescription>
+                    <DialogTitle className="font-poppins text-green-950">Criar Empresa</DialogTitle>
+                    <DialogDescription>Insira as informações para criar uma empresa.</DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} id="user-form" className="grid grid-cols-2 gap-4 py-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
                             name="name"
                             render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input className="" id="name" placeholder="Nome" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="role"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("role", value);
-                                            }}
-                                        >
-                                            <SelectTrigger className="h-10 w-[180px] ">
-                                                <SelectValue placeholder="Cargo" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="manager">Gestor</SelectItem>
-                                                <SelectItem value="operator">Operador</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({field}) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input id="email" placeholder="Email" {...field} />
+                                        <Input id="name" placeholder="Nome da Empresa" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
-                        <FormField
+                       <FormField
                             control={form.control}
-                            name="password"
+                            name="cnpj"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <PasswordInput {...field} placeholder="Senha" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="identifier"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input id="identifier" placeholder="CPF" {...field} />
+                                        <Input id="cnpj" placeholder="CNPJ" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -140,50 +94,28 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                             control={form.control}
                             name="phone"
                             render={({field}) => (
-                                <FormItem className="col-span-1 ">
+                                <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="phone" placeholder="Telefone" {...field} />
+                                        <Input id="phone" placeholder="Telefone da Empresa" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
-                            name="company"
+                            name="zipCode"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("company", value);
-                                            }}
-                                        >
-                                            <SelectTrigger className="h-10 w-[180px] ">
-                                                <SelectValue placeholder="Empresa" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="company1">Empresa 1</SelectItem>
-                                                <SelectItem value="company2">Empresa 2</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <Input id="zipCode" placeholder="CEP" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="address"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input id="address" placeholder="CEP" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+
                         <FormField
                             control={form.control}
                             name="state"
@@ -221,13 +153,14 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
-                            name="street"
+                            name="adress"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="street" placeholder="Rua" {...field} />
+                                        <Input id="adress" placeholder="Endereço" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -245,12 +178,60 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                                 </FormItem>
                             )}
                         />
+                         <FormField
+                            control={form.control}
+                            name="complement"
+                            render={({field}) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Input id="complement" placeholder="Complemento" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="responsibleName"
+                            render={({field}) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Input id="responsibleName" placeholder="Nome do Responsável" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="responsibleEmail"
+                            render={({field}) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Input id="responsibleEmail" placeholder="Email do Responsável" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="responsiblePhone"
+                            render={({field}) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Input id="responsiblePhone" placeholder="Telefone do Responsável" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </form>
                 </Form>
                 <DialogFooter>
                     <Button
                         type="submit"
-                        form="user-form"
+                        form="company-form"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
                         Confirmar
@@ -260,4 +241,4 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
         </Dialog>
     );
 };
-export default CreateUserModal;
+export default CreateCompanyModal;

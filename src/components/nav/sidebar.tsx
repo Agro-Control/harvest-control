@@ -23,7 +23,7 @@ const Sidebar = () => {
                 <NavButton Icon={FileText} title="Ordens de serviço" path="/control/orders" />
                 <NavButton Icon={FilePdf} title="Relatórios" path="/control/report" />
                 <NavButton Icon={UsersThree} title="Gestão de usuarios" path="/control/users" />
-                <NavButton Icon={Truck} title="Máquinas" path="/control/machine" />
+                <NavButton Icon={Truck} title="Máquinas" path="/control/machines" />
                 <NavButton Icon={MapPin} title="Talhões" path="/control/field" />
                 <NavButton Icon={Buildings} title="Gestão de empresas" path="/control/business-management" />
             </div>
