@@ -9,49 +9,69 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {PasswordInput} from "@/components/ui/password-input";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {ReactNode} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import Company from "@/types/company";
-import { editCompanySchema } from "@/utils/validations/editCompanySchema";
+import Empresa from "@/types/empresa";
+import { useCreateCompany } from "@/utils/hooks/useCreateCompanies";
+import { createCompanySchema } from "@/utils/validations/createCompanySchema";
 
 interface CreateCompanyProps {
-    company: Company;
     children: ReactNode;
 }
 
-const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
-    const form = useForm<z.infer<typeof editCompanySchema>>({
-        resolver: zodResolver(editCompanySchema),
+const  CreateCompanyModal = ({children}: CreateCompanyProps) => {
+    const createCompany = useCreateCompany();
+    const form = useForm<z.infer<typeof createCompanySchema>>({
+        resolver: zodResolver(createCompanySchema),
         defaultValues: {
-            name: "",
-            cnpj: "",
-            phone: "",
-            zipCode: "",
-            state: "",
-            city: "",
-            neighborhood: "",
-            adress: "",
-            number: "",
-            complement: "",
-            responsiblePhone: "",
-            responsibleEmail: "",
-            responsibleName: "",
+            nome: "",
+            cnpj: undefined,
+            telefone: "",
+            CEP: "",
+            estado: "",
+            cidade: "",
+            bairro: "",
+            logradouro: "",
+            numero: "",
+            complemento: "",
+            telefoneResponsavel: "",
+            emailResponsavel: "",
+            nomeResponsavel: "",
         }
     });
 
-
-
-
-    function onSubmit(data: z.infer<typeof editCompanySchema>) {
-        console.log(data);
+    const onSubmit = async (data: z.infer<typeof createCompanySchema>) => {
+        try{
+            const empresaData: Empresa = {
+                nome: data.nome,
+                cnpj: data.cnpj.toString(),
+                telefone: data.telefone,
+                cep: data.CEP,
+                estado: data.estado,
+                cidade: data.cidade,
+                bairro: data.bairro,
+                logradouro: data.logradouro,
+                numero: data.numero,
+                complemento: data.complemento,
+                telefone_responsavel: data.telefoneResponsavel,
+                email_responsavel: data.emailResponsavel,
+                nome_responsavel: data.nomeResponsavel,
+            };
+            createCompany(empresaData);
+        } catch (error) {
+            console.error('Erro ao criar empresa:', error);
+        }
     }
+  
+    
+   
+
+
 
     return (
         <Dialog>
@@ -66,11 +86,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
                     <form onSubmit={form.handleSubmit(onSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="nome"
                             render={({field}) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input id="name" placeholder="Nome da Empresa" {...field} />
+                                        <Input id="nome" placeholder="Nome da Empresa" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -92,11 +112,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="phone"
+                            name="telefone"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="phone" placeholder="Telefone da Empresa" {...field} />
+                                        <Input id="telefone" placeholder="Telefone da Empresa" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -105,11 +125,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="zipCode"
+                            name="CEP"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="zipCode" placeholder="CEP" {...field} />
+                                        <Input id="CEP" placeholder="CEP" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -118,11 +138,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="state"
+                            name="estado"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="state" placeholder="Estado" {...field} />
+                                        <Input id="estado" placeholder="Estado" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -131,11 +151,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="city"
+                            name="cidade"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="city" placeholder="Cidade" {...field} />
+                                        <Input id="cidade" placeholder="Cidade" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -143,11 +163,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="neighborhood"
+                            name="bairro"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="neighborhood" placeholder="Bairro" {...field} />
+                                        <Input id="bairro" placeholder="Bairro" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -156,11 +176,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="adress"
+                            name="logradouro"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="adress" placeholder="Endereço" {...field} />
+                                        <Input id="logradouro" placeholder="Endereço" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -168,11 +188,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="number"
+                            name="numero"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="number" placeholder="Número" {...field} />
+                                        <Input id="numero" placeholder="Número" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -180,11 +200,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
                         />
                          <FormField
                             control={form.control}
-                            name="complement"
+                            name="complemento"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="complement" placeholder="Complemento" {...field} />
+                                        <Input id="complemento" placeholder="Complemento" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -192,11 +212,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
                         />
                          <FormField
                             control={form.control}
-                            name="responsibleName"
+                            name="nomeResponsavel"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="responsibleName" placeholder="Nome do Responsável" {...field} />
+                                        <Input id="nomeResponsavel" placeholder="Nome do Responsável" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -204,11 +224,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="responsibleEmail"
+                            name="emailResponsavel"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="responsibleEmail" placeholder="Email do Responsável" {...field} />
+                                        <Input id="emailResponsavel" placeholder="Email do Responsável" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -216,11 +236,11 @@ const  CreateCompanyModal = ({children, company}: CreateCompanyProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="responsiblePhone"
+                            name="telefoneResponsavel"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="responsiblePhone" placeholder="Telefone do Responsável" {...field} />
+                                        <Input id="telefoneResponsavel" placeholder="Telefone do Responsável" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

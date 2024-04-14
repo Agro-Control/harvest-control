@@ -18,35 +18,36 @@ import {Input} from "@/components/ui/input";
 import {ReactNode, useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import Company from "@/types/company";
 import { editCompanySchema } from "@/utils/validations/editCompanySchema";
-import { updateDataInAPI } from "@/app/api/api";
+import { useUpdateCompany } from "@/utils/hooks/useUpdateCompanies";
+import Empresa from "@/types/empresa";
+
 
 interface EditCompanyProps {
-    company: Company;
+    company: Empresa;
     children: ReactNode;
 }
 
 const EditCompanyModal = ({children, company}: EditCompanyProps) => {
-    
+    const updateCompany = useUpdateCompany();
 
     const form = useForm<z.infer<typeof editCompanySchema>>({
         resolver: zodResolver(editCompanySchema),
         defaultValues: {
             id: company.id,
-            name: company.name,
+            nome: company.nome,
             cnpj: company.cnpj,
-            phone: company.phone,
-            zipCode: company.zipCode,
-            state: company.state,
-            city: company.city,
-            neighborhood: company.neighborhood,
-            adress: company.adress,
-            number: company.number,
-            complement: company.complement,
-            responsiblePhone: company.responsiblePhone,
-            responsibleEmail: company.responsibleEmail,
-            responsibleName: company.responsibleName,
+            telefone: company.telefone,
+            CEP: company.cep,
+            estado: company.estado,
+            cidade: company.cidade,
+            bairro: company.bairro,
+            logradouro: company.logradouro,
+            numero: company.numero,
+            complemento: company.complemento,
+            telefoneResponsavel: company.telefone_responsavel,
+            emailResponsavel: company.email_responsavel,
+            nomeResponsavel: company.nome_responsavel,
         }
     });
 
@@ -57,23 +58,23 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
         try{
             const empresaData: Empresa = {
                 id: data.id,
-                nome: data.name,
+                nome: data.nome,
                 cnpj: data.cnpj,
-                telefone: data.phone,
-                cep: data.zipCode,
-                estado: data.state,
-                cidade: data.city,
-                bairro: data.neighborhood,
-                logradouro: data.adress,
-                numero: data.number,
-                complemento: data.complement,
-                telefone_responsavel: data.responsiblePhone,
-                email_responsavel: data.responsibleEmail,
-                nome_responsavel: data.responsibleName,
+                telefone: data.telefone,
+                cep: data.CEP,
+                status: company.status,
+                data_criacao: company.data_criacao,
+                estado: data.estado,
+                cidade: data.cidade,
+                bairro: data.bairro,
+                logradouro: data.logradouro,
+                numero: data.numero,
+                complemento: data.complemento,
+                telefone_responsavel: data.telefoneResponsavel,
+                email_responsavel: data.emailResponsavel,
+                nome_responsavel: data.nomeResponsavel,
             };
-    
-            await updateDataInAPI(`empresas`, empresaData);
-            
+            updateCompany(empresaData);
         } catch (error) {
             console.error('Erro ao atualizar empresa:', error);
         }
@@ -92,11 +93,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                     <form onSubmit={form.handleSubmit(onSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="nome"
                             render={({field}) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input id="name" placeholder="Nome da Empresa" {...field} />
+                                        <Input id="nome" placeholder="Nome da Empresa" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -118,11 +119,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="phone"
+                            name="telefone"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="phone" placeholder="Telefone da Empresa" {...field} />
+                                        <Input id="telefone" placeholder="Telefone da Empresa" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -131,11 +132,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="zipCode"
+                            name="CEP"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="zipCode" placeholder="CEP" {...field} />
+                                        <Input id="cep" placeholder="CEP" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -144,11 +145,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="state"
+                            name="estado"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="state" placeholder="Estado" {...field} />
+                                        <Input id="estado" placeholder="Estado" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -157,11 +158,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="city"
+                            name="cidade"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="city" placeholder="Cidade" {...field} />
+                                        <Input id="cidade" placeholder="Cidade" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -169,11 +170,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="neighborhood"
+                            name="bairro"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="neighborhood" placeholder="Bairro" {...field} />
+                                        <Input id="bairro" placeholder="Bairro" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -182,11 +183,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="adress"
+                            name="logradouro"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="adress" placeholder="Endereço" {...field} />
+                                        <Input id="logradouro" placeholder="Endereço" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -194,11 +195,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="number"
+                            name="numero"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="number" placeholder="Número" {...field} />
+                                        <Input id="numero" placeholder="Número" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -206,11 +207,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                         />
                          <FormField
                             control={form.control}
-                            name="complement"
+                            name="complemento"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="complement" placeholder="Complemento" {...field} />
+                                        <Input id="complemento" placeholder="Complemento" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -218,11 +219,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                         />
                          <FormField
                             control={form.control}
-                            name="responsibleName"
+                            name="nomeResponsavel"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="responsibleName" placeholder="Nome do Responsável" {...field} />
+                                        <Input id="nomeResponsavel" placeholder="Nome do Responsável" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -230,11 +231,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="responsibleEmail"
+                            name="emailResponsavel"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="responsibleEmail" placeholder="Email do Responsável" {...field} />
+                                        <Input id="emailResponsavel" placeholder="Email do Responsável" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -242,11 +243,11 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="responsiblePhone"
+                            name="telefoneResponsavel"
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="responsiblePhone" placeholder="Telefone do Responsável" {...field} />
+                                        <Input id="telefoneResponsavel" placeholder="Telefone do Responsável" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -17,3 +17,5 @@ interface Empresa {
   nome_responsavel?: string;
   gestor_id?: number;
 }
+
+export default Empresa;

@@ -5,8 +5,7 @@ import { requiredStringField, optionalStringField} from "./reusableSchemes";
 const emailRegex = /^(?![-.])[\w.-]+@(?![-.])[\w.-]+\.[a-zA-Z]{2,}$/;
 
 
-export const editCompanySchema = z.object({
-        id: z.number(),
+export const createCompanySchema = z.object({
         nome: requiredStringField(1, 255, "O nome da empresa não pode estar vazio"),
         cnpj: requiredStringField(14,14, "Cnpj é necessário"),
         telefone: requiredStringField(1, 255, "O telefone não pode estar vazio"),
@@ -17,7 +16,7 @@ export const editCompanySchema = z.object({
         logradouro: optionalStringField(255),
         numero: optionalStringField(255),
         complemento: optionalStringField(255),
-        telefoneResponsavel: requiredStringField(1, 255, "O telefone do responsável não pode estar vazio"),
+        telefoneResponsavel: requiredStringField(1, 12, "O telefone do responsável não pode estar vazio"),
         emailResponsavel: requiredStringField(1, 255, "O email não pode estar vazio").refine(
             (value) => value === null || emailRegex.test(value || "") || value === "",
             {
@@ -26,4 +25,3 @@ export const editCompanySchema = z.object({
         ),
         nomeResponsavel: requiredStringField(1, 255, "O nome do responsável não pode estar vazio"),
 });
-

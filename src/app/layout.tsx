@@ -2,6 +2,7 @@ import "./globals.css";
 import type {Metadata} from "next";
 import {Poppins, Plus_Jakarta_Sans} from "next/font/google";
 import {SpeedInsights} from "@vercel/speed-insights/next";
+import { ReactQueryClientProvider } from "@/components/control/react-query-client-provider";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -25,6 +26,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
+        <ReactQueryClientProvider>
         <html lang="en">
             <body
                 className={`${poppins.variable} ${jakarta.variable} bg-background text-dark font-jakarta flex h-screen w-screen flex-col overflow-y-auto overflow-x-hidden`}
@@ -33,5 +35,7 @@ export default function RootLayout({
                 {children}
             </body>
         </html>
+        </ReactQueryClientProvider>
+
     );
 }
