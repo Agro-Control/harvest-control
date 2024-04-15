@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-type CardType = "machines" | "companies" | "unity" | "users" | "dashboard";
+type CardType = "machines" | "companies" | "units" | "users" | "dashboard";
 
 interface FastAcessCardProps {
     title: string;
@@ -8,9 +8,9 @@ interface FastAcessCardProps {
 }
 
 const FastAccessCard = ({title, image}: FastAcessCardProps) => {
-    const bgImage = image === "machines" ? "bg-machine" : image === "companies" ? "bg-company" : image === "unity" ? "bg-unity" : image === "users" ? "bg-operator" : "bg-dashboard";
+    const bgImage = image === "machines" ? "bg-machine" : image === "companies" ? "bg-company" : image === "units" ? "bg-unity" : image === "users" ? "bg-operator" : "bg-dashboard";
     var path = "control/";
-    if (image === "unity" || image === "companies" )
+    if (image === "units" || image === "companies" )
        path = "business-management/";
     
     return (

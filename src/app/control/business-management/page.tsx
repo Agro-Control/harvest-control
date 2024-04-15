@@ -13,7 +13,7 @@ export default function BusinessManagementHome() {
             <div className="flex w-full flex-col items-center justify-center gap-1 ">
                 <div className="grid size-3/5 gap-6 md:grid-cols-2 lg:grid-cols-2">
                     <FastAccessCard title="Empresas" image="companies" />
-                    <FastAccessCard title="Unidades" image="unity" />
+                    <FastAccessCard title="Unidades" image="units" />
                 </div>
             </div>
         </div>
