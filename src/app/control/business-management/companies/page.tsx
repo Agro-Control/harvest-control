@@ -2,17 +2,15 @@
 import CreateCompanyModal from "@/components/control/company/create-company-modal";
 import EditCompanyModal from "@/components/control/company/edit-company-modal";
 import ViewCompanyModal from "@/components/control/company/view-company-modal";
-import EditUserModal from "@/components/control/edit-user-modal";
 import Filter from "@/components/control/filter";
 import SearchBar from "@/components/control/search-bar";
-import ViewUserModal from "@/components/control/view-user-modal";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import Empresa from "@/types/empresa";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import {Eye, Pencil, Plus} from "@phosphor-icons/react";
-import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
+import { useQueryState } from "nuqs";
 interface FilterItem {
     key: string;
     value: string;
@@ -26,66 +24,87 @@ export interface FilterInformation {
     title: string;
 }
 
+const estadoFilter: FilterInformation = {
+    title: "Estado",
+    filterItem: [
+        {
+            key: "PR",
+            value: "PR",
+        },
+        {key: "SP", value: "SP"},
+    ],
+};
+const cidadeFilter: FilterInformation = {
+    title: "Cidade",
+    filterItem: [
+        {key: "Curitiba", value: "Curitiba"},
+        {
+            key: "São Paulo",
+            value: "São Paulo",
+        },
+    ],
+};
+
 
 
 export default function Companies() {
-    const [cidadeFilterItems, setCidadeFilterItems] = useState<FilterItem[]>([]);
-    const [estadoFilterItems, setEstadoFilterItems] = useState<FilterItem[]>([]);
-    const [selectedCity, setSelectedCity] = useState("");
-    const [selectedState, setSelectedState] = useState("");
+    // const [cidadeFilterItems, setCidadeFilterItems] = useState<FilterItem[]>([]);
+    // const [estadoFilterItems, setEstadoFilterItems] = useState<FilterItem[]>([]);
     const [query, setQuery] = useQueryState("query"); 
-    const { data: { empresas = [] } = {} } = useGetCompanies(selectedCity === "Todas" ? "" : selectedCity, selectedState === "Todos" ? "" : selectedState, query === null ? "" : query);
-    const [estadoFilter, setEstadoFilter] = useState<FilterInformation>({
-        title: "Estado",
-        filterItem: [], 
-    });
-    const [cidadeFilter, setCidadeFilter] = useState<FilterInformation>({
-        title: "Cidade",
-        filterItem: [], 
-    });
+    const [estado] = useQueryState("estado"); 
+    const [cidade] = useQueryState("cidade"); 
+    const { data: { empresas = [] } = {} } = useGetCompanies(cidade, estado, query);
+    // const [estadoFilter, setEstadoFilter] = useState<FilterInformation>({
+    //     title: "Estado",
+    //     filterItem: [], 
+    // });
+    // const [cidadeFilter, setCidadeFilter] = useState<FilterInformation>({
+    //     title: "Cidade",
+    //     filterItem: [], 
+    // });
 
-    useEffect(() => {
-        const extractUniqueCitiesAndStates = (empresas: Empresa[]) => {
-            const cidades: string[] = [];
-            const estados: string[] = [];
+
+    // useEffect(() => {
+    //     const extractUniqueCitiesAndStates = (empresas: Empresa[]) => {
+    //         const cidades: string[] = [];
+    //         const estados: string[] = [];
         
-            empresas.forEach((empresa) => {
-                if (empresa.cidade && !cidades.includes(empresa.cidade)) {
-                    cidades.push(empresa.cidade);
-                }
-                if (empresa.estado && !estados.includes(empresa.estado)) {
-                    estados.push(empresa.estado);
-                }
-            });
-            console.log ("cidades:" + cidades);
+    //         empresas.forEach((empresa) => {
+    //             if (empresa.cidade && !cidades.includes(empresa.cidade)) {
+    //                 cidades.push(empresa.cidade);
+    //             }
+    //             if (empresa.estado && !estados.includes(empresa.estado)) {
+    //                 estados.push(empresa.estado);
+    //             }
+    //         });
+    //         console.log ("cidades:" + cidades);
 
-            const newEstadoFilterItems = estados.map((estado) => ({
-                key: estado,
-                value: estado, 
-            }));
+    //         const newEstadoFilterItems = estados.map((estado) => ({
+    //             key: estado,
+    //             value: estado, 
+    //         }));
         
-            const newCidadeFilterItems = cidades.map((cidade) => ({
-                key: cidade,
-                value: cidade,
-            }));
+    //         const newCidadeFilterItems = cidades.map((cidade) => ({
+    //             key: cidade,
+    //             value: cidade,
+    //         }));
 
-            console.log ("new cidades" + newCidadeFilterItems);
-            const cidadeFilterItemsWithEmptyOption = [{ key: "Todas", value: "Todas" }, ...newCidadeFilterItems];
-            const estadoFilterItemsWithEmptyOption = [{ key: "Todos", value: "Todos" }, ...newEstadoFilterItems];
+    //         const cidadeFilterItemsWithEmptyOption = [{ key: "Todas", value: "Todas" }, ...newCidadeFilterItems];
+    //         const estadoFilterItemsWithEmptyOption = [{ key: "Todos", value: "Todos" }, ...newEstadoFilterItems];
           
-            if (JSON.stringify(newCidadeFilterItems) !== JSON.stringify(cidadeFilterItems)) {
-                setCidadeFilterItems(newCidadeFilterItems);
-                setCidadeFilter(prevState => ({...prevState, filterItem: cidadeFilterItemsWithEmptyOption }));
+    //         if (JSON.stringify(newCidadeFilterItems) !== JSON.stringify(cidadeFilterItems)) {
+    //             setCidadeFilterItems(newCidadeFilterItems);
+    //             setCidadeFilter(prevState => ({...prevState, filterItem: cidadeFilterItemsWithEmptyOption }));
 
-            }
-            if (JSON.stringify(newEstadoFilterItems) !== JSON.stringify(estadoFilterItems)) {
-                setEstadoFilterItems(newEstadoFilterItems);
-                setEstadoFilter(prevState => ({...prevState, filterItem: estadoFilterItemsWithEmptyOption }));
-            }
-        };
+    //         }
+    //         if (JSON.stringify(newEstadoFilterItems) !== JSON.stringify(estadoFilterItems)) {
+    //             setEstadoFilterItems(newEstadoFilterItems);
+    //             setEstadoFilter(prevState => ({...prevState, filterItem: estadoFilterItemsWithEmptyOption }));
+    //         }
+    //     };
 
-        extractUniqueCitiesAndStates(empresas);
-    }, [empresas, cidadeFilterItems, estadoFilterItems, setCidadeFilterItems, setCidadeFilter, query]);
+    //     extractUniqueCitiesAndStates(empresas);
+    // }, [empresas, cidadeFilterItems, estadoFilterItems, setCidadeFilterItems, setCidadeFilter, query]);
 
   /* const filteredEmpresas = empresas.filter(empresa => {
         if (selectedCity && selectedCity !== "Todas" && empresa.cidade !== selectedCity) {
@@ -105,12 +124,8 @@ export default function Companies() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                    {estadoFilterItems.length > 0 && (
-                    <Filter filter={estadoFilter} paramType="estado" onSelectFilter={(selected) => setSelectedState(selected)} />
-                    )}
-                    {cidadeFilterItems.length > 0 && (
-                        <Filter filter={cidadeFilter} paramType="cidade" onSelectFilter={(selected) => setSelectedCity(selected)} />
-                    )}
+                    <Filter filter={estadoFilter} paramType="estado"  />
+                    <Filter filter={cidadeFilter} paramType="cidade" />
                 <CreateCompanyModal>
                     <Button
                         type="button"
