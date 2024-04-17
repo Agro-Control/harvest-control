@@ -34,16 +34,6 @@ const estadoFilter: FilterInformation = {
         {key: "SP", value: "SP"},
     ],
 };
-const cidadeFilter: FilterInformation = {
-    title: "Cidade",
-    filterItem: [
-        {key: "Curitiba", value: "Curitiba"},
-        {
-            key: "São Paulo",
-            value: "São Paulo",
-        },
-    ],
-};
 
 
 
@@ -125,7 +115,6 @@ export default function Companies() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                     <Filter filter={estadoFilter} paramType="estado"  />
-                    <Filter filter={cidadeFilter} paramType="cidade" />
                 <CreateCompanyModal>
                     <Button
                         type="button"
