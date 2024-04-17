@@ -32,6 +32,8 @@
     "cidade": "Cidade",
     "status": "Status",
     "modelo": "Modelo",
+    "model": "Modelo",
+    "colector": "Coletora",
     "profile": "Perfil",
     "manager": "Gerente",
     "operator": "Operador"
