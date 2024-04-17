@@ -8,6 +8,7 @@ import {Eye, Pencil, Plus} from "@phosphor-icons/react";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
 import {Button} from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const statusFilter: FilterInformation = {
     filterItem: [
@@ -30,33 +31,35 @@ const userList = [
     {
         matricula: "000001",
         name: "João",
-        status: "active",
+        status: "A",
         profile: "manager",
         contract: "12/12/2000",
     },
     {
         matricula: "000002",
         name: "Maria",
-        status: "inactive",
+        status: "I",
         profile: "operator",
         contract: "12/12/2000",
     },
     {
         matricula: "000003",
         name: "José",
-        status: "active",
+        status: "A",
         profile: "manager",
         contract: "12/12/2000",
     },
     {
         matricula: "000004",
         name: "Ana",
-        status: "inactive",
+        status: "I",
         profile: "operator",
         contract: "12/12/2000",
     },
 ];
 export default function Users() {
+const {t} = useTranslation();
+
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
             <div className="flex w-full flex-row ">
@@ -93,8 +96,8 @@ export default function Users() {
                             <TableRow key={user.matricula}>
                                 <TableCell className="font-medium">{user.matricula}</TableCell>
                                 <TableCell className="font-medium">{user.name}</TableCell>
-                                <TableCell className="">{user.profile}</TableCell>
-                                <TableCell className="">{user.status}</TableCell>
+                                <TableCell className="">{t(user.profile)}</TableCell>
+                                <TableCell className="">{t(user.status)}</TableCell>
                                 <TableCell className="">{user.contract}</TableCell>
                                 <TableCell className="w-28">
                                     <div className="-ml-1 flex w-full flex-row items-center gap-3">

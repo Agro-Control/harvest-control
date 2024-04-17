@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
+import {createUserSchema} from "@/utils/validations/createUserSchema";
 import {PasswordInput} from "@/components/ui/password-input";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
@@ -18,7 +19,6 @@ import {Input} from "@/components/ui/input";
 import {ReactNode} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {createUserSchema} from "@/utils/validations/createUserSchema";
 
 interface CreateUserModalProps {
     children: ReactNode;
