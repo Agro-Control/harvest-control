@@ -1,16 +1,16 @@
 "use client";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateCompanyModal from "@/components/control/company/create-company-modal";
 import EditCompanyModal from "@/components/control/company/edit-company-modal";
 import ViewCompanyModal from "@/components/control/company/view-company-modal";
-import Filter from "@/components/control/filter";
-import SearchBar from "@/components/control/search-bar";
-import {Button} from "@/components/ui/button";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import Empresa from "@/types/empresa";
 import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
-import {Eye, Pencil} from "@phosphor-icons/react";
-import {useQueryState} from "nuqs";
 import FilterInformation from "@/types/filter-information";
+import SearchBar from "@/components/control/search-bar";
+import {Eye, Pencil} from "@phosphor-icons/react";
+import Filter from "@/components/control/filter";
+import {Button} from "@/components/ui/button";
+import Empresa from "@/types/empresa";
+import {useQueryState} from "nuqs";
 
 export interface getEmpresa {
     empresas: Empresa[];

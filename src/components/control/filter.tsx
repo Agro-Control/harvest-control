@@ -1,6 +1,7 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import FilterInformation from "@/types/filter-information";
 import {useQueryState} from "nuqs";
+import {useTranslation} from "react-i18next";
 
 interface FilterProps {
     filter: FilterInformation;
@@ -8,6 +9,7 @@ interface FilterProps {
 }
 
 const Filter = ({filter, paramType}: FilterProps) => {
+    const {t} = useTranslation();
     const setTypeParam = useQueryState(paramType)[1];
 
     const items = filter.filterItem;
@@ -19,13 +21,13 @@ const Filter = ({filter, paramType}: FilterProps) => {
     return (
         <Select onValueChange={handleValueChange}>
             <SelectTrigger className="h-10 w-[180px] ">
-                <SelectValue placeholder={paramType} />
+                <SelectValue placeholder={t(paramType)} />
             </SelectTrigger>
             <SelectContent>
                 {items.map((item) => {
                     return (
                         <SelectItem key={item.value} value={item.value}>
-                            {item.value}
+                            {t(item.value)}
                         </SelectItem>
                     );
                 })}

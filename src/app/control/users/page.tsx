@@ -1,13 +1,13 @@
 "use client";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateUserModal from "@/components/control/create-user-modal";
 import EditUserModal from "@/components/control/edit-user-modal";
-import Filter from "@/components/control/filter";
-import SearchBar from "@/components/control/search-bar";
 import ViewUserModal from "@/components/control/view-user-modal";
-import {Button} from "@/components/ui/button";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import FilterInformation from "@/types/filter-information";
 import {Eye, Pencil, Plus} from "@phosphor-icons/react";
+import SearchBar from "@/components/control/search-bar";
+import Filter from "@/components/control/filter";
+import {Button} from "@/components/ui/button";
 
 const statusFilter: FilterInformation = {
     filterItem: [

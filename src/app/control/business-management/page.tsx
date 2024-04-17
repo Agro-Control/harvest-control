@@ -1,5 +1,4 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import FastAccessCard from '@/components/control/fast-access-card';
 
 export default function BusinessManagementHome() {

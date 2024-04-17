@@ -1,37 +1,25 @@
 "use client";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateUserModal from "@/components/control/create-user-modal";
 import EditUserModal from "@/components/control/edit-user-modal";
-import Filter from "@/components/control/filter";
-import SearchBar from "@/components/control/search-bar";
 import ViewUserModal from "@/components/control/view-user-modal";
-import {Button} from "@/components/ui/button";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import FilterInformation from "@/types/filter-information";
+import SearchBar from "@/components/control/search-bar";
 import {Eye, Pencil, Plus} from "@phosphor-icons/react";
-interface FilterItem {
-    key: string;
-    value: string;
-}
-
-export interface FilterInformation {
-    filterItem: FilterItem[];
-    title: string;
-}
+import Filter from "@/components/control/filter";
+import {Button} from "@/components/ui/button";
 
 const statusFilter: FilterInformation = {
-    title: "Status",
     filterItem: [
-        {key: "Ativo", value: "active"},
+        {value: "active"},
         {
-            key: "Inativo",
             value: "inactive",
         },
     ],
 };
 const modelFilter: FilterInformation = {
-    title: "Modelo",
     filterItem: [
         {
-            key: "Colhedora",
             value: "colector",
         },
     ],
@@ -52,7 +40,6 @@ const machineList = [
         aquisicao: "26/09/1977",
         status: "inactive",
     },
- 
 ];
 
 const Machines = () => {
@@ -95,7 +82,7 @@ const Machines = () => {
                                 <TableCell className="">{machine.fabricante}</TableCell>
                                 <TableCell className="">{machine.aquisicao}</TableCell>
                                 <TableCell className="">{machine.status}</TableCell>
-                                <TableCell className="w-28">
+                                {/* <TableCell className="w-28">
                                     <div className="-ml-1 flex w-full flex-row items-center gap-3">
                                         <EditUserModal userInformation={machine}>
                                             <Pencil
@@ -107,7 +94,7 @@ const Machines = () => {
                                             <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
                                         </ViewUserModal>
                                     </div>
-                                </TableCell>
+                                </TableCell> */}
                             </TableRow>
                         );
                     })}

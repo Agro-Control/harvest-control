@@ -1,6 +1,6 @@
-import FastAccessCard from "@/components/control/fast-access-card";
-import UserInformationCard from "@/components/control/user-information-card";
 import CompanyInformationCard from "@/components/control/company-information-card";
+import UserInformationCard from "@/components/control/user-information-card";
+import FastAccessCard from "@/components/control/fast-access-card";
 export interface mockuser {
     name: string;
     email: string;
