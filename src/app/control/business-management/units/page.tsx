@@ -1,55 +1,37 @@
 "use client";
-import CreateCompanyModal from "@/components/control/company/create-company-modal";
-import EditCompanyModal from "@/components/control/company/edit-company-modal";
-import ViewCompanyModal from "@/components/control/company/view-company-modal";
-import EditUserModal from "@/components/control/edit-user-modal";
-import Filter from "@/components/control/filter";
-import SearchBar from "@/components/control/search-bar";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateUnitModal from "@/components/control/unit/create-unit-modal";
 import EditUnitModal from "@/components/control/unit/edit-unit-modal";
 import ViewUnitModal from "@/components/control/unit/view-unit-modal";
-import ViewUserModal from "@/components/control/view-user-modal";
+import FilterInformation from "@/types/filter-information";
+import SearchBar from "@/components/control/search-bar";
+import {useGetUnits} from "@/utils/hooks/useGetUnits";
+import {Eye, Pencil, } from "@phosphor-icons/react";
+import Filter from "@/components/control/filter";
 import {Button} from "@/components/ui/button";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import Empresa from "@/types/empresa";
 import Unidade from "@/types/unidade";
-import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { useGetUnits } from "@/utils/hooks/useGetUnits";
-import {Eye, Pencil, Plus} from "@phosphor-icons/react";
-import { useQueryState } from "nuqs";
-import { useEffect, useState } from "react";
+import {useQueryState} from "nuqs";
+import { useState} from "react";
 
-interface FilterItem {
-    key: string;
-    value: string;
-}
 export interface getUnidade {
     unidades: Unidade[];
 }
 
-export interface FilterInformation {
-    filterItem: FilterItem[];
-    title: string;
-}
+//TODO: Refatorar essas unidades
+
 const statusFilter: FilterInformation = {
-    title: "Status",
     filterItem: [
-        {key: "Ativo", value: "A"},
+        {value: "A"},
         {
-            key: "Inativo",
             value: "I",
         },
     ],
 };
 
-
 export default function Units() {
-    const [query, setQuery] = useQueryState("query"); 
+    const [query, setQuery] = useQueryState("query");
     const [status, setSelectedStatus] = useState<string>();
-    const { data: { unidades = [] } = {} } = useGetUnits(status === null ? "" : status, query === null ? "" : query);
-    
-
-
+    const {data: {unidades = []} = {}} = useGetUnits(status === null ? "" : status, query === null ? "" : query);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -58,7 +40,7 @@ export default function Units() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                  <Filter filter={statusFilter} paramType="status" onSelectFilter={(selected) => setSelectedStatus(selected)} />
+                <Filter filter={statusFilter} paramType="status" />
                 <CreateUnitModal>
                     <Button
                         type="button"
@@ -90,14 +72,14 @@ export default function Units() {
                                 <TableCell className="w-28">
                                     <div className="-ml-1 flex w-full flex-row items-center gap-3">
                                         <EditUnitModal unit={unidade}>
-                                                <Pencil
-                                                    className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
-                                                    weight="fill"
-                                                />
+                                            <Pencil
+                                                className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
+                                                weight="fill"
+                                            />
                                         </EditUnitModal>
                                         <ViewUnitModal unit={unidade}>
-                                                <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
-                                        </ViewUnitModal>    
+                                            <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
+                                        </ViewUnitModal>
                                     </div>
                                 </TableCell>
                             </TableRow>

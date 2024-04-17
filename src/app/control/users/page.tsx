@@ -6,35 +6,23 @@ import SearchBar from "@/components/control/search-bar";
 import ViewUserModal from "@/components/control/view-user-modal";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import FilterInformation from "@/types/filter-information";
 import {Eye, Pencil, Plus} from "@phosphor-icons/react";
-interface FilterItem {
-    key: string;
-    value: string;
-}
-
-export interface FilterInformation {
-    filterItem: FilterItem[];
-    title: string;
-}
 
 const statusFilter: FilterInformation = {
-    title: "Status",
     filterItem: [
-        {key: "Ativo", value: "active"},
+        {value: "A"},
         {
-            key: "Inativo",
-            value: "inactive",
+            value: "I",
         },
     ],
 };
 const profileFilter: FilterInformation = {
-    title: "Perfil",
     filterItem: [
         {
-            key: "Gestor",
             value: "manager",
         },
-        {key: "Operador", value: "operator"},
+        {value: "operator"},
     ],
 };
 
