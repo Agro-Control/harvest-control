@@ -36,9 +36,11 @@ export default function Companies() {
         isRefetching,
     } = useGetCompanies(cidade, estado, query);
     const isLoadingData = isLoading || isRefetching;
+
+    
     useEffect(() => {
         refetch();
-    }, [query]);
+    }, [query, estado, cidade]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
