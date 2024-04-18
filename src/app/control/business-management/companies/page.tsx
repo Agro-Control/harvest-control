@@ -23,26 +23,41 @@ const estadoFilter: FilterInformation = {
     ],
 };
 
-export default function Companies() {
-    const [query] = useQueryState("query");
-    const [estado] = useQueryState("estado");
-    const [cidade] = useQueryState("cidade");
-    const {
-        data: {empresas = []} = {},
-        error,
-        isError,
-        isLoading,
-        refetch,
-        isRefetching,
-    } = useGetCompanies(cidade, estado, query);
-    const isLoadingData = isLoading || isRefetching;
 
-    
+/**
+ * Componente que renderiza toda a pagina que tem a lista das empresas
+ */
+
+export default function Companies() {
+
+    // Hook que pega os parametros da URL
+    const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
+    const [estado] = useQueryState("estado"); // estado é o nome do parametro que está na URL - Usado para o filtro de estado.
+    const [cidade] = useQueryState("cidade"); // cidade é o nome do parametro que está na URL - Não está sendo usado
+
+
+    // Hook que retorna a a resposta da Api para a rota de empresas
+    const {
+        data: {empresas = []} = {}, // Objeto contendo a lista de empresas
+        error, // Erro retornado pela Api
+        isError, // Booleano que indica se houve erro
+        isLoading, // Booleano que indica se está carregando
+        refetch, // Função que faz a requisição novamente
+        isRefetching, // Booleano que indica se está fazendo a requisição novamente
+    } = useGetCompanies(cidade, estado, query);
+
+    // Variavel que indica se está carregando ou refazendo a requisição
+    const isLoadingData = isLoading || isRefetching; 
+
+    // Hook que refaz a requisição toda vez que os parametros da URL mudam - Quando troca filtro ou busca
     useEffect(() => {
         refetch();
     }, [query, estado, cidade]);
 
+
+
     return (
+        
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
             <div className="flex w-full flex-row ">
                 <p className="font-poppins text-4xl font-medium">Empresas</p>
@@ -59,7 +74,6 @@ export default function Companies() {
                     </Button>
                 </CreateCompanyModal>
             </div>
-
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -71,6 +85,8 @@ export default function Companies() {
                         <TableHead>Ações</TableHead>
                     </TableRow>
                 </TableHeader>
+
+                {/* Renderiza a lista de empresas SE não houver erro e nem estiver carregando  */}
                 {!isError &&
                     !isLoadingData &&
                     empresas.map((empresa: Empresa) => {
@@ -81,7 +97,9 @@ export default function Companies() {
                         );
                     })}
             </Table>
+            {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
+            {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="company" error={error as AxiosError} />}
         </div>
     );

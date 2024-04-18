@@ -1,8 +1,14 @@
 import Lottie from "lottie-react";
 import loading from "@/assets/loadingPipes.json";
 
+
+
+/**
+ * Componente que renderiza a animação de loading, usando arquivo json
+ */
 const LoadingAnimation = () => {
     return (
+        // O componente Lottie recebe o arquivo json e transforam em animação
         <Lottie
             animationData={loading}
             loop={true}
