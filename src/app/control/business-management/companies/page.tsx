@@ -1,20 +1,17 @@
 "use client";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateCompanyModal from "@/components/control/company/create-company-modal";
-import EditCompanyModal from "@/components/control/company/edit-company-modal";
-import ViewCompanyModal from "@/components/control/company/view-company-modal";
+import CompanyRow from "@/components/control/company/company-row";
 import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
 import FilterInformation from "@/types/filter-information";
 import SearchBar from "@/components/control/search-bar";
-import {Eye, Pencil} from "@phosphor-icons/react";
 import Filter from "@/components/control/filter";
 import {Button} from "@/components/ui/button";
 import Empresa from "@/types/empresa";
 import {useQueryState} from "nuqs";
-
-export interface getEmpresa {
-    empresas: Empresa[];
-}
+import {AxiosError} from "axios";
+import {useEffect} from "react";
+import LoadingAnimation from "@/components/loading-animation";
 
 const estadoFilter: FilterInformation = {
     filterItem: [
@@ -26,72 +23,22 @@ const estadoFilter: FilterInformation = {
 };
 
 export default function Companies() {
-    // const [cidadeFilterItems, setCidadeFilterItems] = useState<FilterItem[]>([]);
-    // const [estadoFilterItems, setEstadoFilterItems] = useState<FilterItem[]>([]);
-    const [query, setQuery] = useQueryState("query");
+    const [query] = useQueryState("query");
     const [estado] = useQueryState("estado");
     const [cidade] = useQueryState("cidade");
-    const {data: {empresas = []} = {}} = useGetCompanies(cidade, estado, query);
-    // const [estadoFilter, setEstadoFilter] = useState<FilterInformation>({
-    //     title: "Estado",
-    //     filterItem: [],
-    // });
-    // const [cidadeFilter, setCidadeFilter] = useState<FilterInformation>({
-    //     title: "Cidade",
-    //     filterItem: [],
-    // });
-
-    // useEffect(() => {
-    //     const extractUniqueCitiesAndStates = (empresas: Empresa[]) => {
-    //         const cidades: string[] = [];
-    //         const estados: string[] = [];
-
-    //         empresas.forEach((empresa) => {
-    //             if (empresa.cidade && !cidades.includes(empresa.cidade)) {
-    //                 cidades.push(empresa.cidade);
-    //             }
-    //             if (empresa.estado && !estados.includes(empresa.estado)) {
-    //                 estados.push(empresa.estado);
-    //             }
-    //         });
-    //         console.log ("cidades:" + cidades);
-
-    //         const newEstadoFilterItems = estados.map((estado) => ({
-    //             key: estado,
-    //             value: estado,
-    //         }));
-
-    //         const newCidadeFilterItems = cidades.map((cidade) => ({
-    //             key: cidade,
-    //             value: cidade,
-    //         }));
-
-    //         const cidadeFilterItemsWithEmptyOption = [{ key: "Todas", value: "Todas" }, ...newCidadeFilterItems];
-    //         const estadoFilterItemsWithEmptyOption = [{ key: "Todos", value: "Todos" }, ...newEstadoFilterItems];
-
-    //         if (JSON.stringify(newCidadeFilterItems) !== JSON.stringify(cidadeFilterItems)) {
-    //             setCidadeFilterItems(newCidadeFilterItems);
-    //             setCidadeFilter(prevState => ({...prevState, filterItem: cidadeFilterItemsWithEmptyOption }));
-
-    //         }
-    //         if (JSON.stringify(newEstadoFilterItems) !== JSON.stringify(estadoFilterItems)) {
-    //             setEstadoFilterItems(newEstadoFilterItems);
-    //             setEstadoFilter(prevState => ({...prevState, filterItem: estadoFilterItemsWithEmptyOption }));
-    //         }
-    //     };
-
-    //     extractUniqueCitiesAndStates(empresas);
-    // }, [empresas, cidadeFilterItems, estadoFilterItems, setCidadeFilterItems, setCidadeFilter, query]);
-
-    /* const filteredEmpresas = empresas.filter(empresa => {
-        if (selectedCity && selectedCity !== "Todas" && empresa.cidade !== selectedCity) {
-            return false; 
-        }
-        if (selectedState && selectedState !== "" && empresa.estado !== selectedState) {
-            return false; 
-        }
-        return true; 
-    });*/
+    const {
+        data: {empresas = []} = {},
+        error,
+        isError,
+        isLoading,
+        refetch,
+        isRefetching,
+    } = useGetCompanies(cidade, estado, query);
+    const errorStatusCode = (error as AxiosError)?.response?.status;
+    const isLoadingData = isLoading || isRefetching;
+    useEffect(() => {
+        refetch();
+    }, [query]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -122,33 +69,22 @@ export default function Companies() {
                         <TableHead>Ações</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody>
-                    {empresas.map((empresa) => {
+                {!isError &&
+                    !isLoadingData &&
+                    empresas.map((empresa: Empresa) => {
                         return (
-                            <TableRow key={empresa.id}>
-                                <TableCell className="font-medium">{empresa.cnpj}</TableCell>
-                                <TableCell className="font-medium">{empresa.nome}</TableCell>
-                                <TableCell className="font-medium">{empresa.cidade}</TableCell>
-                                <TableCell className="">{empresa.estado}</TableCell>
-                                <TableCell className="">{empresa.status}</TableCell>
-                                <TableCell className="w-28">
-                                    <div className="-ml-1 flex w-full flex-row items-center gap-3">
-                                        <EditCompanyModal company={empresa}>
-                                            <Pencil
-                                                className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
-                                                weight="fill"
-                                            />
-                                        </EditCompanyModal>
-                                        <ViewCompanyModal empresa={empresa}>
-                                            <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
-                                        </ViewCompanyModal>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            <TableBody>
+                                <CompanyRow key={empresa.id} empresa={empresa} />
+                            </TableBody>
                         );
                     })}
-                </TableBody>
             </Table>
+            {isLoadingData && (
+               <LoadingAnimation />
+            )}
+            {isError && (error as AxiosError)?.response?.status === 404 && !isLoadingData && (
+                <div className="flex w-full items-center justify-center font-medium">Não foi possivel encontrar a empresa.</div>
+            )}
         </div>
     );
 }
