@@ -1,8 +1,8 @@
 import "./globals.css";
-import type {Metadata} from "next";
 import {Poppins, Plus_Jakarta_Sans} from "next/font/google";
 import {SpeedInsights} from "@vercel/speed-insights/next";
 import Providers from "./providers";
+import type {Metadata} from "next";
 
 const poppins = Poppins({
     subsets: ["latin"],

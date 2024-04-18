@@ -1,8 +1,10 @@
 "use client";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateCompanyModal from "@/components/control/company/create-company-modal";
 import CompanyRow from "@/components/control/company/company-row";
+import StatusCodeHandler from "@/components/status-code-handler";
 import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
+import LoadingAnimation from "@/components/loading-animation";
 import FilterInformation from "@/types/filter-information";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
@@ -11,7 +13,6 @@ import Empresa from "@/types/empresa";
 import {useQueryState} from "nuqs";
 import {AxiosError} from "axios";
 import {useEffect} from "react";
-import LoadingAnimation from "@/components/loading-animation";
 
 const estadoFilter: FilterInformation = {
     filterItem: [
@@ -34,7 +35,6 @@ export default function Companies() {
         refetch,
         isRefetching,
     } = useGetCompanies(cidade, estado, query);
-    const errorStatusCode = (error as AxiosError)?.response?.status;
     const isLoadingData = isLoading || isRefetching;
     useEffect(() => {
         refetch();
@@ -79,12 +79,8 @@ export default function Companies() {
                         );
                     })}
             </Table>
-            {isLoadingData && (
-               <LoadingAnimation />
-            )}
-            {isError && (error as AxiosError)?.response?.status === 404 && !isLoadingData && (
-                <div className="flex w-full items-center justify-center font-medium">Não foi possivel encontrar a empresa.</div>
-            )}
+            {isLoadingData && <LoadingAnimation />}
+            {isError && !isLoadingData && <StatusCodeHandler requisitionType="company" error={error as AxiosError} />}
         </div>
     );
 }

@@ -36,5 +36,7 @@
     "colector": "Coletora",
     "profile": "Perfil",
     "manager": "Gerente",
-    "operator": "Operador"
+    "operator": "Operador",
+    "company-error-404": "Não encontramos nenhuma empresa para sua busca."
+
 }
