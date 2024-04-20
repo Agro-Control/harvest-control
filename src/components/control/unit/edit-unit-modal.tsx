@@ -9,18 +9,19 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {ReactNode, useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ReactNode, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import Unidade from "@/types/unidade";
 import { useUpdateUnit } from "@/utils/hooks/useUpdateUnit";
 import { editUnitSchema } from "@/utils/validations/editUnitSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
+import { useTranslation } from "react-i18next";
 
 
 interface EditUnitProps {
@@ -28,14 +29,16 @@ interface EditUnitProps {
     children: ReactNode;
 }
 
-const EditUnitModal = ({children, unit}: EditUnitProps) => {
+const EditUnitModal = ({ children, unit }: EditUnitProps) => {
     const updateUnit = useUpdateUnit();
-    const { data: { empresas = [] } = {} } = useGetCompanies();
+    const [open, setOpen] = useState(false);
+    const {t} = useTranslation();
+    const { data: { empresas = [] } = {} } = useGetCompanies(null, null, null);
 
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
-    const [statusOptions, setStatusOptions] = useState<{ value: string; label: string }[]>([
-        { value: 'A', label: 'Ativo' },
-        { value: 'I', label: 'Inativo' }
+    const [statusOptions, setStatusOptions] = useState<{ value: string; }[]>([
+        { value: 'A' },
+        { value: 'I' }
     ]);
     useEffect(() => {
         if (empresas.length > 0) {
@@ -50,7 +53,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
             id: unit.id,
             nome: unit.nome,
             cnpj: unit.cnpj,
-           // telefone: unit.telefone,
+            // telefone: unit.telefone,
             cep: unit.cep,
             estado: unit.estado,
             cidade: unit.cidade,
@@ -58,7 +61,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
             logradouro: unit.logradouro,
             numero: unit.numero,
             complemento: unit.complemento,
-            status: unit.status,  
+            status: unit.status,
             empresa_id: unit.empresa_id?.toString()
         }
     });
@@ -66,13 +69,13 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
 
 
 
-   const onSubmit = async (data: z.infer<typeof editUnitSchema>) => {
-        try{
+    const onSubmit = async (data: z.infer<typeof editUnitSchema>) => {
+        try {
             const unidadeData: Unidade = {
                 id: data.id,
                 nome: data.nome,
                 cnpj: data.cnpj,
-               // telefone: data.telefone,
+                // telefone: data.telefone,
                 cep: data.cep,
                 estado: data.estado,
                 cidade: data.cidade,
@@ -86,13 +89,14 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                 empresa_id: parseInt(data.empresa_id)
             };
             updateUnit(unidadeData);
+            setOpen(false);
         } catch (error) {
             console.error('Erro ao atualizar unidade:', error);
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -105,7 +109,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                         <FormField
                             control={form.control}
                             name="nome"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Input id="nome" placeholder="Nome da Unidade" {...field} />
@@ -115,10 +119,10 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                             )}
                         />
 
-                       <FormField
+                        <FormField
                             control={form.control}
                             name="cnpj"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input disabled id="cnpj" placeholder="CNPJ" {...field} readOnly />
@@ -128,7 +132,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                             )}
                         />
 
-                   {/*    <FormField
+                        {/*    <FormField
                             control={form.control}
                             name="telefone"
                             render={({field}) => (
@@ -138,12 +142,12 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )}*/} 
+                            )}*/}
 
                         <FormField
                             control={form.control}
                             name="cep"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="cep" placeholder="CEP" {...field} />
@@ -156,7 +160,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                         <FormField
                             control={form.control}
                             name="estado"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="estado" placeholder="Estado" {...field} />
@@ -169,7 +173,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                         <FormField
                             control={form.control}
                             name="cidade"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="cidade" placeholder="Cidade" {...field} />
@@ -181,7 +185,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                         <FormField
                             control={form.control}
                             name="bairro"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="bairro" placeholder="Bairro" {...field} />
@@ -194,7 +198,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                         <FormField
                             control={form.control}
                             name="logradouro"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="logradouro" placeholder="Endereço" {...field} />
@@ -206,7 +210,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                         <FormField
                             control={form.control}
                             name="numero"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="numero" placeholder="Número" {...field} />
@@ -215,10 +219,10 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                                 </FormItem>
                             )}
                         />
-                         <FormField
+                        <FormField
                             control={form.control}
                             name="complemento"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="complemento" placeholder="Complemento" {...field} />
@@ -271,7 +275,7 @@ const EditUnitModal = ({children, unit}: EditUnitProps) => {
                                             <SelectContent>
                                                 {statusOptions.map((option) => (
                                                     <SelectItem key={option.value} value={option.value}>
-                                                        {option.label}
+                                                        {t(option.value)}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

@@ -9,14 +9,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {ReactNode, useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ReactNode, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import Unidade from "@/types/unidade";
 import { useUpdateUnit } from "@/utils/hooks/useUpdateUnit";
 import { editUnitSchema } from "@/utils/validations/editUnitSchema";
@@ -28,21 +28,27 @@ interface createUnitProps {
     children: ReactNode;
 }
 
-const CreateUnitModal = ({children}: createUnitProps) => {
+const CreateUnitModal = ({ children }: createUnitProps) => {
     const createUnit = useCreateUnit();
-    const { data: { empresas = [] } = {} } = useGetCompanies();
+    const [open, setOpen] = useState(false);
+
+    const {
+        data: {empresas = []} = {}, // Objeto contendo a lista de empresas
+        error, // Erro retornado pela Api
+        isError, // Booleano que indica se houve erro
+        isLoading, // Booleano que indica se está carregando
+        refetch, // Função que faz a requisição novamente
+        isRefetching, // Booleano que indica se está fazendo a requisição novamente
+    } = useGetCompanies(null, null, null);
 
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
-    const [statusOptions, setStatusOptions] = useState<{ value: string; label: string }[]>([
-        { value: 'A', label: 'Ativo' },
-        { value: 'I', label: 'Inativo' }
-    ]);
+    
     useEffect(() => {
         if (empresas.length > 0) {
             const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
             setCompanyOptions(options);
         }
-        
+
     }, [empresas]);
 
     const form = useForm<z.infer<typeof editUnitSchema>>({
@@ -50,7 +56,7 @@ const CreateUnitModal = ({children}: createUnitProps) => {
         defaultValues: {
             nome: "",
             cnpj: "",
-           // telefone: unit.telefone,
+            // telefone: unit.telefone,
             cep: "",
             estado: "",
             cidade: "",
@@ -66,13 +72,13 @@ const CreateUnitModal = ({children}: createUnitProps) => {
 
 
 
-   const onSubmit = async (data: z.infer<typeof editUnitSchema>) => {
-        try{
+    const onSubmit = async (data: z.infer<typeof editUnitSchema>) => {
+        try {
             const unidadeData: Unidade = {
                 id: data.id,
                 nome: data.nome,
                 cnpj: data.cnpj,
-               // telefone: data.telefone,
+                // telefone: data.telefone,
                 cep: data.cep,
                 estado: data.estado,
                 cidade: data.cidade,
@@ -85,13 +91,14 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                 empresa_id: parseInt(data.empresa_id)
             };
             createUnit(unidadeData);
+            setOpen(false);
         } catch (error) {
             console.error('Erro ao criar unidade:', error);
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -104,7 +111,7 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                         <FormField
                             control={form.control}
                             name="nome"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Input id="nome" placeholder="Nome da Unidade" {...field} />
@@ -114,20 +121,20 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                             )}
                         />
 
-                       <FormField
+                        <FormField
                             control={form.control}
                             name="cnpj"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="cnpj" placeholder="CNPJ" {...field}/>
+                                        <Input id="cnpj" placeholder="CNPJ" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
-                   {/*    <FormField
+                        {/*    <FormField
                             control={form.control}
                             name="telefone"
                             render={({field}) => (
@@ -137,12 +144,12 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )}*/} 
+                            )}*/}
 
                         <FormField
                             control={form.control}
                             name="cep"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="cep" placeholder="CEP" {...field} />
@@ -155,7 +162,7 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                         <FormField
                             control={form.control}
                             name="estado"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="estado" placeholder="Estado" {...field} />
@@ -168,7 +175,7 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                         <FormField
                             control={form.control}
                             name="cidade"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="cidade" placeholder="Cidade" {...field} />
@@ -180,7 +187,7 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                         <FormField
                             control={form.control}
                             name="bairro"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="bairro" placeholder="Bairro" {...field} />
@@ -193,7 +200,7 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                         <FormField
                             control={form.control}
                             name="logradouro"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="logradouro" placeholder="Endereço" {...field} />
@@ -205,7 +212,7 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                         <FormField
                             control={form.control}
                             name="numero"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="numero" placeholder="Número" {...field} />
@@ -214,10 +221,10 @@ const CreateUnitModal = ({children}: createUnitProps) => {
                                 </FormItem>
                             )}
                         />
-                         <FormField
+                        <FormField
                             control={form.control}
                             name="complemento"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input id="complemento" placeholder="Complemento" {...field} />

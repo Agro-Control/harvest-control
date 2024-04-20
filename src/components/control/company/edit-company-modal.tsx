@@ -21,6 +21,7 @@ import {z} from "zod";
 import { editCompanySchema } from "@/utils/validations/editCompanySchema";
 import { useUpdateCompany } from "@/utils/hooks/useUpdateCompanies";
 import Empresa from "@/types/empresa";
+import { useTranslation } from "react-i18next";
 
 
 interface EditCompanyProps {
@@ -29,7 +30,9 @@ interface EditCompanyProps {
 }
 
 const EditCompanyModal = ({children, company}: EditCompanyProps) => {
+    const {t} = useTranslation();
     const updateCompany = useUpdateCompany();
+    const [open, setOpen] = useState(false);
 
     const form = useForm<z.infer<typeof editCompanySchema>>({
         resolver: zodResolver(editCompanySchema),
@@ -64,8 +67,8 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                 cep: data.CEP,
                 status: company.status,
                 data_criacao: company.data_criacao,
-                estado: data.estado,
-                cidade: data.cidade,
+                estado: data.estado || "",
+                cidade: data.cidade || "",
                 bairro: data.bairro,
                 logradouro: data.logradouro,
                 numero: data.numero,
@@ -75,13 +78,14 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                 nome_responsavel: data.nomeResponsavel,
             };
             updateCompany(empresaData);
+            setOpen(false);
         } catch (error) {
             console.error('Erro ao atualizar empresa:', error);
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -149,7 +153,7 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="estado" placeholder="Estado" {...field} />
+                                        <Input id="estado" placeholder={t(field.name)} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

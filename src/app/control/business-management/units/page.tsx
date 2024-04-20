@@ -1,23 +1,23 @@
 "use client";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateUnitModal from "@/components/control/unit/create-unit-modal";
-import EditUnitModal from "@/components/control/unit/edit-unit-modal";
-import ViewUnitModal from "@/components/control/unit/view-unit-modal";
 import FilterInformation from "@/types/filter-information";
 import SearchBar from "@/components/control/search-bar";
 import {useGetUnits} from "@/utils/hooks/useGetUnits";
-import {Eye, Pencil, } from "@phosphor-icons/react";
 import Filter from "@/components/control/filter";
 import {Button} from "@/components/ui/button";
 import Unidade from "@/types/unidade";
 import {useQueryState} from "nuqs";
-import { useState} from "react";
+import { useEffect} from "react";
+import UnitRow from "@/components/control/unit/unit-row";
+import StatusCodeHandler from "@/components/status-code-handler";
+import LoadingAnimation from "@/components/loading-animation";
+import { AxiosError } from "axios";
 
 export interface getUnidade {
     unidades: Unidade[];
 }
 
-//TODO: Refatorar essas unidades
 
 const statusFilter: FilterInformation = {
     filterItem: [
@@ -29,9 +29,27 @@ const statusFilter: FilterInformation = {
 };
 
 export default function Units() {
-    const [query, setQuery] = useQueryState("query");
-    const [status, setSelectedStatus] = useState<string>();
-    const {data: {unidades = []} = {}} = useGetUnits(status === null ? "" : status, query === null ? "" : query);
+    const [query] = useQueryState("query");
+    const [status]= useQueryState("status");
+
+
+
+    const {
+        data: {unidades = []} = {}, 
+        error, // Erro retornado pela Api
+        isError, // Booleano que indica se houve erro
+        isLoading, // Booleano que indica se está carregando
+        refetch, // Função que faz a requisição novamente
+        isRefetching, // Booleano que indica se está fazendo a requisição novamente
+    } = useGetUnits(status, query);
+
+
+    // Variavel que indica se está carregando ou refazendo a requisição
+    const isLoadingData = isLoading || isRefetching; 
+
+    useEffect(() => {
+        refetch();
+    }, [query, status]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -61,32 +79,22 @@ export default function Units() {
                         <TableHead>Ações</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody>
-                    {unidades.map((unidade: Unidade) => {
+               
+        
+                {!isError &&
+                    !isLoadingData &&
+                    unidades.map((unidade: Unidade) => {
                         return (
-                            <TableRow key={unidade.id}>
-                                <TableCell className="font-medium">{unidade.id}</TableCell>
-                                <TableCell className="font-medium">{unidade.nome}</TableCell>
-                                <TableCell className="font-medium">{unidade.empresa_nome}</TableCell>
-                                <TableCell className="">{unidade.status}</TableCell>
-                                <TableCell className="w-28">
-                                    <div className="-ml-1 flex w-full flex-row items-center gap-3">
-                                        <EditUnitModal unit={unidade}>
-                                            <Pencil
-                                                className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
-                                                weight="fill"
-                                            />
-                                        </EditUnitModal>
-                                        <ViewUnitModal unit={unidade}>
-                                            <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
-                                        </ViewUnitModal>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            <TableBody>
+                                <UnitRow key={unidade.id} unidade={unidade} />
+                            </TableBody>
                         );
                     })}
-                </TableBody>
             </Table>
+            {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
+            {isLoadingData && <LoadingAnimation />}
+            {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
+            {isError && !isLoadingData && <StatusCodeHandler requisitionType="company" error={error as AxiosError} />}
         </div>
     );
 }

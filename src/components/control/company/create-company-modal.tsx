@@ -13,19 +13,24 @@ import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {ReactNode} from "react";
+import {ReactNode, useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import Empresa from "@/types/empresa";
 import { useCreateCompany } from "@/utils/hooks/useCreateCompanies";
 import { createCompanySchema } from "@/utils/validations/createCompanySchema";
+import { useTranslation } from "react-i18next";
+
 
 interface CreateCompanyProps {
     children: ReactNode;
 }
 
 const  CreateCompanyModal = ({children}: CreateCompanyProps) => {
+    const {t} = useTranslation();
     const createCompany = useCreateCompany();
+    const [open, setOpen] = useState(false);
+    
     const form = useForm<z.infer<typeof createCompanySchema>>({
         resolver: zodResolver(createCompanySchema),
         defaultValues: {
@@ -52,17 +57,20 @@ const  CreateCompanyModal = ({children}: CreateCompanyProps) => {
                 cnpj: data.cnpj.toString(),
                 telefone: data.telefone,
                 cep: data.CEP,
-                estado: data.estado,
-                cidade: data.cidade,
+                estado: data.estado || "",
+                cidade: data.cidade || "",
                 bairro: data.bairro,
                 logradouro: data.logradouro,
                 numero: data.numero,
+                status: "A",
                 complemento: data.complemento,
                 telefone_responsavel: data.telefoneResponsavel,
                 email_responsavel: data.emailResponsavel,
                 nome_responsavel: data.nomeResponsavel,
+                gestor_id: 1
             };
             createCompany(empresaData);
+            setOpen(false);
         } catch (error) {
             console.error('Erro ao criar empresa:', error);
         }
@@ -74,7 +82,7 @@ const  CreateCompanyModal = ({children}: CreateCompanyProps) => {
 
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -142,7 +150,7 @@ const  CreateCompanyModal = ({children}: CreateCompanyProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="estado" placeholder="Estado" {...field} />
+                                    <Input id="estado" placeholder={t(field.name)} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
