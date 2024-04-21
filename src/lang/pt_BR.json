@@ -37,6 +37,7 @@
     "profile": "Perfil",
     "manager": "Gerente",
     "operator": "Operador",
-    "company-error-404": "Não encontramos nenhuma empresa para sua busca."
-
+    "company-error-404": "Não encontramos nenhuma empresa para sua busca.",
+    "unit-error-404": "Não encontramos nenhuma unidade para sua busca.",
+    "field-error-404": "Não encontramos nenhum talhão para sua busca"
 }
