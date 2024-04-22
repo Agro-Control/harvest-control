@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {ReactNode} from "react";
+import {ReactNode, useState} from "react";
 import Unidade from "@/types/unidade";
 
 
@@ -23,8 +23,14 @@ interface EditUnitProps {
 
 
 const ViewUnitModal = ({children, unit}: EditUnitProps) => {
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+    
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -59,8 +65,8 @@ const ViewUnitModal = ({children, unit}: EditUnitProps) => {
 
                 <DialogFooter>
                     <Button
+                        onClick={handleClose}
                         type="submit"
-                        form="user-form"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
                         Confirmar

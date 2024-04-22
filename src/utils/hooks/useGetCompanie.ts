@@ -3,18 +3,27 @@ import {api} from "@/lib/api";
 import Empresa from "@/types/empresa";
 
 const getCompanieRequest = async (id: number) => {
-        const {data} = await api.get<Empresa>("/empresas/", {
+    try {
+        const response = await api.get("/empresas/", {
             params: {
                 id: id
             },
         });
-        return data;
-   
+        if (response.data && response.data.empresas && response.data.empresas.length > 0) {
+            
+            return response.data.empresas[0];
+        } else {
+            throw new Error("Empresa não encontrada");
+        }
+    } catch (error) {
+        // Se ocorrer um erro na solicitação, lance-o para ser tratado no componente que chama o hook
+        throw error;
+    }
 };
 
 export const useGetCompanie = (id: number) => {
     return useQuery({
-        queryKey: ["companies"],
+        queryKey: ["companie"],
         queryFn: () => getCompanieRequest(id),
     });
 };

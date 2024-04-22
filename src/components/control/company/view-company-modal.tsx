@@ -8,9 +8,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {ReactNode} from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ReactNode, useState } from "react";
 import Empresa from "@/types/empresa";
 
 interface EditCompanyProps {
@@ -20,7 +20,13 @@ interface EditCompanyProps {
 
 
 
-const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
+const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
@@ -34,13 +40,13 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     <Input disabled className=" col-span-2" id="nome" placeholder="Nome" value={empresa.nome} />
                     <Input disabled className="col-span-1 " id="cnpj" placeholder="CNPJ" value={empresa.cnpj} />
 
-                    <Input disabled className="col-span-1 " id="telefone" placeholder="Telefone da Empresa" value={empresa.telefone}  />
+                    <Input disabled className="col-span-1 " id="telefone" placeholder="Telefone da Empresa" value={empresa.telefone} />
 
                     <Input disabled className="col-span-1 " id="CEP" placeholder="CEP" value={empresa.cep} />
 
-                    <Input disabled className="col-span-1 " id="estado" placeholder="Estado" value={empresa.estado}  />
+                    <Input disabled className="col-span-1 " id="estado" placeholder="Estado" value={empresa.estado} />
 
-                    <Input disabled className="col-span-1 " id="cidade" placeholder="Cidade" value={empresa.cidade}  />
+                    <Input disabled className="col-span-1 " id="cidade" placeholder="Cidade" value={empresa.cidade} />
 
                     <Input disabled className="col-span-1 " id="bairro" placeholder="Bairro" value={empresa.bairro} />
 
@@ -48,9 +54,9 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
 
                     <Input disabled className="col-span-1 " id="numero" placeholder="Número" value={empresa.numero} />
 
-                    <Input disabled className="col-span-1 " id="complemento" placeholder="Complemento"  value={empresa.complemento}/>
+                    <Input disabled className="col-span-1 " id="complemento" placeholder="Complemento" value={empresa.complemento} />
 
-                    <Input disabled className="col-span-1 " id="nomeResponsavel" placeholder="Nome Responsável" value={empresa.nome_responsavel}  />
+                    <Input disabled className="col-span-1 " id="nomeResponsavel" placeholder="Nome Responsável" value={empresa.nome_responsavel} />
 
                     <Input disabled className="col-span-1 " id="emailResponsavel" placeholder="Email Responsável" value={empresa.email_responsavel} />
 
@@ -59,8 +65,8 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
 
                 <DialogFooter>
                     <Button
+                        onClick={handleClose}
                         type="submit"
-                        form="user-form"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
                         Confirmar

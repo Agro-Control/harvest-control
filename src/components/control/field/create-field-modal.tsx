@@ -21,7 +21,7 @@ import { editFieldSchema } from "@/utils/validations/editFieldSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { useCreateField } from "@/utils/hooks/useCreateField";
 import { useTranslation } from "react-i18next";
-
+import ResponseDialog from "@/components/response-dialog";
 
 interface createFieldProps {
     children: ReactNode;
@@ -30,18 +30,17 @@ interface createFieldProps {
 const CreateFieldModal = ({ children }: createFieldProps) => {
     const createField = useCreateField();
     const [open, setOpen] = useState(false);
+    const [responseDialogOpen, setResponseDialogOpen] = useState(false);
+    const [responseMessage, setResponseMessage] = useState("");
+    const [responseSuccess, setResponseSuccess] = useState(false);
     const { t } = useTranslation();
+
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-        error, // Erro retornado pela Api
-        isError, // Booleano que indica se houve erro
-        isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
-        isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetCompanies(null, null, null);
 
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
-    const [statusOptions, setStatusOptions] = useState<{ value: string; }[]>([
+    const [statusOptions] = useState<{ value: string }[]>([
         { value: 'A' },
         { value: 'I' }
     ]);
@@ -51,7 +50,6 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
             setCompanyOptions(options);
         }
-
     }, [empresas]);
 
     const form = useForm<z.infer<typeof editFieldSchema>>({
@@ -62,12 +60,8 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             tamanho: "",
             status: "",
             empresa_id: "",
-
         }
     });
-
-
-
 
     const onSubmit = async (data: z.infer<typeof editFieldSchema>) => {
         try {
@@ -79,116 +73,140 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                 status: data.status || "",
                 gestor_id: 1, //da sessão?
             };
-            createField(talhaoData);
-            setOpen(false);
+            const response = await createField(talhaoData);
+            if (response.status === 201 || response.status === 200) {
+                setResponseMessage("Talhão criado com sucesso!");
+                setResponseSuccess(true);
+            } else {
+                setResponseMessage("Ocorreu um erro ao criar talhão.");
+                setResponseSuccess(false);
+            }
+            setResponseDialogOpen(true);
         } catch (error) {
             console.error('Erro ao criar talhao:', error);
+            setResponseMessage("Ocorreu um erro ao criar talhão.");
+            setResponseSuccess(false);
+            setResponseDialogOpen(true);
         }
     }
 
+    const handleCloseResponseDialog = () => {
+        setResponseDialogOpen(false);
+        setOpen(false);
+    };
+
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle className="font-poppins text-green-950">Criar Talhao</DialogTitle>
-                    <DialogDescription>Insira as informações para criar uma Talhao.</DialogDescription>
-                </DialogHeader>
+        <>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>{children}</DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="font-poppins text-green-950">Criar Talhão</DialogTitle>
+                        <DialogDescription>Insira as informações para criar um Talhão.</DialogDescription>
+                    </DialogHeader>
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
-                        <FormField
-                            control={form.control}
-                            name="codigo"
-                            render={({ field }) => (
-                                <FormItem className="col-span-2">
-                                    <FormControl>
-                                        <Input id="codigo" placeholder="Código" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
+                            <FormField
+                                control={form.control}
+                                name="codigo"
+                                render={({ field }) => (
+                                    <FormItem className="col-span-2">
+                                        <FormControl>
+                                            <Input id="codigo" placeholder="Código" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="tamanho"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input id="tamanho" placeholder="Tamanho" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="empresa_id"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("empresa_id", value);
-                                            }}
-                                        >
-                                            <SelectTrigger className="h-10 w-[180px] ">
-                                                <SelectValue placeholder="Selecione a Empresa" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {companyOptions.map((company) => (
-                                                    <SelectItem key={company.id} value={company.id.toString()}>
-                                                        {company.nome}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("status", value);
-                                            }}
-                                        >
-                                            <SelectTrigger className="h-10 w-[180px]">
-                                                <SelectValue placeholder="Selecione o Status" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {statusOptions.map((option) => (
-                                                    <SelectItem key={option.value} value={option.value}>
-                                                        {t(option.value)}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </form>
-                </Form>
-                <DialogFooter>
-                    <Button
-                        type="submit"
-                        form="company-form"
-                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                    >
-                        Confirmar
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                            <FormField
+                                control={form.control}
+                                name="tamanho"
+                                render={({ field }) => (
+                                    <FormItem className="col-span-1">
+                                        <FormControl>
+                                            <Input id="tamanho" placeholder="Tamanho" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="empresa_id"
+                                render={({ field }) => (
+                                    <FormItem className="col-span-1">
+                                        <FormControl>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue("empresa_id", value);
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-10 w-[180px] ">
+                                                    <SelectValue placeholder="Selecione a Empresa" {...field} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {companyOptions.map((company) => (
+                                                        <SelectItem key={company.id} value={company.id.toString()}>
+                                                            {company.nome}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field }) => (
+                                    <FormItem className="col-span-1">
+                                        <FormControl>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue("status", value);
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-10 w-[180px]">
+                                                    <SelectValue placeholder="Selecione o Status" {...field} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {statusOptions.map((option) => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            {t(option.value)}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </form>
+                    </Form>
+                    <DialogFooter>
+                        <Button
+                            type="submit"
+                            form="company-form"
+                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                        >
+                            Confirmar
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <ResponseDialog
+                open={responseDialogOpen}
+                onClose={handleCloseResponseDialog}
+                success={responseSuccess}
+                message={responseMessage}
+            />
+        </>
     );
 };
 export default CreateFieldModal;

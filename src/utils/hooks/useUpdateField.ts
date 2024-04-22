@@ -3,10 +3,10 @@ import Talhao from "@/types/talhao";
 
 
 
-  const updateTalhaoRequest = async (updatedTalhao: Talhao): Promise<Talhao> => {
+  const updateTalhaoRequest = async (updatedTalhao: Talhao) => {
     const { ...rest } = updatedTalhao;
     const response = await api.put(`/talhoes`, rest);
-    return response.data as Talhao; // Certifique-se de ajustar conforme necessário para o formato dos dados retornados pela sua API
+    return response; 
   };
   
   

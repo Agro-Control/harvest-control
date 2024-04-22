@@ -8,9 +8,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {ReactNode, useEffect} from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ReactNode, useEffect, useState } from "react";
 import Talhao from "@/types/talhao";
 import { useGetCompanie } from "@/utils/hooks/useGetCompanie";
 
@@ -24,19 +24,30 @@ interface EditFieldProps {
 
 
 
-const ViewFieldModal = ({children, field}: EditFieldProps) => {
-
+const ViewFieldModal = ({ children, field }: EditFieldProps) => {
+    const [open, setOpen] = useState(false);
     const {
-        data: empresa, 
-        error, 
-        isError, 
-        isLoading, 
-        refetch, 
-        isRefetching, 
+        data: empresa,
+        error,
+        isError,
+        isLoading,
+        refetch,
+        isRefetching,
     } = useGetCompanie(field.empresa_id);
 
+    useEffect(() => {
+        if (open && !isLoading && !isRefetching) {
+            refetch(); 
+        }
+    }, [open]);
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -47,14 +58,14 @@ const ViewFieldModal = ({children, field}: EditFieldProps) => {
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <Input disabled className=" col-span-2" id="codigo" placeholder="Codigo" value={field.codigo} />
                     <Input disabled className="col-span-1 " id="tamanho" placeholder="Tamanho" value={field.tamanho + "ha"} />
-                    <Input disabled className="col-span-1 " id="Empresa" placeholder="Empresa" value={empresa?.nome} />
+                    <Input disabled className="col-span-1 " id="Empresa" placeholder="Empresa" value={empresa?.nome}/>
                     <Input disabled className="col-span-1 " id="status" placeholder="Status" value={field.status === 'A' ? 'Ativo' : 'Inativo'} />
                 </div>
 
                 <DialogFooter>
-                    <Button
+                    <Button 
+                        onClick={handleClose}
                         type="submit"
-                        form="user-form"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
                         Confirmar
