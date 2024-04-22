@@ -14,6 +14,7 @@ import {createCompanySchema} from "@/utils/validations/createCompanySchema";
 import {useCreateCompany} from "@/utils/hooks/useCreateCompanies";
 import {MaskedInput} from "@/components/ui/masked-input";
 import ResponseDialog from "@/components/response-dialog";
+import {EnvelopeSimple} from "@phosphor-icons/react";
 import {useQueryClient} from "@tanstack/react-query";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
@@ -24,7 +25,6 @@ import {ReactNode, useState} from "react";
 import {useForm} from "react-hook-form";
 import Empresa from "@/types/empresa";
 import {z} from "zod";
-
 interface CreateCompanyProps {
     children: ReactNode;
 }
@@ -154,6 +154,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                         <FormControl>
                                             <MaskedInput
                                                 {...field}
+                                                Icon={EnvelopeSimple}
                                                 placeholder="Telefone da Empresa"
                                                 maskInput={{
                                                     input: InputMask,

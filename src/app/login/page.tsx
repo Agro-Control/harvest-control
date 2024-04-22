@@ -1,7 +1,8 @@
 "use client";
 
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import { PasswordInput } from "@/components/ui/password-input";
+import {PasswordInput} from "@/components/ui/password-input";
+import {EnvelopeSimple} from "@phosphor-icons/react";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -49,6 +50,7 @@ const Login = () => {
                                 <FormItem>
                                     <FormControl>
                                         <Input
+                                            Icon={EnvelopeSimple}
                                             className="min-h-[40px] bg-white transition-colors"
                                             placeholder="Email"
                                             {...field}
