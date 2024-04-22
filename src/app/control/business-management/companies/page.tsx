@@ -86,7 +86,8 @@ export default function Companies() {
                     </Button>
                 </CreateCompanyModal>
             </div>
-            <Table>
+
+            <Table  >
                 <TableHeader>
                     <TableRow>
                         <TableHead>CNPJ</TableHead>
@@ -99,15 +100,17 @@ export default function Companies() {
                 </TableHeader>
 
                 {/* Renderiza a lista de empresas SE não houver erro e nem estiver carregando  */}
+                <TableBody> 
                 {!isError &&
                     !isLoadingData &&
-                    empresas.map((empresa: Empresa) => {
-                        return (
-                            <TableBody>
+
+                        empresas.map((empresa: Empresa) => {
+                            return (
                                 <CompanyRow key={empresa.id} empresa={empresa} />
-                            </TableBody>
-                        );
-                    })}
+                            );
+                        })                       
+                    }
+                    </TableBody>
             </Table>
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}

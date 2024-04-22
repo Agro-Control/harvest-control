@@ -3,19 +3,19 @@ import ViewCompanyModal from "@/components/control/company/view-company-modal";
 import {TableCell, TableRow} from "@/components/ui/table";
 import {Eye, Pencil} from "@phosphor-icons/react";
 import Empresa from "@/types/empresa";
-import { useTranslation } from "react-i18next";
-
+import {useTranslation} from "react-i18next";
 
 interface CompanyRowProps {
     empresa: Empresa;
 }
 
 const CompanyRow = ({empresa}: CompanyRowProps) => {
-const {t} = useTranslation();
+    const {t} = useTranslation();
+    const formattedCnpj = empresa.cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
 
     return (
         <TableRow>
-            <TableCell className="font-medium">{empresa.cnpj}</TableCell>
+            <TableCell className="font-medium">{formattedCnpj}</TableCell>
             <TableCell className="font-medium">{empresa.nome}</TableCell>
             <TableCell className="font-medium">{empresa.cidade}</TableCell>
             <TableCell className="">{t(empresa.estado)}</TableCell>
