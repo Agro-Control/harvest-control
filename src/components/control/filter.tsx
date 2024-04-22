@@ -15,6 +15,8 @@ const Filter = ({filter, paramType}: FilterProps) => {
     const items = filter.filterItem;
 
     const handleValueChange = async (value: string) => {
+        if (value === "all") return await setTypeParam("");
+
         await setTypeParam(value);
     };
 
