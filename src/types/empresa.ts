@@ -1,7 +1,7 @@
 interface Empresa {
   id?: number;
   nome?: string;
-  cnpj?: string;
+  cnpj: string;
   telefone?: string;
   cep?: string;
   estado: string;
