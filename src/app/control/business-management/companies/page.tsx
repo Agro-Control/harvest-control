@@ -16,10 +16,20 @@ import {useEffect} from "react";
 
 const estadoFilter: FilterInformation = {
     filterItem: [
+        {value: "all"},
         {
             value: "PR",
         },
         {value: "SP"},
+    ],
+};
+const statusFilter: FilterInformation = {
+    filterItem: [
+        {value: "all"},
+        {
+            value: "A",
+        },
+        {value: "I"},
     ],
 };
 
@@ -27,13 +37,14 @@ const estadoFilter: FilterInformation = {
 /**
  * Componente que renderiza toda a pagina que tem a lista das empresas
  */
-
+//TODO: solicitar pra trocar codigo pra nome no backend
 export default function Companies() {
 
     // Hook que pega os parametros da URL
     const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
     const [estado] = useQueryState("estado"); // estado é o nome do parametro que está na URL - Usado para o filtro de estado.
     const [cidade] = useQueryState("cidade"); // cidade é o nome do parametro que está na URL - Não está sendo usado
+    const [status] = useQueryState("status"); // status é o nome do parametro que está na URL - Usado para filtrar ativo e inativo.
 
 
     // Hook que retorna a a resposta da Api para a rota de empresas
@@ -44,7 +55,7 @@ export default function Companies() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(cidade, estado, query);
+    } = useGetCompanies(cidade, estado, query, status);
 
     // Variavel que indica se está carregando ou refazendo a requisição
     const isLoadingData = isLoading || isRefetching; 
@@ -52,7 +63,7 @@ export default function Companies() {
     // Hook que refaz a requisição toda vez que os parametros da URL mudam - Quando troca filtro ou busca
     useEffect(() => {
         refetch();
-    }, [query, estado, cidade]);
+    }, [query, estado, cidade, status]);
 
 
 
@@ -65,6 +76,7 @@ export default function Companies() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={estadoFilter} paramType="estado" />
+                <Filter filter={statusFilter} paramType="status" />
                 <CreateCompanyModal>
                     <Button
                         type="button"
