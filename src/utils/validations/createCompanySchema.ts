@@ -7,7 +7,7 @@ const emailRegex = /^(?![-.])[\w.-]+@(?![-.])[\w.-]+\.[a-zA-Z]{2,}$/;
 
 export const createCompanySchema = z.object({
         nome: requiredStringField(1, 255, "O nome da empresa não pode estar vazio"),
-        cnpj: requiredStringField(14,14, "Cnpj é necessário"),
+        cnpj: requiredStringField(18,18, "Cnpj é necessário"),
         telefone: requiredStringField(1, 255, "O telefone não pode estar vazio"),
         CEP: requiredStringField(1, 255, "O CEP não pode estar vazio"),
         estado: optionalStringField(255),
@@ -16,7 +16,7 @@ export const createCompanySchema = z.object({
         logradouro: optionalStringField(255),
         numero: optionalStringField(255),
         complemento: optionalStringField(255),
-        telefoneResponsavel: requiredStringField(1, 12, "O telefone do responsável não pode estar vazio"),
+        telefoneResponsavel: requiredStringField(1, 255, "O telefone do responsável não pode estar vazio"),
         emailResponsavel: requiredStringField(1, 255, "O email não pode estar vazio").refine(
             (value) => value === null || emailRegex.test(value || "") || value === "",
             {
