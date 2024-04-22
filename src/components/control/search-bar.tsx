@@ -10,12 +10,13 @@ interface SearchBarProps {
 
 const SearchBar = ({text}: SearchBarProps) => {
     const setQueryParam = useQueryState("query")[1];
-    const [query, setQuery] = useState("");
-    const searchLengthRule = query.length > 0 && query.length < 3;
+    const [query, setQuery] = useState<string | undefined>();
+    const searchLengthRule = query && query.length > 0 && query.length < 3;
     useDebounce(
         () => {
+            if (query === "") setQueryParam("");
             if (searchLengthRule) return;
-            setQueryParam(query);
+            if (query) setQueryParam(query);
         },
         1500,
         [query],
