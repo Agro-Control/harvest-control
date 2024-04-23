@@ -12,6 +12,20 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {ReactNode, useState} from "react";
 import Empresa from "@/types/empresa";
+import {
+    Buildings,
+    IdentificationCard,
+    Phone,
+    MapPin,
+    MapTrifold,
+    NavigationArrow,
+    Factory,
+    House,
+    Hash,
+    Flag,
+    User,
+    EnvelopeSimple,
+} from "@phosphor-icons/react";
 
 interface EditCompanyProps {
     empresa: Empresa;
@@ -28,22 +42,20 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[450px]">
                 <DialogHeader>
-                    <DialogTitle className="font-poppins text-green-950">Empresas</DialogTitle>
+                    <DialogTitle className="font-poppins text-green-950">Empresa</DialogTitle>
                     <DialogDescription>Você está visualizando as informações da Empresa.</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid grid-cols-2 gap-4 py-4">
+                    <div className="col-span-2">
+                        <Input Icon={Buildings} disabled placeholder="Nome" value={empresa.nome || "Não Informado"} />
+                    </div>
+
                     <Input
                         disabled
-                        className=" col-span-2"
-                        id="nome"
-                        placeholder="Nome"
-                        value={empresa.nome || "Não Informado"}
-                    />
-                    <Input
-                        disabled
+                        Icon={IdentificationCard}
                         className="col-span-1 "
                         id="cnpj"
                         placeholder="CNPJ"
@@ -51,6 +63,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
+                        Icon={Phone}
                         disabled
                         className="col-span-1 "
                         id="telefone"
@@ -60,6 +73,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
 
                     <Input
                         disabled
+                        Icon={NavigationArrow}
                         className="col-span-1 "
                         id="CEP"
                         placeholder="CEP"
@@ -67,6 +81,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
+                        Icon={MapTrifold}
                         disabled
                         className="col-span-1 "
                         id="estado"
@@ -76,6 +91,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
 
                     <Input
                         disabled
+                        Icon={MapPin}
                         className="col-span-1 "
                         id="cidade"
                         placeholder="Cidade"
@@ -83,6 +99,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
+                        Icon={Factory}
                         disabled
                         className="col-span-1 "
                         id="bairro"
@@ -91,6 +108,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
+                        Icon={House}
                         disabled
                         className="col-span-1 "
                         id="logradouro"
@@ -99,6 +117,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
+                    Icon={Hash}
                         disabled
                         className="col-span-1 "
                         id="numero"
@@ -107,6 +126,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
+                    Icon={Flag}
                         disabled
                         className="col-span-1 "
                         id="complemento"
@@ -115,24 +135,27 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
+                    Icon={User}
                         disabled
-                        className="col-span-1 "
+                        className="col-span-1"
                         id="nomeResponsavel"
                         placeholder="Nome Responsável"
                         value={empresa.nome_responsavel || "Não Informado"}
                     />
 
                     <Input
+                    Icon={EnvelopeSimple}
                         disabled
-                        className="col-span-1 "
+                        className="col-span-1"
                         id="emailResponsavel"
                         placeholder="Email Responsável"
                         value={empresa.email_responsavel || "Não Informado"}
                     />
 
                     <Input
+                    Icon={Phone}
                         disabled
-                        className="col-span-1 "
+                        className="col-span-1"
                         id="telefoneResponsavel"
                         placeholder="Telefone Responsável"
                         value={empresa.telefone_responsavel || "Não Informado"}
