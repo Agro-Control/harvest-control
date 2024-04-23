@@ -1,19 +1,30 @@
-import {useState} from "react";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Eye, EyeClosed, LockKey} from "@phosphor-icons/react";
-
+import {useState} from "react";
 import * as React from "react";
-
 import {cn} from "@/lib/utils";
+
+
 
 export interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(({className, type, ...props}, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     return (
+        <TooltipProvider delayDuration={200}> 
         <div className="relative w-full">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 transform ">
-                <LockKey className="h-5 w-5 text-green-950" />
-            </div>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <div className="absolute left-3 top-1/2 z-50 -translate-y-1/2 transform cursor-pointer">
+                    <LockKey className="h-5 w-5 text-green-950" />
+
+                    </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{props.placeholder}</p>
+                </TooltipContent>
+            </Tooltip>
+           
             <div
                 className="absolute right-3 top-1/2 -translate-y-1/2 transform cursor-pointer"
                 onClick={() => setShowPassword(!showPassword)}
@@ -34,6 +45,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(({c
                 {...props}
             />
         </div>
+        </TooltipProvider> 
     );
 });
 PasswordInput.displayName = "PasswordInput";

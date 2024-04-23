@@ -1,3 +1,4 @@
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Icon as IconType} from "@phosphor-icons/react";
 import {InputMask, useMask} from "@react-input/mask";
 import * as React from "react";
@@ -30,11 +31,20 @@ const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
         };
 
         return (
+            <TooltipProvider delayDuration={200}>
+
             <div className="relative w-full">
             {Icon && (
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 transform ">
-                    <Icon className="h-5 w-5 text-green-950" />
-                </div>
+                <Tooltip>
+                <TooltipTrigger asChild>
+                    <div className="absolute left-3 top-1/2 z-50 -translate-y-1/2 transform cursor-pointer">
+                        <Icon className="h-5 w-5 text-green-950" />
+                    </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{props.placeholder}</p>
+                </TooltipContent>
+            </Tooltip>
             )}
             <input
                 type={type}
@@ -44,8 +54,9 @@ const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
                 )}
                 ref={setRefs}
                 {...props}
-            />
+                />
         </div>
+                </TooltipProvider>
         );
     },
 );
