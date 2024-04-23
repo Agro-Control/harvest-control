@@ -10,18 +10,18 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ReactNode, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import Talhao from "@/types/talhao";
 import { editFieldSchema } from "@/utils/validations/editFieldSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { useCreateField } from "@/utils/hooks/useCreateField";
-import { useTranslation } from "react-i18next";
 import ResponseDialog from "@/components/response-dialog";
+import { ReactNode, useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import Talhao from "@/types/talhao";
+import { z } from "zod";
 
 interface createFieldProps {
     children: ReactNode;
@@ -37,7 +37,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(null, null, null);
+    } = useGetCompanies(null, null, null, null);
 
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [statusOptions] = useState<{ value: string }[]>([

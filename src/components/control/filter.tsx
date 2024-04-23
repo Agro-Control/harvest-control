@@ -1,7 +1,7 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import FilterInformation from "@/types/filter-information";
-import {useQueryState} from "nuqs";
 import {useTranslation} from "react-i18next";
+import {useQueryState} from "nuqs";
 
 interface FilterProps {
     filter: FilterInformation;

@@ -1,5 +1,5 @@
-import Lottie from "lottie-react";
 import loading from "@/assets/loadingPipes.json";
+import Lottie from "lottie-react";
 
 
 

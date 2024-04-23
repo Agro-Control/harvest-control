@@ -15,8 +15,8 @@ import {PasswordInput} from "@/components/ui/password-input";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {ReactNode} from "react";
 import {useForm} from "react-hook-form";
+import {ReactNode} from "react";
 import {z} from "zod";
 
 interface EditUserProps {

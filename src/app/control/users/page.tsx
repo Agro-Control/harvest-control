@@ -7,8 +7,8 @@ import FilterInformation from "@/types/filter-information";
 import {Eye, Pencil, Plus} from "@phosphor-icons/react";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
-import {Button} from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import {Button} from "@/components/ui/button";
 
 const statusFilter: FilterInformation = {
     filterItem: [

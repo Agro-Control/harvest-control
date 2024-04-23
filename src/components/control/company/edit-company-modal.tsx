@@ -11,18 +11,18 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { editCompanySchema } from "@/utils/validations/editCompanySchema";
+import { useUpdateCompany } from "@/utils/hooks/useUpdateCompanies";
 import { PasswordInput } from "@/components/ui/password-input";
+import ResponseDialog from "@/components/response-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { editCompanySchema } from "@/utils/validations/editCompanySchema";
-import { useUpdateCompany } from "@/utils/hooks/useUpdateCompanies";
 import Empresa from "@/types/empresa";
-import { useTranslation } from "react-i18next";
-import ResponseDialog from "@/components/response-dialog";
+import { z } from "zod";
 
 
 interface EditCompanyProps {

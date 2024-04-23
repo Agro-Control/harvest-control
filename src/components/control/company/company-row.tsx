@@ -2,8 +2,8 @@ import EditCompanyModal from "@/components/control/company/edit-company-modal";
 import ViewCompanyModal from "@/components/control/company/view-company-modal";
 import {TableCell, TableRow} from "@/components/ui/table";
 import {Eye, Pencil} from "@phosphor-icons/react";
-import Empresa from "@/types/empresa";
 import {useTranslation} from "react-i18next";
+import Empresa from "@/types/empresa";
 
 interface CompanyRowProps {
     empresa: Empresa;

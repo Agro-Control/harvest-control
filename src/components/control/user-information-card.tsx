@@ -1,9 +1,9 @@
 "use client";
-import {mockuser} from "@/app/control/page";
-import logoRounded from "@/assets/logo-rounded.svg";
-
 import {User, EnvelopeSimple, House, AddressBook, Pencil} from "@phosphor-icons/react";
 import EditProfileModal from "./edit-profile-modal";
+import logoRounded from "@/assets/logo-rounded.svg";
+import {mockuser} from "@/app/control/page";
+
 
 interface UserInformationCardProps {
     user: mockuser;

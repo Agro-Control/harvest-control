@@ -1,8 +1,8 @@
 "use client";
-import {useState} from "react";
+import useDebounce from "@/utils/hooks/useDebounce";
 import {Input} from "@/components/ui/search";
 import {useQueryState} from "nuqs";
-import useDebounce from "@/utils/hooks/useDebounce";
+import {useState} from "react";
 
 interface SearchBarProps {
     text: string;

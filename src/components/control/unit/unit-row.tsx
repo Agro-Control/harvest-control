@@ -1,9 +1,9 @@
-import Unidade from "@/types/unidade";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, Pencil } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import EditUnitModal from "./edit-unit-modal";
 import ViewUnitModal from "./view-unit-modal";
+import Unidade from "@/types/unidade";
 
 interface UnitRowProps {
     unidade: Unidade;

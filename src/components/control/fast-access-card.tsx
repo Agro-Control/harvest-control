@@ -1,6 +1,6 @@
+type CardType = "machines" | "companies" | "units" | "users" | "dashboard";
 import Link from "next/link";
 
-type CardType = "machines" | "companies" | "units" | "users" | "dashboard";
 
 interface FastAcessCardProps {
     title: string;

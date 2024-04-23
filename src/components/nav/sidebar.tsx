@@ -1,6 +1,4 @@
 "use client";
-import NavButton from "./nav-button";
-import SidebarHeader from "./sidebar-header";
 import {
     ChartPieSlice,
     WindowsLogo,
@@ -12,6 +10,8 @@ import {
     Buildings,
     SignOut,
 } from "@phosphor-icons/react";
+import SidebarHeader from "./sidebar-header";
+import NavButton from "./nav-button";
 
 const Sidebar = () => {
     return (

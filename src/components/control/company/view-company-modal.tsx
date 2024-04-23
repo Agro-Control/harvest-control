@@ -1,18 +1,5 @@
 "use client";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {ReactNode, useState} from "react";
-import Empresa from "@/types/empresa";
-import {
     Buildings,
     IdentificationCard,
     Phone,
@@ -26,6 +13,19 @@ import {
     User,
     EnvelopeSimple,
 } from "@phosphor-icons/react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {ReactNode, useState} from "react";
+import Empresa from "@/types/empresa";
 
 interface EditCompanyProps {
     empresa: Empresa;

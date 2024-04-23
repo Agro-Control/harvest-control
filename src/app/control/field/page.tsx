@@ -1,19 +1,18 @@
 "use client";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateFieldModal from "@/components/control/field/create-field-modal";
-import FilterInformation from "@/types/filter-information";
-import SearchBar from "@/components/control/search-bar";
-import {useGetFields} from "@/utils/hooks/useGetFields";
-import Filter from "@/components/control/filter";
-import {Button} from "@/components/ui/button";
-import Unidade from "@/types/unidade";
-import {useQueryState} from "nuqs";
-import { useEffect} from "react";
-import FieldRow from "@/components/control/field/field-row";
 import StatusCodeHandler from "@/components/status-code-handler";
 import LoadingAnimation from "@/components/loading-animation";
-import { AxiosError } from "axios";
+import FieldRow from "@/components/control/field/field-row";
+import FilterInformation from "@/types/filter-information";
+import {useGetFields} from "@/utils/hooks/useGetFields";
+import SearchBar from "@/components/control/search-bar";
+import Filter from "@/components/control/filter";
+import {Button} from "@/components/ui/button";
 import Talhao from "@/types/talhao";
+import { AxiosError } from "axios";
+import {useQueryState} from "nuqs";
+import { useEffect} from "react";
 
 
 const statusFilter: FilterInformation = {

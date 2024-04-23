@@ -9,15 +9,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {PasswordInput} from "@/components/ui/password-input";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {ReactNode} from "react";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
 
 interface EditUserProps {
     userInformation: {
@@ -43,7 +37,13 @@ const ViewUserModal = ({children, userInformation}: EditUserProps) => {
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <Input disabled className=" col-span-1" id="name" placeholder="Nome" value={userInformation.name} />
 
-                    <Input disabled className="col-span-1 " id="role" placeholder="Cargo" value={userInformation.name} />
+                    <Input
+                        disabled
+                        className="col-span-1 "
+                        id="role"
+                        placeholder="Cargo"
+                        value={userInformation.name}
+                    />
 
                     <Input disabled className="col-span-2 " id="email" placeholder="Email" />
 

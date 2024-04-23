@@ -1,8 +1,8 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, Pencil } from "@phosphor-icons/react";
-import { useTranslation } from "react-i18next";
 import EditFieldModal from "./edit-field-modal";
 import ViewFieldModal from "./view-field-modal";
+import { useTranslation } from "react-i18next";
 import Talhao from "@/types/talhao";
 
 interface FieldRowProps {

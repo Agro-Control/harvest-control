@@ -1,8 +1,8 @@
 "use client";
-import {mockcompany} from "@/app/control/page";
-import logoRounded from "@/assets/logo-rounded.svg";
-
 import {Buildings, EnvelopeSimple, House, GlobeHemisphereEast} from "@phosphor-icons/react";
+import logoRounded from "@/assets/logo-rounded.svg";
+import {mockcompany} from "@/app/control/page";
+
 
 interface CompanyInformationCardProps {
     company: mockcompany;
