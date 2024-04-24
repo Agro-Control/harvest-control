@@ -1,5 +1,4 @@
 import {createCompanySchema} from "@/utils/validations/createCompanySchema";
-
 import {UseFormSetValue} from "react-hook-form";
 import axios from "axios";
 import {z} from "zod";
@@ -30,7 +29,7 @@ interface Response {
 
 type Form = z.infer<typeof createCompanySchema>;
 
-type FormFields = keyof Omit<Form, "cnpj" | "telefoneResponsavel" | "emailResponsavel" | "nomeResponsavel">;
+type FormFields = keyof Omit<Form, "cnpj" | "telefone_responsavel" | "email_responsavel" | "nome_responsavel">;
 
 type HandledFormFields = {
     [key in FormFields]: string;
@@ -39,7 +38,7 @@ type HandledFormFields = {
 const mapDataToFormFields = (data: Data): HandledFormFields => ({
     nome: data.nome_fantasia || "",
     telefone: `(${data.ddd1}) ${data.telefone1.substring(0, 5)}-${data.telefone1.substring(5)}`,
-    CEP: data.cep.substring(0, 5) + "-" + data.cep.substring(5),
+    cep: data.cep.substring(0, 5) + "-" + data.cep.substring(5),
     estado: data.estado.sigla,
     cidade: data.cidade.nome,
     bairro: data.bairro,

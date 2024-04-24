@@ -26,10 +26,10 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import {createCompanySchema} from "@/utils/validations/createCompanySchema";
-import {useCreateCompany} from "@/utils/hooks/useCreateCompanies";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {MaskedInput} from "@/components/ui/masked-input";
-import ResponseDialog from "@/components/response-dialog";
-import {useQueryClient} from "@tanstack/react-query";
+import {handleCnpjData} from "@/utils/handleCnpjData";
+import {useToast} from "@/components/ui/use-toast";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
@@ -38,51 +38,58 @@ import {InputMask} from "@react-input/mask";
 import {ReactNode, useState} from "react";
 import {useForm} from "react-hook-form";
 import Empresa from "@/types/empresa";
+import { AxiosError } from "axios";
+import { api } from "@/lib/api";
 import {z} from "zod";
-import {handleCnpjData} from "@/utils/handleCnpjData";
-import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
+
 interface CreateCompanyProps {
     children: ReactNode;
 }
 
-const CreateCompanyModal = ({children}: CreateCompanyProps) => {
-    const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
+type Form = z.infer<typeof createCompanySchema>;
 
+const CreateCompanyModal = ({children}: CreateCompanyProps) => {
+    // Estado que salva o carregamento da  busca do CNPJ
+    const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    // Hook que inicia a toast 
     const {toast} = useToast();
 
     const queryClient = useQueryClient();
-
     const {t} = useTranslation();
-    const createCompany = useCreateCompany();
-    const [open, setOpen] = useState(false);
-    const [responseDialogOpen, setResponseDialogOpen] = useState(false);
-    const [responseMessage, setResponseMessage] = useState("");
-    const [responseSuccess, setResponseSuccess] = useState(false);
 
-    const form = useForm<z.infer<typeof createCompanySchema>>({
+    
+   
+
+    const form = useForm<Form>({
         resolver: zodResolver(createCompanySchema),
         defaultValues: {
             nome: "",
             cnpj: "",
             telefone: "",
-            CEP: "",
+            cep: "",
             estado: "",
             cidade: "",
             bairro: "",
             logradouro: "",
             numero: "",
             complemento: "",
-            telefoneResponsavel: "",
-            emailResponsavel: "",
-            nomeResponsavel: "",
+            telefone_responsavel: "",
+            email_responsavel: "",
+            nome_responsavel: "",
         },
     });
 
+    // Desenstruturando funcões do hook form
     const {getValues, setValue, watch} = form;
+
+    // Variavel usada para monitorar o campo do cnpj
     const watchCnpj = watch("cnpj");
+    // Variavel para validar o tamanho do campo do cnpj
     const cnpjValidLength = watchCnpj.length === 18;
 
+    // Função para fazer a busca do cnpj no click
     const onHandleClick = async () => {
         setIsLoadingCnpj(true);
         const {cnpj} = getValues();
@@ -96,59 +103,59 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                 toast({
                     variant: "destructive",
                     title: "Falha ao preencher dados do CNPJ",
-                    description: "Ocorreu um erro na busca, ou excedeu o limite de tentativas. Por favor, tente novamente mais tarde.",
-                })
+                    description:
+                        "Ocorreu um erro na busca, ou excedeu o limite de tentativas. Por favor, tente novamente mais tarde.",
+                });
             }
-            
         }
-        
+
         setIsLoadingCnpj(false);
     };
-
-    const onSubmit = async (data: z.infer<typeof createCompanySchema>) => {
-        try {
-            const empresaData: Empresa = {
-                nome: data.nome,
-                cnpj: data.cnpj.replace(/\D/g, ""),
-                telefone: data.telefone.replace(/\D/g, ""),
-                cep: data.CEP.replace(/\D/g, ""),
-                estado: data.estado || "",
-                cidade: data.cidade || "",
-                bairro: data.bairro,
-                logradouro: data.logradouro,
-                numero: data.numero,
-                status: "A",
-                complemento: data.complemento,
-                telefone_responsavel: data.telefoneResponsavel.replace(/\D/g, ""),
-                email_responsavel: data.emailResponsavel,
-                nome_responsavel: data.nomeResponsavel,
-                gestor_id: 1,
-            };
-            const response = await createCompany(empresaData);
-            if (response.status === 201 || response.status === 200) {
-                setResponseMessage("Empresa criada com sucesso!");
-                setResponseSuccess(true);
-                await queryClient.refetchQueries({queryKey: ["companies"], type: "active", exact: true});
-            } else {
-                setResponseMessage("Ocorreu um erro ao criar Empresa.");
-                setResponseSuccess(false);
-            }
-            setResponseDialogOpen(true);
-        } catch (error) {
-            console.error("Erro ao criar talhao:", error);
-            setResponseMessage("Ocorreu um erro ao criar Empresa.");
-            setResponseSuccess(false);
-            setResponseDialogOpen(true);
-        }
+    // Função asincrona para dar o post com os dados formatados da empresa
+    const createCompanyRequest = async (postData: Empresa | null) => {
+        const {data} = await api.post("/empresas", postData);
+        return data;
     };
 
-    const handleCloseResponseDialog = () => {
-        setResponseDialogOpen(false);
-        setOpen(false);
+    // Hook do react query para fazer a validação se foi sucesso ou se a requisição deu problema
+    const {mutate, isPending, variables} = useMutation({
+        mutationFn: createCompanyRequest,
+        onSuccess: () => {
+            toast({
+                className:"border-green-500 bg-green-500",
+                title: "Sucesso!",
+                description: "A empresa foi cadastrada no sistema com sucesso.",
+            });
+            // Refetch na lista de empresas
+            queryClient.refetchQueries({queryKey: ["companies"], type: "active", exact: true});
+            setOpen(false);
+            form.reset();
+        },
+        onError: (error: AxiosError) => {
+            toast({
+                variant: "destructive",
+                title: "Error!",
+                description: "Ocorreu um erro ao cadastrar a empresa.",
+            });
+        },
+    });
+
+    // Função de submit do formulário de criação de empresa
+    const onHandleSubmit = (data: Form) => {
+        const formattedData = {
+            ...data,
+            cnpj: data.cnpj.replace(/\D/g, ""),
+            telefone: data.telefone.replace(/\D/g, ""),
+            cep: data.cep.replace(/\D/g, ""),
+            status: "A",
+            telefone_responsavel: data.telefone_responsavel.replace(/\D/g, ""),
+            gestor_id: 1,
+        };
+        // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
+        mutate(formattedData);
     };
 
     return (
-        <>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>{children}</DialogTrigger>
                 <DialogContent className="sm:max-w-[450px]">
@@ -159,7 +166,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
 
                     <Form {...form}>
                         <form
-                            onSubmit={form.handleSubmit(onSubmit)}
+                            onSubmit={form.handleSubmit(onHandleSubmit)}
                             id="company-form"
                             className="grid grid-cols-2 gap-4 py-4"
                         >
@@ -236,7 +243,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
 
                             <FormField
                                 control={form.control}
-                                name="CEP"
+                                name="cep"
                                 render={({field}) => (
                                     <FormItem className="col-span-1 ">
                                         <FormControl>
@@ -337,13 +344,13 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                             />
                             <FormField
                                 control={form.control}
-                                name="nomeResponsavel"
+                                name="nome_responsavel"
                                 render={({field}) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
                                             <Input
                                                 Icon={User}
-                                                id="nomeResponsavel"
+                                                id="nome_responsavel"
                                                 placeholder="Nome do Responsável"
                                                 {...field}
                                             />
@@ -354,13 +361,13 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                             />
                             <FormField
                                 control={form.control}
-                                name="emailResponsavel"
+                                name="email_responsavel"
                                 render={({field}) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
                                             <Input
                                                 Icon={EnvelopeSimple}
-                                                id="emailResponsavel"
+                                                id="email_responsavel"
                                                 placeholder="Email do Responsável"
                                                 {...field}
                                             />
@@ -371,7 +378,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                             />
                             <FormField
                                 control={form.control}
-                                name="telefoneResponsavel"
+                                name="telefone_responsavel"
                                 render={({field}) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
@@ -403,13 +410,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                 </DialogContent>
             </Dialog>
 
-            <ResponseDialog
-                open={responseDialogOpen}
-                onClose={handleCloseResponseDialog}
-                success={responseSuccess}
-                message={responseMessage}
-            />
-        </>
+           
     );
 };
 export default CreateCompanyModal;
