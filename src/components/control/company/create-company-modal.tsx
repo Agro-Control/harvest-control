@@ -1,5 +1,20 @@
 "use client";
-
+import {
+    Buildings,
+    IdentificationCard,
+    Phone,
+    MapPin,
+    MapTrifold,
+    NavigationArrow,
+    Factory,
+    House,
+    Hash,
+    Flag,
+    User,
+    EnvelopeSimple,
+    MagnifyingGlass,
+    CircleNotch,
+} from "@phosphor-icons/react";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {
     Dialog,
@@ -14,7 +29,6 @@ import {createCompanySchema} from "@/utils/validations/createCompanySchema";
 import {useCreateCompany} from "@/utils/hooks/useCreateCompanies";
 import {MaskedInput} from "@/components/ui/masked-input";
 import ResponseDialog from "@/components/response-dialog";
-import {EnvelopeSimple} from "@phosphor-icons/react";
 import {useQueryClient} from "@tanstack/react-query";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
@@ -25,11 +39,14 @@ import {ReactNode, useState} from "react";
 import {useForm} from "react-hook-form";
 import Empresa from "@/types/empresa";
 import {z} from "zod";
+import {handleCnpjData} from "@/utils/handleCnpjData";
 interface CreateCompanyProps {
     children: ReactNode;
 }
 
 const CreateCompanyModal = ({children}: CreateCompanyProps) => {
+    const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
+
     const queryClient = useQueryClient();
 
     const {t} = useTranslation();
@@ -43,7 +60,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
         resolver: zodResolver(createCompanySchema),
         defaultValues: {
             nome: "",
-            cnpj: undefined,
+            cnpj: "",
             telefone: "",
             CEP: "",
             estado: "",
@@ -57,6 +74,24 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
             nomeResponsavel: "",
         },
     });
+
+    const {getValues, setValue, watch} = form;
+    const watchCnpj = watch("cnpj");
+    const cnpjValidLength = watchCnpj.length === 18;
+
+    const onHandleClick = async () => {
+        setIsLoadingCnpj(true);
+        const {cnpj} = getValues();
+        const formattedCnpj = cnpj.replace(/\D/g, "");
+
+        const isLengthValid = formattedCnpj.length === 14;
+
+        if (isLengthValid) {
+            const response = await handleCnpjData(formattedCnpj, setValue);
+        }
+
+        setIsLoadingCnpj(false);
+    };
 
     const onSubmit = async (data: z.infer<typeof createCompanySchema>) => {
         try {
@@ -104,7 +139,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
         <>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>{children}</DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[450px]">
                     <DialogHeader>
                         <DialogTitle className="font-poppins text-green-950">Criar Empresa</DialogTitle>
                         <DialogDescription>Insira as informações para criar uma empresa.</DialogDescription>
@@ -118,27 +153,47 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                         >
                             <FormField
                                 control={form.control}
-                                name="nome"
+                                name="cnpj"
                                 render={({field}) => (
-                                    <FormItem className="col-span-2">
-                                        <FormControl>
-                                            <Input id="nome" placeholder="Nome da Empresa" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
+                                    <FormItem className="col-span-2 flex w-full flex-row items-start justify-center gap-3 space-y-0">
+                                        <div className="flex w-full flex-col gap-2">
+                                            <FormControl>
+                                                <MaskedInput
+                                                    Icon={IdentificationCard}
+                                                    {...field}
+                                                    placeholder="CNPJ"
+                                                    maskInput={{input: InputMask, mask: "__.___.___/____-__"}}
+                                                />
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </div>
+                                        <Button
+                                            onClick={onHandleClick}
+                                            disabled={cnpjValidLength ? false : true}
+                                            type="button"
+                                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                                        >
+                                            {isLoadingCnpj ? (
+                                                <CircleNotch className="h-5 w-5 animate-spin" />
+                                            ) : (
+                                                <MagnifyingGlass className="h-5 w-5" />
+                                            )}
+                                        </Button>
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 control={form.control}
-                                name="cnpj"
+                                name="nome"
                                 render={({field}) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
-                                            <MaskedInput
+                                            <Input
+                                                Icon={Buildings}
+                                                id="nome"
+                                                placeholder="Nome da Empresa"
                                                 {...field}
-                                                placeholder="CNPJ"
-                                                maskInput={{input: InputMask, mask: "__.___.___/____-__"}}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -154,7 +209,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                         <FormControl>
                                             <MaskedInput
                                                 {...field}
-                                                Icon={EnvelopeSimple}
+                                                Icon={Phone}
                                                 placeholder="Telefone da Empresa"
                                                 maskInput={{
                                                     input: InputMask,
@@ -175,6 +230,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                         <FormControl>
                                             <MaskedInput
                                                 {...field}
+                                                Icon={NavigationArrow}
                                                 placeholder="CEP"
                                                 maskInput={{
                                                     input: InputMask,
@@ -193,7 +249,13 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                 render={({field}) => (
                                     <FormItem className="col-span-1 ">
                                         <FormControl>
-                                            <Input id="estado" placeholder={t(field.name)} {...field} />
+                                            <Input
+                                                disabled
+                                                Icon={MapTrifold}
+                                                id="estado"
+                                                placeholder={t(field.name)}
+                                                {...field}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -206,7 +268,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                 render={({field}) => (
                                     <FormItem className="col-span-1 ">
                                         <FormControl>
-                                            <Input id="cidade" placeholder="Cidade" {...field} />
+                                            <Input disabled Icon={MapPin} id="cidade" placeholder="Cidade" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -218,7 +280,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                 render={({field}) => (
                                     <FormItem className="col-span-1 ">
                                         <FormControl>
-                                            <Input id="bairro" placeholder="Bairro" {...field} />
+                                            <Input Icon={Factory} id="bairro" placeholder="Bairro" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -231,7 +293,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                 render={({field}) => (
                                     <FormItem className="col-span-1 ">
                                         <FormControl>
-                                            <Input id="logradouro" placeholder="Endereço" {...field} />
+                                            <Input Icon={House} id="logradouro" placeholder="Endereço" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -243,7 +305,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                 render={({field}) => (
                                     <FormItem className="col-span-1 ">
                                         <FormControl>
-                                            <Input id="numero" placeholder="Número" {...field} />
+                                            <Input Icon={Hash} id="numero" placeholder="Número" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -255,7 +317,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                 render={({field}) => (
                                     <FormItem className="col-span-1 ">
                                         <FormControl>
-                                            <Input id="complemento" placeholder="Complemento" {...field} />
+                                            <Input Icon={Flag} id="complemento" placeholder="Complemento" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -267,7 +329,12 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                 render={({field}) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
-                                            <Input id="nomeResponsavel" placeholder="Nome do Responsável" {...field} />
+                                            <Input
+                                                Icon={User}
+                                                id="nomeResponsavel"
+                                                placeholder="Nome do Responsável"
+                                                {...field}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -280,6 +347,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                     <FormItem className="col-span-1">
                                         <FormControl>
                                             <Input
+                                                Icon={EnvelopeSimple}
                                                 id="emailResponsavel"
                                                 placeholder="Email do Responsável"
                                                 {...field}
@@ -297,6 +365,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                                         <FormControl>
                                             <MaskedInput
                                                 {...field}
+                                                Icon={Phone}
                                                 placeholder="Telefone do Responsável"
                                                 maskInput={{
                                                     input: InputMask,
