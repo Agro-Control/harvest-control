@@ -8,8 +8,8 @@ const emailRegex = /^(?![-.])[\w.-]+@(?![-.])[\w.-]+\.[a-zA-Z]{2,}$/;
 export const createCompanySchema = z.object({
         nome: requiredStringField(1, 255, "O nome da empresa não pode estar vazio"),
         cnpj: requiredStringField(18,18, "CNPJ inválido"),
-        telefone: requiredStringField(15, 255, "Telefone inválido"),
-        CEP: requiredStringField(9, 255, "CEP incompleto"),
+        telefone: requiredStringField(14, 255, "Telefone inválido"),
+        CEP: requiredStringField(8, 255, "CEP incompleto"),
         estado: optionalStringField(255),
         cidade: optionalStringField(255),
         bairro: optionalStringField(255),
