@@ -117,7 +117,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
-                    Icon={Hash}
+                        Icon={Hash}
                         disabled
                         className="col-span-1 "
                         id="numero"
@@ -126,7 +126,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
-                    Icon={Flag}
+                        Icon={Flag}
                         disabled
                         className="col-span-1 "
                         id="complemento"
@@ -135,7 +135,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
-                    Icon={User}
+                        Icon={User}
                         disabled
                         className="col-span-1"
                         id="nomeResponsavel"
@@ -144,7 +144,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
-                    Icon={EnvelopeSimple}
+                        Icon={EnvelopeSimple}
                         disabled
                         className="col-span-1"
                         id="emailResponsavel"
@@ -153,7 +153,7 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <Input
-                    Icon={Phone}
+                        Icon={Phone}
                         disabled
                         className="col-span-1"
                         id="telefoneResponsavel"

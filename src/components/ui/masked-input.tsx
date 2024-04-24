@@ -22,7 +22,6 @@ const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
 
         const setRefs = (inputElement: HTMLInputElement) => {
             inputRef.current = inputElement;
-
             if (typeof ref === "function") {
                 ref(inputElement);
             } else if (ref) {
