@@ -3,6 +3,7 @@ import {Poppins, Plus_Jakarta_Sans} from "next/font/google";
 import {SpeedInsights} from "@vercel/speed-insights/next";
 import Providers from "./providers";
 import type {Metadata} from "next";
+import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({
                     <Providers>
                         <SpeedInsights />
                         {children}
+                        <Toaster />
                     </Providers>
                 </body>
             </html>
