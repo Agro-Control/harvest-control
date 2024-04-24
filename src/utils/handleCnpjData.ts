@@ -1,10 +1,8 @@
 import {createCompanySchema} from "@/utils/validations/createCompanySchema";
-import { UseFormSetValue } from "react-hook-form";
-import { TFunction } from "i18next";
+
+import {UseFormSetValue} from "react-hook-form";
 import axios from "axios";
-import { z } from "zod";
-
-
+import {z} from "zod";
 
 interface Data {
     nome_fantasia: string | null;
@@ -41,7 +39,7 @@ type HandledFormFields = {
 const mapDataToFormFields = (data: Data): HandledFormFields => ({
     nome: data.nome_fantasia || "",
     telefone: `(${data.ddd1}) ${data.telefone1.substring(0, 5)}-${data.telefone1.substring(5)}`,
-    CEP: data.cep.substring(0, 5) + "-" + data.cep.substring(5), 
+    CEP: data.cep.substring(0, 5) + "-" + data.cep.substring(5),
     estado: data.estado.sigla,
     cidade: data.cidade.nome,
     bairro: data.bairro,
@@ -50,11 +48,7 @@ const mapDataToFormFields = (data: Data): HandledFormFields => ({
     complemento: data.complemento || "",
 });
 
-export const handleCnpjData = async (
-    cnpj: string,
-    setValue: UseFormSetValue<Form>,
-) => {
-    // const { toast } = createStandaloneToast();
+export const handleCnpjData = async (cnpj: string, setValue: UseFormSetValue<Form>) => {
 
     try {
         const response: Response = await axios.get(`https://publica.cnpj.ws/cnpj/${cnpj}`, {
@@ -67,23 +61,9 @@ export const handleCnpjData = async (
             setValue(key as FormFields, formFields[key as FormFields]);
         });
 
-        return { success: true };
+        return {error: false};
     } catch (error) {
-        const toastId = "cnpj-error";
 
-        // if (toast.isActive(toastId)) return;
-
-        // toast({
-        //     id: toastId,
-        //     position: "top",
-        //     title: translate("cnpj_failed"),
-        //     description: translate("cnpj_failed_description"),
-        //     status: "warning",
-        //     duration: 9999,
-        //     isClosable: true,
-        //     variant: "left-accent",
-        // });
-
-        return { error: true };
-    } 
+        return {error: true};
+    }
 };

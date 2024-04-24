@@ -40,12 +40,16 @@ import {useForm} from "react-hook-form";
 import Empresa from "@/types/empresa";
 import {z} from "zod";
 import {handleCnpjData} from "@/utils/handleCnpjData";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 interface CreateCompanyProps {
     children: ReactNode;
 }
 
 const CreateCompanyModal = ({children}: CreateCompanyProps) => {
     const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
+
+    const {toast} = useToast();
 
     const queryClient = useQueryClient();
 
@@ -88,8 +92,16 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
 
         if (isLengthValid) {
             const response = await handleCnpjData(formattedCnpj, setValue);
+            if (response.error === true) {
+                toast({
+                    variant: "destructive",
+                    title: "Falha ao preencher dados do CNPJ",
+                    description: "Ocorreu um erro na busca, ou excedeu o limite de tentativas. Por favor, tente novamente mais tarde.",
+                })
+            }
+            
         }
-
+        
         setIsLoadingCnpj(false);
     };
 
