@@ -13,6 +13,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {createUserSchema} from "@/utils/validations/createUserSchema";
 import {PasswordInput} from "@/components/ui/password-input";
+import {Buildings, UsersThree} from "@phosphor-icons/react";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -83,7 +84,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                                                 form.setValue("role", value);
                                             }}
                                         >
-                                            <SelectTrigger className="h-10 w-[180px] ">
+                                            <SelectTrigger Icon={UsersThree} className="h-10 w-[180px] ">
                                                 <SelectValue placeholder="Cargo" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -159,8 +160,8 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                                                 form.setValue("company", value);
                                             }}
                                         >
-                                            <SelectTrigger className="h-10 w-[180px] ">
-                                                <SelectValue placeholder="Empresa" {...field} />
+                                            <SelectTrigger Icon={Buildings} className="h-10 w-[180px] ">
+                                                <SelectValue  placeholder="Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="company1">Empresa 1</SelectItem>

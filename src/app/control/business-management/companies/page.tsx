@@ -75,8 +75,8 @@ export default function Companies() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                <Filter filter={estadoFilter} paramType="estado" />
-                <Filter filter={statusFilter} paramType="status" />
+                <Filter  filter={estadoFilter} paramType="estado" />
+                <Filter  filter={statusFilter} paramType="status" />
                 <CreateCompanyModal>
                     <Button
                         type="button"

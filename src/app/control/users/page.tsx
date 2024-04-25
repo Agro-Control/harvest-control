@@ -67,7 +67,7 @@ const {t} = useTranslation();
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                <Filter filter={statusFilter} paramType="status" />
+                <Filter  filter={statusFilter} paramType="status" />
                 <Filter filter={profileFilter} paramType="profile" />
                 <CreateUserModal>
                     <Button

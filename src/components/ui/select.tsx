@@ -1,9 +1,10 @@
 "use client";
 
-import * as React from "react";
 import {CaretSortIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon} from "@radix-ui/react-icons";
+import {Eye, EyeClosed, LockKey} from "@phosphor-icons/react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-
+import {Icon as IconType} from "@phosphor-icons/react";
+import * as React from "react";
 import {cn} from "@/lib/utils";
 
 const Select = SelectPrimitive.Root;
@@ -12,24 +13,32 @@ const SelectGroup = SelectPrimitive.Group;
 
 const SelectValue = SelectPrimitive.Value;
 
-const SelectTrigger = React.forwardRef<
-    React.ElementRef<typeof SelectPrimitive.Trigger>,
-    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({className, children, ...props}, ref) => (
-    <SelectPrimitive.Trigger
-        ref={ref}
-        className={cn(
-            "text-sm flex h-9 w-full items-center justify-between whitespace-nowrap rounded-xl border border-divider bg-white px-3 py-2 shadow-sm ring-offset-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-green-800 focus:ring-offset-0 focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus:ring-gray-300 [&>span]:line-clamp-1",
-            className,
-        )}
-        {...props}
-    >
-        {children}
-        <SelectPrimitive.Icon asChild>
-            <CaretSortIcon className="h-4 w-4 opacity-50" />
-        </SelectPrimitive.Icon>
-    </SelectPrimitive.Trigger>
-));
+interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> {
+    Icon?: IconType;
+}
+
+
+
+const SelectTrigger = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Trigger>, SelectTriggerProps>(
+    ({className, Icon, children, ...props}, ref) => (
+        <SelectPrimitive.Trigger
+            ref={ref}
+            className={cn(
+                `relative flex h-9 w-full items-center justify-between whitespace-nowrap rounded-xl border border-divider bg-white py-2  ${Icon ? "pl-10" : "px-4"} pr-3 text-sm shadow-sm ring-offset-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-green-800 focus:ring-offset-0 focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:ring-offset-gray-950 dark:placeholder:text-gray-400 dark:focus:ring-gray-300 [&>span]:line-clamp-1`,
+                className,
+            )}
+            {...props}
+        >
+            {Icon && <div className="absolute left-3 top-1/2 z-50 -translate-y-1/2 transform cursor-pointer">
+                <Icon className="h-5 w-5 text-green-950" />
+            </div>}
+            {children}
+            <SelectPrimitive.Icon asChild>
+                <CaretSortIcon className="h-4 w-4 opacity-50" />
+            </SelectPrimitive.Icon>
+        </SelectPrimitive.Trigger>
+    ),
+);
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectScrollUpButton = React.forwardRef<

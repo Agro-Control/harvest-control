@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -24,8 +25,8 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {ReactNode, useState} from "react";
 import Empresa from "@/types/empresa";
+import {ReactNode} from "react";
 
 interface EditCompanyProps {
     empresa: Empresa;
@@ -33,14 +34,11 @@ interface EditCompanyProps {
 }
 
 const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
-    const [open, setOpen] = useState(false);
 
-    const handleClose = () => {
-        setOpen(false);
-    };
+    
 
     return (
-        <Dialog>
+        <Dialog >
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[450px]">
                 <DialogHeader>
@@ -163,13 +161,14 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                 </div>
 
                 <DialogFooter>
+                <DialogClose asChild>
                     <Button
-                        onClick={handleClose}
-                        type="submit"
+                        type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
                         Confirmar
                     </Button>
+                    </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
