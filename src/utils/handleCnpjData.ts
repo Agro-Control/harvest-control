@@ -2,6 +2,8 @@ import {createCompanySchema} from "@/utils/validations/createCompanySchema";
 import {UseFormSetValue} from "react-hook-form";
 import axios from "axios";
 import {z} from "zod";
+import { editUnitSchema } from "./validations/editUnitSchema";
+
 
 interface Data {
     nome_fantasia: string | null;
@@ -28,6 +30,10 @@ interface Response {
 }
 
 type Form = z.infer<typeof createCompanySchema>;
+
+type UnitForm = z.infer<typeof editUnitSchema>;
+
+type UnitFormFields = keyof Omit<UnitForm, "cnpj" | "id" | "empresa_id">;
 
 type FormFields = keyof Omit<Form, "cnpj" | "telefone_responsavel" | "email_responsavel" | "nome_responsavel">;
 
@@ -58,6 +64,26 @@ export const handleCnpjData = async (cnpj: string, setValue: UseFormSetValue<For
 
         Object.keys(formFields).forEach((key) => {
             setValue(key as FormFields, formFields[key as FormFields]);
+        });
+
+        return {error: false};
+    } catch (error) {
+
+        return {error: true};
+    }
+};
+
+export const handleUnitCnpjData = async (cnpj: string, setValue: UseFormSetValue<UnitForm>) => {
+
+    try {
+        const response: Response = await axios.get(`https://publica.cnpj.ws/cnpj/${cnpj}`, {
+            timeout: 5000, // 5s
+        });
+
+        const formFields = mapDataToFormFields(response.data.estabelecimento);
+
+        Object.keys(formFields).forEach((key) => {
+            setValue(key as UnitFormFields, formFields[key as FormFields]);
         });
 
         return {error: false};

@@ -17,6 +17,7 @@ import { useEffect} from "react";
 
 const statusFilter: FilterInformation = {
     filterItem: [
+        {value: "all"},
         {value: "A"},
         {
             value: "I",

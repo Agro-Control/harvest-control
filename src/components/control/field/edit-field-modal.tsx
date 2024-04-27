@@ -43,7 +43,7 @@ const EditFieldModal = ({children, field}: editFieldProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(null, null, null);
+    } = useGetCompanies(null, null, null, null);
 
     const [companyOptions, setCompanyOptions] = useState<{id: number; nome: string}[]>([]);
     const [statusOptions, setStatusOptions] = useState<{value: string}[]>([{value: "A"}, {value: "I"}]);

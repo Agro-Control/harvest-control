@@ -19,6 +19,7 @@ import { useEffect} from "react";
 
 const statusFilter: FilterInformation = {
     filterItem: [
+        {value: "all"},
         {value: "A"},
         {
             value: "I",
@@ -44,11 +45,30 @@ export default function Units() {
 
     // Variavel que indica se está carregando ou refazendo a requisição
     const isLoadingData = isLoading || isRefetching; 
+    
+    const mockUsuario = {
+        id: 1,
+        nome: "João",
+        email: "joao@example.com",
+        cpf: "123.456.789-00",
+        telefone: "(00) 12345-6789",
+        status: "ativo",
+        data_contratacao: new Date("2022-01-01"),
+        gestor_id: 2,
+        empresa_id: 3,
+        matricula: "123456",
+        turno: "manhã",
+        tipo: "GESTOR"
+    };
+
+    const isAdmin = mockUsuario.tipo === "ADM";
 
     useEffect(() => {
         refetch();
     }, [query, status]);
 
+    
+    
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
             <div className="flex w-full flex-row ">
@@ -72,7 +92,7 @@ export default function Units() {
                     <TableRow>
                         <TableHead>Código Unidade</TableHead>
                         <TableHead>Nome</TableHead>
-                        <TableHead>Filiação</TableHead>
+                        {isAdmin && <TableHead>Filiação</TableHead>}
                         <TableHead>Status</TableHead>
                         <TableHead>Ações</TableHead>
                     </TableRow>
@@ -84,7 +104,7 @@ export default function Units() {
                     unidades.map((unidade: Unidade) => {
                         return (
                             <TableBody>
-                                <UnitRow key={unidade.id} unidade={unidade} />
+                                <UnitRow key={unidade.id} unidade={unidade} isAdm={isAdmin} />
                             </TableBody>
                         );
                     })}
