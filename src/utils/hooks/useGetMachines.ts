@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import GetTalhao from "@/types/get-talhao";
+import GetMaquina from "@/types/get-maquina";
 
-const getFieldsRequest = async (id_empresa: number | null, codigo: string | null, status: string | null) => {
-    const { data } = await api.get<GetTalhao>("/talhoes", {
+const getMachinesRequest = async (id_empresa: number | null, codigo: string | null, status: string | null) => {
+    const { data } = await api.get<GetMaquina>("/maquinas", {
         params: {
             id_empresa: id_empresa,
             codigo: codigo,
@@ -13,10 +13,10 @@ const getFieldsRequest = async (id_empresa: number | null, codigo: string | null
     return data;
 };
 
-export const useGetFields = (id_empresa: number | null, status: string | null, codigo: string | null) => {
+export const useGetMachines = (id_empresa: number | null, status: string | null, codigo: string | null) => {
     return useQuery({
-        queryKey: ["fields", id_empresa, codigo, status],
-        queryFn: () => getFieldsRequest(id_empresa, codigo, status),
+        queryKey: ["machines", id_empresa, codigo, status],
+        queryFn: () => getMachinesRequest(id_empresa, codigo, status),
         retry: (failureCount, error) => {
 
             if (error instanceof Error && error.message.includes("404")) {

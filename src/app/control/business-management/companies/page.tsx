@@ -55,7 +55,7 @@ export default function Companies() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(cidade, estado, query, status);
+    } = useGetCompanies(null, cidade, estado, query, status);
 
     // Variavel que indica se está carregando ou refazendo a requisição
     const isLoadingData = isLoading || isRefetching; 

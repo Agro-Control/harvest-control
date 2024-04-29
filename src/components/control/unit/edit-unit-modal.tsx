@@ -38,7 +38,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
     const [responseMessage, setResponseMessage] = useState("");
     const [responseSuccess, setResponseSuccess] = useState(false);
 
-    const { data: { empresas = [] } = {} } = useGetCompanies(null, null, null);
+    const { data: { empresas = [] } = {} } = useGetCompanies(null, null, null, null, null);
 
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [statusOptions, setStatusOptions] = useState<{ value: string; }[]>([

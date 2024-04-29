@@ -3,6 +3,7 @@ import GetEmpresa from "@/types/get-empresa";
 import {api} from "@/lib/api";
 
 const getCompaniesRequest = async (
+    gestor_id: number | null,
     cidade: string | null,
     estado: string | null,
     codigo: string | null,
@@ -10,6 +11,7 @@ const getCompaniesRequest = async (
 ) => {
     const {data} = await api.get<GetEmpresa>("/empresas", {
         params: {
+            gestor_id: gestor_id,
             codigo: codigo,
             cidade: cidade,
             estado: estado,
@@ -20,6 +22,7 @@ const getCompaniesRequest = async (
 };
 
 export const useGetCompanies = (
+    gestor_id: number | null,
     cidade: string | null,
     estado: string | null,
     codigo: string | null,
@@ -27,6 +30,6 @@ export const useGetCompanies = (
 ) => {
     return useQuery({
         queryKey: ["companies"],
-        queryFn: () => getCompaniesRequest(cidade, estado, codigo, status),
+        queryFn: () => getCompaniesRequest(gestor_id, cidade, estado, codigo, status),
     });
 };

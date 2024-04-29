@@ -2,19 +2,7 @@
 import {
     Buildings,
     CompassTool,
-    IdentificationCard,
-    Phone,
-    MapPin,
-    MapTrifold,
-    NavigationArrow,
     Factory,
-    House,
-    Hash,
-    Flag,
-    User,
-    EnvelopeSimple,
-    MagnifyingGlass,
-    CircleNotch,
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -29,8 +17,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { editFieldSchema } from "@/utils/validations/editFieldSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { useCreateField } from "@/utils/hooks/useCreateField";
-import ResponseDialog from "@/components/response-dialog";
 import { ReactNode, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -59,7 +45,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(null, null, null, null);
+    } = useGetCompanies(null, null, null, null, null);
 
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [statusOptions] = useState<{ value: string }[]>([
@@ -96,7 +82,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             toast({
                 className: "border-green-500 bg-green-500",
                 title: "Sucesso!",
-                description: "A unidade foi cadastrada no sistema com sucesso.",
+                description: "O talhão foi cadastrado no sistema com sucesso.",
             });
             // Refetch na lista de empresas
             queryClient.refetchQueries({ queryKey: ["fields"], type: "active", exact: true });
@@ -107,7 +93,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             toast({
                 variant: "destructive",
                 title: "Erro!",
-                description: "Ocorreu um erro ao cadastrar a unidade.",
+                description: "Ocorreu um erro ao cadastrar o talhão.",
             });
         },
     });

@@ -63,7 +63,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(null, null, null, null);
+    } = useGetCompanies(null, null, null, null, null);
 
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
 
