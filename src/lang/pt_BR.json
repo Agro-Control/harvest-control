@@ -49,6 +49,8 @@
     "field-error-404": "Não encontramos nenhum talhão para sua busca",
     "postLogin-error-422": "Email ou Senha incorretos",
     "postLogin-description-error-422": "Essas credenciais não estão cadastradas em nosso sistema.",
+    "postLogin-error-401": "Email ou Senha incorretos",
+    "postLogin-description-error-401": "Essas credenciais não estão cadastradas em nosso sistema.",
     "postCompany-error-422": "Informações incorretas",
     "postCompany-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente."
 }
