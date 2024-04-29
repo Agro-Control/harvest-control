@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import {  AuthContext } from "@/contexts/Auth";
+import { AuthContext } from "@/contexts/Auth";
 import useCookie from "./useCookies";
 import User from "@/types/user";
 

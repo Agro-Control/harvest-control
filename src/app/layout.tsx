@@ -2,8 +2,6 @@ import "./globals.css";
 import {Poppins, Plus_Jakarta_Sans} from "next/font/google";
 import {SpeedInsights} from "@vercel/speed-insights/next";
 import {Toaster} from "@/components/ui/toaster";
-import {ClientCookiesProvider} from "./cookies";
-import {cookies} from "next/headers";
 import Providers from "./providers";
 import type {Metadata} from "next";
 
@@ -33,13 +31,11 @@ export default function RootLayout({
             <body
                 className={`${poppins.variable} ${jakarta.variable} flex h-screen w-screen flex-col overflow-y-auto overflow-x-hidden bg-background font-jakarta text-dark`}
             >
-                <ClientCookiesProvider value={cookies().getAll()}>
                     <Providers>
                         <SpeedInsights />
                         {children}
                         <Toaster />
                     </Providers>
-                </ClientCookiesProvider>
             </body>
         </html>
     );
