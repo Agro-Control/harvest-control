@@ -11,7 +11,7 @@ export const useAuth = () => {
     }
     
     const { setCookie, removeCookie } = useCookie();
-    const { user } = authData[0];
+    const { user, isLoading } = authData[0];
     
     const addUser = (user: User | null) => {
         authData[1].setUser(user);
@@ -24,5 +24,5 @@ export const useAuth = () => {
     }
 
 
-    return { user, addUser, removeUser }
+    return { user, isLoading, addUser, removeUser }
 };
