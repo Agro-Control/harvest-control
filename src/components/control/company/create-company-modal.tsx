@@ -29,8 +29,9 @@ import {createCompanySchema} from "@/utils/validations/createCompanySchema";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {MaskedInput} from "@/components/ui/masked-input";
 import {handleCnpjData} from "@/utils/handleCnpjData";
-import {useToast} from "@/components/ui/use-toast";
+import SubmitButton from "@/components/submit-button";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useToast} from "@/components/ui/use-toast";
 import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
 import {Input} from "@/components/ui/input";
@@ -94,7 +95,6 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
         setIsLoadingCnpj(true);
         const {cnpj} = getValues();
         const formattedCnpj = cnpj.replace(/\D/g, "");
-
         const isLengthValid = formattedCnpj.length === 14;
 
         if (isLengthValid) {
@@ -123,22 +123,38 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
         onSuccess: () => {
             toast({
                 className:"border-green-500 bg-green-500",
-                title: "Sucesso!",
-                description: "A empresa foi cadastrada no sistema com sucesso.",
+                title: t("success"),
+                description: t("postCompany-success"),
             });
+
             // Refetch na lista de empresas
             queryClient.refetchQueries({queryKey: ["companies"], type: "active", exact: true});
             setOpen(false);
             form.reset();
         },
         onError: (error: AxiosError) => {
+            const { response } = error;
+            if(!response) {
+                toast({
+                    variant: "destructive",
+                    title: t("network-error"),
+                    description: t("network-error-description"),
+                });
+                return;
+            }
+
+            const { status } = response;
+            const titleCode = `postCompany-error-${status}`;
+            const descriptionCode = `postCompany-description-error-${status}`;
+
             toast({
                 variant: "destructive",
-                title: "Error!",
-                description: "Ocorreu um erro ao cadastrar a empresa.",
+                title: t(titleCode),
+                description: t(descriptionCode),
             });
         },
     });
+
 
     // Função de submit do formulário de criação de empresa
     const onHandleSubmit = (data: Form) => {
@@ -399,13 +415,7 @@ const CreateCompanyModal = ({children}: CreateCompanyProps) => {
                         </form>
                     </Form>
                     <DialogFooter>
-                        <Button
-                            type="submit"
-                            form="company-form"
-                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                        >
-                            Confirmar
-                        </Button>
+                      <SubmitButton isLoading={isPending} form="company-form" />
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

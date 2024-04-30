@@ -41,7 +41,19 @@
     "profile": "Perfil",
     "manager": "Gerente",
     "operator": "Operador",
+    "success": "Sucesso",
+    "postCompany-success": "Empresa cadastrada com sucesso",
+
+
+    "network-error": "Erro de conexão",
+    "network-error-description": "Houve um problema de conexão com o servidor, tente novamente.",
     "company-error-404": "Não encontramos nenhuma empresa para sua busca.",
     "unit-error-404": "Não encontramos nenhuma unidade para sua busca.",
-    "field-error-404": "Não encontramos nenhum talhão para sua busca"
+    "field-error-404": "Não encontramos nenhum talhão para sua busca",
+    "postLogin-error-422": "Email ou Senha incorretos",
+    "postLogin-description-error-422": "Essas credenciais não estão cadastradas em nosso sistema.",
+    "postLogin-error-401": "Email ou Senha incorretos",
+    "postLogin-description-error-401": "Essas credenciais não estão cadastradas em nosso sistema.",
+    "postCompany-error-422": "Informações incorretas",
+    "postCompany-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente."
 }

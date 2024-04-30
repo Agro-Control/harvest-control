@@ -1,51 +1,100 @@
 "use client";
-
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import { loginSchema } from "@/utils/validations/loginSchema";
 import {PasswordInput} from "@/components/ui/password-input";
 import {EnvelopeSimple} from "@phosphor-icons/react";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useToast} from "@/components/ui/use-toast";
+import { useAuth } from "@/utils/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import logo2 from "@/assets/logo-row.svg";
 import {useForm} from "react-hook-form";
+import { AxiosError } from "axios";
+import { api } from "@/lib/api";
+import User from "@/types/user";
 import Image from "next/image";
 import {z} from "zod";
 
-const FormSchema = z.object({
-    register: z.string().min(2, {
-        message: "Campo obrigatório",
-    }),
-    password: z.string().min(2, {
-        message: "Os campos não podem estar vazios",
-    }),
-});
+type Form = z.infer<typeof loginSchema>
 
 const Login = () => {
-    const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
+
+    const {addUser } = useAuth();
+
+
+    const {toast} = useToast();
+
+    const {t} = useTranslation();
+
+    const form = useForm<Form>({
+        resolver: zodResolver(loginSchema),
         defaultValues: {
-            register: "",
-            password: "",
+            email: "",
+            senha: "",
         },
     });
 
     const {push} = useRouter();
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log(data);
-        push("/control");
-    }
+    const getUserRequest = async (postData: Form) => {
+        const { data } = await api.post<User>("/login", postData);
+        return data;
+    };
+
+    const {mutate, isPending} = useMutation({
+        mutationFn: getUserRequest,
+        onSuccess: (data) => {
+                addUser(data);
+                setTimeout(() => {
+                    push("/control");
+                }, 1500);
+        },
+        onError: (error: AxiosError) => {
+            const { response } = error;
+            if(!response) {
+                toast({
+                    duration: 1000,
+                    variant: "destructive",
+                    title: t("network-error"),
+                    description: t("network-error-description"),
+                });
+                return;
+            }
+
+            const { status } = response;
+            const titleCode = `postLogin-error-${status}`;
+            const descriptionCode = `postLogin-description-error-${status}`;
+
+            toast({
+                duration: 1000,
+                variant: "destructive",
+                title: t(titleCode),
+                description: t(descriptionCode),
+            });
+        },
+    });
+
+
+
+    
+    const onHandleSubmit = (data: Form) => {
+        mutate(data);
+    };
+
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-center overflow-hidden text-green-950 ">
             <div className="flex w-[20vw] flex-col items-center justify-center  ">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-6">
+                    <form onSubmit={form.handleSubmit(onHandleSubmit)} className="flex w-full flex-col gap-6">
                         <Image src={logo2} className="h-[64px] w-auto" alt="Agro Control" width={512} height={512} />
                         <FormField
                             control={form.control}
-                            name="register"
+                            name="email"
                             render={({field}) => (
                                 <FormItem>
                                     <FormControl>
@@ -56,12 +105,13 @@ const Login = () => {
                                             {...field}
                                         />
                                     </FormControl>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
-                            name="password"
+                            name="senha"
                             render={({field}) => (
                                 <FormItem>
                                     <FormControl>

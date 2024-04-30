@@ -1,9 +1,9 @@
 import "./globals.css";
 import {Poppins, Plus_Jakarta_Sans} from "next/font/google";
 import {SpeedInsights} from "@vercel/speed-insights/next";
+import {Toaster} from "@/components/ui/toaster";
 import Providers from "./providers";
 import type {Metadata} from "next";
-import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -27,16 +27,16 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-            <html lang="en">
-                <body
-                    className={`${poppins.variable} ${jakarta.variable} flex h-screen w-screen flex-col overflow-y-auto overflow-x-hidden bg-background font-jakarta text-dark`}
-                >
+        <html lang="en">
+            <body
+                className={`${poppins.variable} ${jakarta.variable} flex h-screen w-screen flex-col overflow-y-auto overflow-x-hidden bg-background font-jakarta text-dark`}
+            >
                     <Providers>
                         <SpeedInsights />
                         {children}
                         <Toaster />
                     </Providers>
-                </body>
-            </html>
+            </body>
+        </html>
     );
 }
