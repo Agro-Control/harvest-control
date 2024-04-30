@@ -1,9 +1,9 @@
 "use client";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {EnvelopeSimple, CircleNotch} from "@phosphor-icons/react";
 import { loginSchema } from "@/utils/validations/loginSchema";
 import {PasswordInput} from "@/components/ui/password-input";
-import {EnvelopeSimple} from "@phosphor-icons/react";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useToast} from "@/components/ui/use-toast";
 import { useAuth } from "@/utils/hooks/useAuth";
@@ -49,9 +49,7 @@ const Login = () => {
         mutationFn: getUserRequest,
         onSuccess: (data) => {
                 addUser(data);
-                setTimeout(() => {
                     push("/control");
-                }, 1500);
         },
         onError: (error: AxiosError) => {
             const { response } = error;
@@ -125,7 +123,7 @@ const Login = () => {
                             type="submit"
                             className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                         >
-                            Entrar
+                             { isPending ?  <CircleNotch className="h-5 w-5 animate-spin" /> :  "Entrar"}
                         </Button>
                     </form>
                 </Form>
