@@ -1,6 +1,6 @@
-import { createContext, ReactNode, useEffect, useReducer, useRef } from "react";
-import { factory } from "./factory";
-import { reducer } from "./reducer";
+import {createContext, ReactNode, useEffect, useReducer, useRef} from "react";
+import {factory} from "./factory";
+import {reducer} from "./reducer";
 import User from "@/types/user";
 import useCookie from "@/utils/hooks/useCookies";
 
@@ -24,31 +24,31 @@ type AuthContextProviderProps = {
 
 export const AuthContext = createContext<[AuthState, AuthActions] | null>(null);
 
-export function AuthContextProvider({ children }: AuthContextProviderProps) {
+export function AuthContextProvider({children}: AuthContextProviderProps) {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { getCookie } = useCookie();
+    const {getCookie} = useCookie();
     const actions = useRef(factory(dispatch));
-    const { setUser } = actions.current;
-    const { user } = state;
-
+    const {setUser} = actions.current;
+    const {user} = state;
 
     useEffect(() => {
         if (!user) {
-          let existingUser = null;
-          const getFromCookie = async () => (existingUser = getCookie("user"));
-          getFromCookie();
-          if (existingUser) {
-            try {
-              setUser(JSON.parse(existingUser));
-            } catch (e) {
-              console.log(e);
+            let existingUser = null;
+            const getFromCookie = async () => (existingUser = getCookie("user"));
+            getFromCookie();
+            if (existingUser) {
+                try {
+                    setUser(JSON.parse(existingUser));
+                } catch (e) {
+                    console.log(e);
+                }
             }
-          }
         }
-      }, []);
-    
+    }, []);
 
-
+    useEffect(() => {
+        console.log(user);
+    }, [user]);
 
     return <AuthContext.Provider value={[state, actions.current]}>{children}</AuthContext.Provider>;
 }

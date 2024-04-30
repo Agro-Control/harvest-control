@@ -45,13 +45,13 @@ const Login = () => {
         return data;
     };
 
-    const {mutate, isPending, data = null} = useMutation({
+    const {mutate, isPending} = useMutation({
         mutationFn: getUserRequest,
-        onSuccess: () => {
-            addUser(data);
-            setTimeout(() => {
-                push("/control");
-            }, 1500);
+        onSuccess: (data) => {
+                addUser(data);
+                setTimeout(() => {
+                    push("/control");
+                }, 1500);
         },
         onError: (error: AxiosError) => {
             const { response } = error;
@@ -82,7 +82,6 @@ const Login = () => {
 
     
     const onHandleSubmit = (data: Form) => {
-        console.log(data)
         mutate(data);
     };
 

@@ -12,7 +12,6 @@ interface User {
         matricula: string | null;
         turno: string | null;
         tipo: string;
-        senha: string;
     },
     token: string
 }
