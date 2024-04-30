@@ -13,10 +13,11 @@ const getFieldsRequest = async (id_empresa: number | null, codigo: string | null
     return data;
 };
 
-export const useGetFields = (id_empresa: number | null, status: string | null, codigo: string | null) => {
+export const useGetFields = (enableFlag: boolean, id_empresa: number | null, status: string | null, codigo: string | null) => {
     return useQuery({
         queryKey: ["fields", id_empresa, codigo, status],
         queryFn: () => getFieldsRequest(id_empresa, codigo, status),
+        enabled: enableFlag,
         retry: (failureCount, error) => {
 
             if (error instanceof Error && error.message.includes("404")) {

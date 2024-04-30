@@ -13,10 +13,11 @@ const getUnitsRequest = async (id_empresa: number | null, codigo: string | null,
   return data;
 };
 
-export const useGetUnits = (id_empresa: number | null, status: string | null, codigo: string | null) => {
+export const useGetUnits = (enableFlag: boolean, id_empresa: number | null, status: string | null, codigo: string | null) => {
   return useQuery({
     queryKey: ["units", id_empresa, codigo, status],
     queryFn: () => getUnitsRequest(id_empresa, codigo, status),
+    enabled: enableFlag,
     retry: (failureCount, error) => {
 
       if (error instanceof Error && error.message.includes("404")) {

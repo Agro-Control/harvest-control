@@ -56,24 +56,19 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     const { toast } = useToast();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
-    const [idEmpresa, setIdEmpresa] = useState<number | null>(null);
-    const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
-    const [unitOptions, setUnitOptions] = useState<{ id: number; nome: string }[]>([]);
-    const [fieldOptions, setFieldOptions] = useState<{ id: number; codigo: string }[]>([]);
-    const [machineOptions, setMachineOptions] = useState<{ id: number; nome: string }[]>([]);
-    const [morningOperatorOptions, setMorningOperatorOptions] = useState<{ id: number; nome: string }[]>([]);
-    const [afternoonOperatorOptions, setAfternoonOperatorOptions] = useState<{ id: number; nome: string }[]>([]);
-    const [nightOperatorOptions, setNightOperatorOptions] = useState<{ id: number; nome: string }[]>([]);
+    const [flag, setFlag] = useState<boolean>(false); //Contexto/Redux?
+
+
 
     const mockUsuario = {  //mock sessao
-        id: 1,
+        id: 2,
         nome: "João",
         email: "joao@example.com",
         cpf: "123.456.789-00",
         telefone: "(00) 12345-6789",
         status: "ativo",
         data_contratacao: new Date("2022-01-01"),
-        gestor_id: 2,
+        gestor_id: 1,
         empresa_id: 1,
         matricula: "123456",
         turno: "manhã",
@@ -100,6 +95,10 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         }
     });
 
+    const { getValues, setValue, watch } = form;
+    const watchIdEmpresa = watch("id_empresa");
+    const getTalhao = getValues("id_talhao");
+
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         error, // Erro retornado pela Api
@@ -107,45 +106,40 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(!isAdmin ? mockUsuario.empresa_id : null, null, null, null, null);
+    } = useGetCompanies(!isAdmin ? mockUsuario.id : null, null, null, null, null);
 
-    
+
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(idEmpresa, "A", null);
-    
+    } = useGetUnits(flag, parseInt(watchIdEmpresa!), "A", null);
+
+    const {
+        data: { talhoes = [] } = {}
+    } = useGetFields(flag, parseInt(watchIdEmpresa!), "A", null);
+
+    const {
+        data: { maquinas = [] } = {}
+    } = useGetMachines(flag, parseInt(watchIdEmpresa!), "A", null);
+
+    const {
+        data: { operador: operadores_manha = [] } = {}
+    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Manhã", "A", null);
+
+    const {
+        data: { operador: operadores_tarde = [] } = {}
+    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Tarde", "A", null);
+
+    const {
+        data: { operador: operadores_noite = [] } = {}
+    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Noite", "A", null);
 
 
     useEffect(() => {
-        if (empresas.length > 0) {
-            const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
-            setCompanyOptions(options);
-            console.log("valor: " + form.getValues("id_empresa"));
-        }
-        if (idEmpresa && unidades.length > 0) {
-            const options = unidades.map((unidade: any) => ({ id: unidade.id, nome: unidade.nome }));
-            setUnitOptions(options);
-        
-           /* const { data: machinesData, error: machinesError } = useGetMachines(id_empresa, "A", null);
-            if (machinesError) {
-            } else if (machinesData) {
-                setMachineOptions(machinesData.maquinas.map((maquina: any) => ({ id: maquina.id, nome: maquina.nome })));
-            }
-            const { data: fieldsData, error: fieldsError } = useGetFields(id_empresa, "A", null);
-            if (fieldsError) {
-            } else if (fieldsData) {
-                setFieldOptions(fieldsData.talhoes.map((talhao: any) => ({ id: talhao.id, codigo: talhao.codigo })));
-            }
-    
-            // Obter os dados dos operadores
-            const { data: operatorsData, error: operatorsError } = useGetOperators(id_empresa, "Manhã", "A", null);
-            if (operatorsError) {
-            } else if (operatorsData) {
-                setMorningOperatorOptions(operatorsData.usuarios.map((operador: any) => ({ id: operador.id, nome: operador.nome })));
-            }*/
-        }
+        if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined)
+            setFlag(true);
 
-    }, [empresas, idEmpresa]);
+        console.log("talhao:" + getTalhao);
+    }, [empresas, watchIdEmpresa, flag]);
 
 
 
@@ -162,8 +156,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                 title: "Sucesso!",
                 description: "A ordem foi cadastrada no sistema com sucesso.",
             });
-            // Refetch na lista de empresas
             queryClient.refetchQueries({ queryKey: ["orders"], type: "active", exact: true });
+            setFlag(false);
             setOpen(false);
             form.reset();
         },
@@ -178,15 +172,19 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
 
     const onHandleSubmit = (data: Form) => {
         const formattedData = {
-            ...data,
-            id_empresa: parseInt(data.id_empresa || "0"),
-            id_talhao: parseInt(data.id_talhao || "0"),
-            id_gestor: parseInt(data.id_gestor || "0"),
-            id_unidade: parseInt(data.id_unidade || "0"),
-            id_maquina: parseInt(data.id_maquina || "0"),
+            status: "A",
+            id_empresa: parseInt(data.id_empresa!),
+            id_talhao: parseInt(data.id_talhao!),
+            id_gestor: mockUsuario.id,
+            id_unidade: parseInt(data.id_unidade!),
+            id_maquina: parseInt(data.id_maquina!),
             velocidade_minima: parseFloat(data.velocidade_minima),
             velocidade_maxima: parseFloat(data.velocidade_maxima),
-            rpm: parseInt(data.rpm)
+            rpm: parseInt(data.rpm),
+            operadores_ids: [parseInt(data.operador_manha!),
+            parseInt(data.operador_tarde!),
+            parseInt(data.operador_noturno!)
+            ]
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -211,7 +209,6 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
-                                                setIdEmpresa(parseInt(value));
                                                 form.setValue("id_empresa", value);
                                             }}
                                         >
@@ -219,8 +216,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione a Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {companyOptions.map((company) => (
-                                                    <SelectItem key={company.id} value={company.id.toString()}>
+                                                {empresas.map((company) => (
+                                                    <SelectItem key={company.id} value={company.id!.toString()}>
                                                         {company.nome}
                                                     </SelectItem>
                                                 ))}
@@ -247,8 +244,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione a Máquina" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {machineOptions.map((machine) => (
-                                                    <SelectItem key={machine.id} value={machine.id.toString()}>
+                                                {maquinas.map((machine) => (
+                                                    <SelectItem key={machine.id} value={machine.id!.toString()}>
                                                         {machine.nome}
                                                     </SelectItem>
                                                 ))}
@@ -274,8 +271,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione a Unidade" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {unitOptions.map((unit) => (
-                                                    <SelectItem key={unit.id} value={unit.id.toString()}>
+                                                {unidades.map((unit) => (
+                                                    <SelectItem key={unit.id} value={unit.id!.toString()}>
                                                         {unit.nome}
                                                     </SelectItem>
                                                 ))}
@@ -301,9 +298,9 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione o Operador do Turno da Manhã" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {unitOptions.map((unit) => (
-                                                    <SelectItem key={unit.id} value={unit.id.toString()}>
-                                                        {unit.nome}
+                                                {operadores_manha.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -328,9 +325,9 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione o Operador do Turno da Tarde" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {unitOptions.map((unit) => (
-                                                    <SelectItem key={unit.id} value={unit.id.toString()}>
-                                                        {unit.nome}
+                                                {operadores_tarde.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -355,9 +352,9 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione o Operador do Turno da Noite" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {unitOptions.map((unit) => (
-                                                    <SelectItem key={unit.id} value={unit.id.toString()}>
-                                                        {unit.nome}
+                                                {operadores_noite.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -382,8 +379,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione o Talhão" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {fieldOptions.map((field) => (
-                                                    <SelectItem key={field.id} value={field.id.toString()}>
+                                                {talhoes.map((field) => (
+                                                    <SelectItem key={field.id} value={field.id!.toString()}>
                                                         {field.codigo}
                                                     </SelectItem>
                                                 ))}

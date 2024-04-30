@@ -38,7 +38,7 @@ export default function Field() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetFields(status, query);
+    } = useGetFields(true, null, status, query);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição

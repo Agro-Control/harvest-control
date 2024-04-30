@@ -2,19 +2,46 @@ import { z } from "zod";
 import { requiredStringField, optionalStringField } from "./reusableSchemes";
 ;
 export const createOrderSchema = z.object({
-    id_gestor: optionalStringField(1),
-    id_talhao: optionalStringField(1),
-    id_unidade: optionalStringField(1),
-    id_empresa: optionalStringField(1),
-    id_maquina: optionalStringField(1),
+    id_gestor: optionalStringField(255),
+    id_talhao: requiredStringField(1, 255, "Selecione um Talhão").refine((value) => {
+        return value !== null && value !== undefined;
+    }, {
+        message: "Por favor, selecione um talhão",
+    }),
+    id_unidade: requiredStringField(1, 255, "Selecione uma Unidade").refine((value) => {
+        return value !== null && value !== undefined;
+    }, {
+        message: "Por favor, selecione uma unidade",
+    }),
+    id_empresa: requiredStringField(1, 255, "Selecione uma Empresa").refine((value) => {
+        return value !== null && value !== undefined;
+    }, {
+        message: "Por favor, selecione uma Empresa",
+    }),
+    id_maquina: requiredStringField(1, 255, "Selecione uma Máquina").refine((value) => {
+        return value !== null && value !== undefined;
+    }, {
+        message: "Por favor, selecione uma Máquina",
+    }),
     status: optionalStringField(255),
-    operador_manha: optionalStringField(1),
-    operador_tarde: optionalStringField(1),
-    operador_noturno: optionalStringField(1),
+    operador_manha: requiredStringField(1, 255, "Selecione um Operador").refine((value) => {
+        return value !== null && value !== undefined;
+    }, {
+        message: "Por favor, selecione uma Operador do turno da manhã",
+    }),
+    operador_tarde: requiredStringField(1, 255, "Selecione um Operador").refine((value) => {
+        return value !== null && value !== undefined;
+    }, {
+        message: "Por favor, selecione uma Operador do turno da tarde",
+    }),
+    operador_noturno: requiredStringField(1, 255, "Selecione um Operador").refine((value) => {
+        return value !== null && value !== undefined;
+    }, {
+        message: "Por favor, selecione uma Operador do turno da noite",
+    }),
     velocidade_minima: requiredStringField(3, 3, "Velocidade Mínima Inválida, insira com pontuação").refine(
         (value) => {
             const convertedSpeed = parseFloat(value.replace(",", "."));
-            console.log(convertedSpeed);
             return convertedSpeed !== null && convertedSpeed >= 1.0 && convertedSpeed <= 1.5;
         },
         {
@@ -24,7 +51,6 @@ export const createOrderSchema = z.object({
     velocidade_maxima: requiredStringField(3, 3, "Velocidade Máxima Inválida, insira com pontuação").refine(
         (value) => {
             const convertedSpeed = parseFloat(value.replace(",", "."));
-            console.log(convertedSpeed);
             return convertedSpeed !== null && convertedSpeed >= 3.5 && convertedSpeed <= 5.0;
         },
         {
@@ -34,7 +60,6 @@ export const createOrderSchema = z.object({
     rpm: requiredStringField(4, 4, "Rpm Inválido").refine(
         (value) => {
             const convertedRPM = parseInt(value);
-            console.log(convertedRPM);
             return convertedRPM !== null && convertedRPM >= 1000 && convertedRPM <= 1500;
         },
         {

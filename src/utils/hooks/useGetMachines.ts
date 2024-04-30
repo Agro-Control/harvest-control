@@ -13,10 +13,11 @@ const getMachinesRequest = async (id_empresa: number | null, codigo: string | nu
     return data;
 };
 
-export const useGetMachines = (id_empresa: number | null, status: string | null, codigo: string | null) => {
+export const useGetMachines = (enableFlag: boolean, id_empresa: number | null, status: string | null, codigo: string | null) => {
     return useQuery({
         queryKey: ["machines", id_empresa, codigo, status],
         queryFn: () => getMachinesRequest(id_empresa, codigo, status),
+        enabled: enableFlag,
         retry: (failureCount, error) => {
 
             if (error instanceof Error && error.message.includes("404")) {
