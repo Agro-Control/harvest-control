@@ -25,8 +25,10 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {InputMask} from "@react-input/mask";
 import Empresa from "@/types/empresa";
 import {ReactNode} from "react";
+import { MaskedInput } from "@/components/ui/masked-input";
 
 interface EditCompanyProps {
     empresa: Empresa;
@@ -60,14 +62,16 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                         value={empresa.cnpj || "Não Informado"}
                     />
 
-                    <Input
-                        Icon={Phone}
-                        disabled
-                        className="col-span-1 "
-                        id="telefone"
-                        placeholder="Telefone da Empresa"
-                        value={empresa.telefone}
-                    />
+                    <MaskedInput
+                                     
+                                                value={empresa.telefone}
+                                                Icon={Phone}
+                                                placeholder="Telefone da Empresa"
+                                                maskInput={{
+                                                    input: InputMask,
+                                                    mask: "(__) _____-____",
+                                                }}
+                                            />
 
                     <Input
                         disabled

@@ -18,7 +18,7 @@ const OrdersRow = ({ ordem }: OrderRowProps) => {
             <TableCell className="font-medium">{ordem.id_maquina}</TableCell>
             <TableCell className="">{formatDate(ordem.data_inicio)}</TableCell>
             <TableCell className="">{formatDate(ordem.data_fim)}</TableCell>
-            <TableCell className="">{t(ordem.status)}</TableCell>
+            <TableCell className="">{t(ordem.status!)}</TableCell>
            {/*<TableCell className="w-28">
                 <div className="-ml-1 flex w-full flex-row items-center gap-3">
                     <EditFieldModal order={ordem}>

@@ -13,6 +13,7 @@ import Empresa from "@/types/empresa";
 import {useQueryState} from "nuqs";
 import {AxiosError} from "axios";
 import {useEffect} from "react";
+import { useAuth } from "@/utils/hooks/useAuth";
 
 const estadoFilter: FilterInformation = {
     filterItem: [
@@ -39,15 +40,16 @@ const statusFilter: FilterInformation = {
  */
 //TODO: solicitar pra trocar codigo pra nome no backend
 export default function Companies() {
-
+    const auth = useAuth();
+    const user = auth.user?.usuario;
+    const isGestor = user?.tipo === "G";
     // Hook que pega os parametros da URL
     const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
     const [estado] = useQueryState("estado"); // estado é o nome do parametro que está na URL - Usado para o filtro de estado.
     const [cidade] = useQueryState("cidade"); // cidade é o nome do parametro que está na URL - Não está sendo usado
     const [status] = useQueryState("status"); // status é o nome do parametro que está na URL - Usado para filtrar ativo e inativo.
 
-
-    // Hook que retorna a a resposta da Api para a rota de empresas
+    
     const {
         data: {empresas = []} = {}, // Objeto contendo a lista de empresas
         error, // Erro retornado pela Api
@@ -55,7 +57,9 @@ export default function Companies() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(null, cidade, estado, query, status);
+    } = useGetCompanies(isGestor ? parseInt(user?.empresa_id!) : null, cidade, estado, query, status);
+
+
 
     // Variavel que indica se está carregando ou refazendo a requisição
     const isLoadingData = isLoading || isRefetching; 
@@ -77,14 +81,14 @@ export default function Companies() {
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter  filter={estadoFilter} paramType="estado" />
                 <Filter  filter={statusFilter} paramType="status" />
-                <CreateCompanyModal>
+            {!isGestor && <CreateCompanyModal>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
                         Criar
                     </Button>
-                </CreateCompanyModal>
+                </CreateCompanyModal> }
             </div>
 
             <Table  >

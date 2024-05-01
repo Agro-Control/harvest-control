@@ -13,6 +13,7 @@ import Unidade from "@/types/unidade";
 import {useQueryState} from "nuqs";
 import { AxiosError } from "axios";
 import { useEffect} from "react";
+import { useAuth } from "@/utils/hooks/useAuth";
 
 
 
@@ -30,23 +31,9 @@ const statusFilter: FilterInformation = {
 export default function Units() {
     const [query] = useQueryState("query");
     const [status]= useQueryState("status");
-
-    const mockUsuario = {
-        id: 1,
-        nome: "João",
-        email: "joao@example.com",
-        cpf: "123.456.789-00",
-        telefone: "(00) 12345-6789",
-        status: "ativo",
-        data_contratacao: new Date("2022-01-01"),
-        gestor_id: 2,
-        empresa_id: 1,
-        matricula: "123456",
-        turno: "manhã",
-        tipo: "GESTOR"
-    };
-
-    const isAdmin = mockUsuario.tipo === "ADM";
+    const auth = useAuth();
+    const user = auth.user?.usuario;
+    const isGestor = user?.tipo === "G";
 
 
 
@@ -57,7 +44,7 @@ export default function Units() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetUnits(true, !isAdmin ? mockUsuario.empresa_id : null, status, query);
+    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : null, status, query);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição
@@ -93,7 +80,7 @@ export default function Units() {
                     <TableRow>
                         <TableHead>Código Unidade</TableHead>
                         <TableHead>Nome</TableHead>
-                        {isAdmin && <TableHead>Filiação</TableHead>}
+                        {!isGestor && <TableHead>Filiação</TableHead>}
                         <TableHead>Status</TableHead>
                         <TableHead>Ações</TableHead>
                     </TableRow>
@@ -105,7 +92,7 @@ export default function Units() {
                     unidades.map((unidade: Unidade) => {
                         return (
                             <TableBody>
-                                <UnitRow key={unidade.id} unidade={unidade} isAdm={isAdmin} />
+                                <UnitRow key={unidade.id} unidade={unidade} isGestor={isGestor} />
                             </TableBody>
                         );
                     })}

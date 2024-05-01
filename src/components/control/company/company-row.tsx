@@ -18,7 +18,7 @@ const CompanyRow = ({empresa}: CompanyRowProps) => {
             <TableCell className="font-medium">{formattedCnpj}</TableCell>
             <TableCell className="font-medium">{empresa.nome}</TableCell>
             <TableCell className="font-medium">{empresa.cidade}</TableCell>
-            <TableCell className="">{t(empresa.estado)}</TableCell>
+            <TableCell className="">{t(empresa.estado!)}</TableCell>
             <TableCell className="">{t(empresa.status)}</TableCell>
             <TableCell className="w-28">
                 <div className="-ml-1 flex w-full flex-row items-center gap-3">

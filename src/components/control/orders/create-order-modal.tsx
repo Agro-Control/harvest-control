@@ -43,6 +43,7 @@ import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import { useGetFields } from "@/utils/hooks/useGetFields";
 import { useGetOperators } from "@/utils/hooks/useGetOperators";
 import { useGetMachines } from "@/utils/hooks/useGetMachines";
+import { useAuth } from "@/utils/hooks/useAuth";
 
 
 interface createOrderProps {
@@ -52,30 +53,15 @@ interface createOrderProps {
 type Form = z.infer<typeof createOrderSchema>;
 
 const CreateOrderModal = ({ children }: createOrderProps) => {
+    const auth = useAuth();
+    const user = auth.user?.usuario!;
+    const isGestor = user?.tipo === "G";
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const [flag, setFlag] = useState<boolean>(false); //Contexto/Redux?
 
-
-
-    const mockUsuario = {  //mock sessao
-        id: 2,
-        nome: "João",
-        email: "joao@example.com",
-        cpf: "123.456.789-00",
-        telefone: "(00) 12345-6789",
-        status: "ativo",
-        data_contratacao: new Date("2022-01-01"),
-        gestor_id: 1,
-        empresa_id: 1,
-        matricula: "123456",
-        turno: "manhã",
-        tipo: "GESTOR"
-    };
-
-    const isAdmin = mockUsuario.tipo === "ADM";
 
     const form = useForm<Form>({
         resolver: zodResolver(createOrderSchema),
@@ -106,7 +92,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(!isAdmin ? mockUsuario.id : null, null, null, null, null);
+    } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null, null, null, null, null);
 
 
     const {
@@ -123,15 +109,15 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
 
     const {
         data: { operador: operadores_manha = [] } = {}
-    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Manhã", "A", null);
+    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Manhã", "A", null, true);
 
     const {
         data: { operador: operadores_tarde = [] } = {}
-    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Tarde", "A", null);
+    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Tarde", "A", null, true);
 
     const {
         data: { operador: operadores_noite = [] } = {}
-    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Noite", "A", null);
+    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Noite", "A", null, true);
 
 
     useEffect(() => {
@@ -175,7 +161,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             status: "A",
             id_empresa: parseInt(data.id_empresa!),
             id_talhao: parseInt(data.id_talhao!),
-            id_gestor: mockUsuario.id,
+            id_gestor: user.id,
             id_unidade: parseInt(data.id_unidade!),
             id_maquina: parseInt(data.id_maquina!),
             velocidade_minima: parseFloat(data.velocidade_minima),
@@ -190,7 +176,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         mutate(formattedData);
     };
 
-
+// adicionar Campo data previsao (1 dia minimo)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
@@ -216,7 +202,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione a Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {empresas.map((company) => (
+                                                {empresas.map((company : any) => (
                                                     <SelectItem key={company.id} value={company.id!.toString()}>
                                                         {company.nome}
                                                     </SelectItem>
@@ -228,7 +214,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                 </FormItem>
                             )}
                         />
-
+                        
                         <FormField
                             control={form.control}
                             name="id_maquina"

@@ -1,17 +1,15 @@
-import {useQuery} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import GetEmpresa from "@/types/get-empresa";
-import {api} from "@/lib/api";
+import { api } from "@/lib/api";
 
 const getCompaniesRequest = async (
-    gestor_id: number | null,
     cidade: string | null,
     estado: string | null,
     codigo: string | null,
     status: string | null,
 ) => {
-    const {data} = await api.get<GetEmpresa>("/empresas", {
+    const { data } = await api.get<GetEmpresa>("/empresas", {
         params: {
-            gestor_id: gestor_id,
             codigo: codigo,
             cidade: cidade,
             estado: estado,
@@ -21,15 +19,32 @@ const getCompaniesRequest = async (
     return data;
 };
 
+const getCompanieRequest = async (id_empresa: number) => {
+    const { data } = await api.get("/empresas/", {
+        params: {
+            id_empresa: id_empresa
+        },
+    });
+    return data;
+
+};
+
 export const useGetCompanies = (
-    gestor_id: number | null,
+    id_empresa: number | null,
     cidade: string | null,
     estado: string | null,
     codigo: string | null,
     status: string | null,
 ) => {
-    return useQuery({
-        queryKey: ["companies"],
-        queryFn: () => getCompaniesRequest(gestor_id, cidade, estado, codigo, status),
-    });
+    if (id_empresa) {
+        return useQuery({
+            queryKey: ["companies"],
+            queryFn: () => getCompanieRequest(id_empresa),
+        })
+    } else {
+        return useQuery({
+            queryKey: ["companies"],
+            queryFn: () => getCompaniesRequest(cidade, estado, codigo, status),
+        });
+    }
 };

@@ -7,18 +7,18 @@ import Unidade from "@/types/unidade";
 
 interface UnitRowProps {
     unidade: Unidade;
-    isAdm: boolean
+    isGestor: boolean
 }
 
-const UnitRow = ({ unidade, isAdm }: UnitRowProps) => {
+const UnitRow = ({ unidade, isGestor }: UnitRowProps) => {
     const {t} = useTranslation();
 
     return (
         <TableRow key={unidade.id}>
             <TableCell className="font-medium">{unidade.id}</TableCell>
             <TableCell className="font-medium">{unidade.nome}</TableCell>
-            {isAdm && <TableCell className="font-medium">{unidade.empresa_nome}</TableCell>}
-            <TableCell className="">{t(unidade.status)}</TableCell>
+            {!isGestor && <TableCell className="font-medium">{unidade.empresa_nome}</TableCell>}
+            <TableCell className="">{t(unidade.status!)}</TableCell>
             <TableCell className="w-28">
                 <div className="-ml-1 flex w-full flex-row items-center gap-3">
                     <EditUnitModal unit={unidade}>

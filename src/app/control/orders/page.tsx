@@ -13,6 +13,7 @@ import { useGetOrders } from "@/utils/hooks/useGetOrders";
 import OrdemServico from "@/types/ordem-de-servico";
 import OrdersRow from "@/components/control/orders/orders-row";
 import CreateOrderModal from "@/components/control/orders/create-order-modal";
+import { useAuth } from "@/utils/hooks/useAuth";
 
 
 const statusFilter: FilterInformation = {
@@ -30,25 +31,10 @@ const statusFilter: FilterInformation = {
 export default function Orders() {
     const [query] = useQueryState("query");
     const [status]= useQueryState("status");
-
-    const mockUsuario = {
-        id: 1,
-        nome: "João",
-        email: "joao@example.com",
-        cpf: "123.456.789-00",
-        telefone: "(00) 12345-6789",
-        status: "ativo",
-        data_contratacao: new Date("2022-01-01"),
-        gestor_id: 2,
-        empresa_id: 1,
-        matricula: "123456",
-        turno: "manhã",
-        tipo: "ADM"
-    };
-
-    const isAdmin = mockUsuario.tipo === "ADM";
-
-
+    const auth = useAuth();
+    const user = auth.user?.usuario;
+    const isGestor = user?.tipo === "G";
+    
     const {
         data: {ordens_servico = []} = {}, 
         error, // Erro retornado pela Api
@@ -56,7 +42,7 @@ export default function Orders() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetOrders(!isAdmin ? mockUsuario.empresa_id : null, status, query);
+    } = useGetOrders(isGestor ? parseInt(user.empresa_id) : null, status, query);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição

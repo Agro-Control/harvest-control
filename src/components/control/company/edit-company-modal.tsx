@@ -36,21 +36,27 @@ import {ReactNode, useState} from "react";
 import {useForm} from "react-hook-form";
 import Empresa from "@/types/empresa";
 import {z} from "zod";
+import { toast } from "@/components/ui/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { AxiosError } from "axios";
 
 interface EditCompanyProps {
     company: Empresa;
     children: ReactNode;
 }
 
+type Form = z.infer<typeof editCompanySchema>;
+
 const EditCompanyModal = ({children, company}: EditCompanyProps) => {
     const {t} = useTranslation();
     const updateCompany = useUpdateCompany();
     const [open, setOpen] = useState(false);
-    const [responseDialogOpen, setResponseDialogOpen] = useState(false);
-    const [responseMessage, setResponseMessage] = useState("");
-    const [responseSuccess, setResponseSuccess] = useState(false);
+    const queryClient = useQueryClient();
 
-    const form = useForm<z.infer<typeof editCompanySchema>>({
+    const [statusOptions, setStatusOptions] = useState<{value: string}[]>([{value: "A"}, {value: "I"}]);
+
+    const form = useForm<Form>({
         resolver: zodResolver(editCompanySchema),
         defaultValues: {
             id: company.id,
@@ -62,58 +68,80 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
             cidade: company.cidade,
             bairro: company.bairro,
             logradouro: company.logradouro,
-            numero: company.numero,
-            complemento: company.complemento,
-            telefoneResponsavel: company.telefone_responsavel,
-            emailResponsavel: company.email_responsavel,
-            nomeResponsavel: company.nome_responsavel,
+            numero: company.numero || "",
+            complemento: company.complemento || "",
+            telefone_responsavel: company.telefone_responsavel,
+            email_responsavel: company.email_responsavel,
+            nome_responsavel: company.nome_responsavel,
+            status: company.status
         },
     });
 
-    const onSubmit = async (data: z.infer<typeof editCompanySchema>) => {
-        try {
-            const empresaData: Empresa = {
-                id: data.id,
-                nome: data.nome,
-                cnpj: data.cnpj,
-                telefone: data.telefone,
-                cep: data.CEP,
-                status: company.status,
-                data_criacao: company.data_criacao,
-                estado: data.estado || "",
-                cidade: data.cidade || "",
-                bairro: data.bairro,
-                logradouro: data.logradouro,
-                numero: data.numero,
-                complemento: data.complemento,
-                telefone_responsavel: data.telefoneResponsavel,
-                email_responsavel: data.emailResponsavel,
-                nome_responsavel: data.nomeResponsavel,
-            };
-            const response = await updateCompany(empresaData);
-            if (response.status === 201 || response.status === 200) {
-                setResponseMessage("Empresa atualizada com sucesso!");
-                setResponseSuccess(true);
-            } else {
-                setResponseMessage("Ocorreu um erro ao atualizar a Empresa.");
-                setResponseSuccess(false);
-            }
-            setResponseDialogOpen(true);
-        } catch (error) {
-            console.error("Erro ao criar talhao:", error);
-            setResponseMessage("Ocorreu um erro ao atualizar a Empresa.");
-            setResponseSuccess(false);
-            setResponseDialogOpen(true);
-        }
+    const createCompanyRequest = async (putData: Empresa | null) => {
+        const {data} = await api.put("/empresas", putData);
+        return data;
     };
 
-    const handleCloseResponseDialog = () => {
-        setResponseDialogOpen(false);
-        setOpen(false);
+    // Hook do react query para fazer a validação se foi sucesso ou se a requisição deu problema
+    const {mutate, isPending, variables} = useMutation({
+        mutationFn: createCompanyRequest,
+        onSuccess: () => {
+            toast({
+                className:"border-green-500 bg-green-500",
+                title: t("success"),
+                description: t("putCompany-success"),
+            });
+
+            // Refetch na lista de empresas
+            queryClient.refetchQueries({queryKey: ["companies"], type: "active", exact: true});
+            setOpen(false);
+            form.reset();
+        },
+        onError: (error: AxiosError) => {
+            const { response } = error;
+            if(!response) {
+                toast({
+                    variant: "destructive",
+                    title: t("network-error"),
+                    description: t("network-error-description"),
+                });
+                return;
+            }
+
+            const { status } = response;
+            const titleCode = `putCompany-error-${status}`;
+            const descriptionCode = `putCompany-description-error-${status}`;
+
+            toast({
+                variant: "destructive",
+                title: t(titleCode),
+                description: t(descriptionCode),
+            });
+        },
+    });
+
+
+    // Função de submit do formulário de criação de empresa
+    const onHandleSubmit = (data: Form) => {
+        const formattedData = {
+            ...data,
+            cnpj: data.cnpj.replace(/\D/g, ""),
+            telefone: data.telefone.replace(/\D/g, ""),
+            cep: data.CEP.replace(/\D/g, ""),
+            status: data.status,
+            telefone_responsavel: data.telefone_responsavel.replace(/\D/g, ""),
+            gestor_id: 1,
+        };
+        // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
+        mutate(formattedData);
     };
+
+
+    
+
+  
 
     return (
-        <>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>{children}</DialogTrigger>
                 <DialogContent className="sm:max-w-[450px]">
@@ -124,7 +152,7 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
 
                     <Form {...form}>
                         <form
-                            onSubmit={form.handleSubmit(onSubmit)}
+                            onSubmit={form.handleSubmit(onHandleSubmit)}
                             id="company-form"
                             className="grid grid-cols-2 gap-4 py-4"
                         >
@@ -278,13 +306,13 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                             />
                             <FormField
                                 control={form.control}
-                                name="nomeResponsavel"
+                                name="nome_responsavel"
                                 render={({field}) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
                                             <Input
                                                 Icon={User}
-                                                id="nomeResponsavel"
+                                                id="nome_responsavel"
                                                 placeholder="Nome do Responsável"
                                                 {...field}
                                             />
@@ -295,13 +323,13 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                             />
                             <FormField
                                 control={form.control}
-                                name="emailResponsavel"
+                                name="email_responsavel"
                                 render={({field}) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
                                             <Input
                                                 Icon={EnvelopeSimple}
-                                                id="emailResponsavel"
+                                                id="email_responsavel"
                                                 placeholder="Email do Responsável"
                                                 {...field}
                                             />
@@ -312,16 +340,43 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                             />
                             <FormField
                                 control={form.control}
-                                name="telefoneResponsavel"
+                                name="telefone_responsavel"
                                 render={({field}) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
                                             <Input
                                                 Icon={Phone}
-                                                id="telefoneResponsavel"
+                                                id="telefone_responsavel"
                                                 placeholder="Telefone do Responsável"
                                                 {...field}
                                             />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({field}) => (
+                                    <FormItem className="col-span-1">
+                                        <FormControl>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue("status", value);
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-10 w-[180px]">
+                                                    <SelectValue placeholder="Selecione o Status" {...field} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {statusOptions.map((option) => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            {t(option.value)}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -340,14 +395,6 @@ const EditCompanyModal = ({children, company}: EditCompanyProps) => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-
-            <ResponseDialog
-                open={responseDialogOpen}
-                onClose={handleCloseResponseDialog}
-                success={responseSuccess}
-                message={responseMessage}
-            />
-        </>
     );
 };
 export default EditCompanyModal;

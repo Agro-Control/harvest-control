@@ -43,6 +43,7 @@
     "operator": "Operador",
     "success": "Sucesso",
     "postCompany-success": "Empresa cadastrada com sucesso",
+    "putCompany-success": "Empresa atualizada com sucesso",
 
 
     "network-error": "Erro de conexão",
@@ -56,4 +57,5 @@
     "postLogin-description-error-401": "Essas credenciais não estão cadastradas em nosso sistema.",
     "postCompany-error-422": "Informações incorretas",
     "postCompany-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente."
+   
 }
