@@ -14,11 +14,11 @@ const config = {
         },
         extend: {
             backgroundImage: {
-                machine: "url('../assets/machine-lg.png')",
-                operator: "url('../assets/operator-lg.png')",
-                dashboard: "url('../assets/dashboard-lg.png')",
-                company: "url('../assets/company.png')",
-                unity: "url('../assets/unity2.png')",
+                machine: "url('../assets/machine-card.png')",
+                operator: "url('../assets/operator-card.png')",
+                dashboard: "url('../assets/dashboard-card.png')",
+                company: "url('../assets/company-card.png')",
+                unity: "url('../assets/unity-card.png')",
             },
             fontFamily: {
                 poppins: "var(--font-poppins)",
