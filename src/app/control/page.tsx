@@ -72,7 +72,7 @@ export default function Home() {
                 <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
                     <FastAccessCard title="Máquinas" image="machines" />
                     <FastAccessCard title="Operadores" image="users" />
-                    <FastAccessCard title="Dashboards" image="dashboard" />
+                    <FastAccessCard isLast title="Dashboards" image="dashboard" />
                 </div>
             </div>
 
