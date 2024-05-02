@@ -19,6 +19,7 @@ const config = {
                 dashboard: "url('../assets/dashboard-card.png')",
                 company: "url('../assets/company-card.png')",
                 unity: "url('../assets/unity-card.png')",
+                group: "url('../assets/group-card.png')",
             },
             fontFamily: {
                 poppins: "var(--font-poppins)",
