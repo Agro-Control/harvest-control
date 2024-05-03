@@ -33,16 +33,17 @@ export function AuthContextProvider({children}: AuthContextProviderProps) {
 
     useEffect(() => {
         if (!user) {
-            let existingUser = null;
-            const getFromCookie = async () => (existingUser = getCookie("user"));
-            getFromCookie();
-            if (existingUser) {
-                try {
-                    setUser(JSON.parse(existingUser));
-                } catch (e) {
-                    console.log(e);
+            const getFromCookie = async () => {
+                const existingUser = getCookie("user");
+                if (existingUser) {
+                    try {
+                        setUser(JSON.parse(existingUser));
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
-            }
+            };
+            getFromCookie();
         }
     }, []);
 

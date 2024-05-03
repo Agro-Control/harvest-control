@@ -9,10 +9,12 @@ export default function BusinessManagementHome() {
                 <p className="font-poppins text-4xl font-medium">Gerenciamento de Empresas</p>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-center gap-1 ">
-                <div className="grid size-3/5 gap-6 md:grid-cols-2 lg:grid-cols-2">
+            <div className="flex w-full flex-col items-start justify-center gap-1 ">
+            <p className=" font-poppins text-sm">Acesso Rápido:</p>
+                <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <FastAccessCard title="Grupo Empresarial" image="group" />
                     <FastAccessCard title="Empresas" image="companies" />
-                    <FastAccessCard title="Unidades" image="units" />
+                    <FastAccessCard isLast title="Unidades" image="units" />
                 </div>
             </div>
         </div>

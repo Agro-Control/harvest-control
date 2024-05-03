@@ -2,6 +2,7 @@
     "all": "Todos",
     "A": "Ativo",
     "I": "Inativo",
+    "G": "Gerente",
     "E": "Em Andamento",
     "C": "Cancelada",
     "F": "Finalizada",
