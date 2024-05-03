@@ -42,6 +42,7 @@ import { AxiosError } from "axios";
 import { MaskedInput } from "@/components/ui/masked-input";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/utils/hooks/useAuth";
+import SubmitButton from "@/components/submit-button";
 
 
 interface createUnitProps {
@@ -157,8 +158,8 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             }
 
             const { status } = response;
-            const titleCode = `postOrder-error-${status}`;
-            const descriptionCode = `postOrder-description-error-${status}`;
+            const titleCode = `postUnit-error-${status}`;
+            const descriptionCode = `postUnit-description-error-${status}`;
 
             toast({
                 variant: "destructive",
@@ -193,7 +194,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
+                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="unit-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
                             name="nome"
@@ -402,13 +403,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                     </form>
                 </Form>
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        form="company-form"
-                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                    >
-                        Confirmar
-                    </Button>
+                    <SubmitButton isLoading={isPending} form="unit-form" />
                 </DialogFooter>
             </DialogContent>
         </Dialog>

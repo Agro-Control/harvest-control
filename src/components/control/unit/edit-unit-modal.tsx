@@ -27,6 +27,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
+import SubmitButton from "@/components/submit-button";
 
 
 interface EditUnitProps {
@@ -154,7 +155,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
+                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="unit-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
                             name="nome"
@@ -337,13 +338,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                     </form>
                 </Form>
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        form="company-form"
-                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                    >
-                        Confirmar
-                    </Button>
+                    <SubmitButton isLoading={isPending} form="unit-form" />
                 </DialogFooter>
             </DialogContent>
         </Dialog>
