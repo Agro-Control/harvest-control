@@ -19,7 +19,7 @@ const getCompaniesRequest = async (
     return data;
 };
 
-const getCompanieRequest = async (id_empresa: number) => {
+const getCompanyRequest = async (id_empresa: number) => {
     const { data } = await api.get("/empresas/", {
         params: {
             id_empresa: id_empresa
@@ -39,7 +39,7 @@ export const useGetCompanies = (
     if (id_empresa) {
         return useQuery({
             queryKey: ["companies"],
-            queryFn: () => getCompanieRequest(id_empresa),
+            queryFn: () => getCompanyRequest(id_empresa),
         })
     } else {
         return useQuery({

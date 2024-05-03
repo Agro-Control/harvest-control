@@ -23,11 +23,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {InputMask} from "@react-input/mask";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { InputMask } from "@react-input/mask";
 import Empresa from "@/types/empresa";
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 import { MaskedInput } from "@/components/ui/masked-input";
 
 interface EditCompanyProps {
@@ -35,9 +35,9 @@ interface EditCompanyProps {
     children: ReactNode;
 }
 
-const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
+const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
 
-    
+
 
     return (
         <Dialog >
@@ -63,15 +63,14 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                     />
 
                     <MaskedInput
-                                     
-                                                value={empresa.telefone}
-                                                Icon={Phone}
-                                                placeholder="Telefone da Empresa"
-                                                maskInput={{
-                                                    input: InputMask,
-                                                    mask: "(__) _____-____",
-                                                }}
-                                            />
+                        value={empresa.telefone}
+                        Icon={Phone}
+                        placeholder="Telefone da Empresa"
+                        maskInput={{
+                            input: InputMask,
+                            mask: "(__) _____-____",
+                        }}
+                    />
 
                     <Input
                         disabled
@@ -165,13 +164,13 @@ const ViewCompanyModal = ({children, empresa}: EditCompanyProps) => {
                 </div>
 
                 <DialogFooter>
-                <DialogClose asChild>
-                    <Button
-                        type="button"
-                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                    >
-                        Confirmar
-                    </Button>
+                    <DialogClose asChild>
+                        <Button
+                            type="button"
+                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                        >
+                            Confirmar
+                        </Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>

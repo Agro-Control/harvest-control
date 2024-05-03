@@ -8,56 +8,48 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {editFieldSchema} from "@/utils/validations/editFieldSchema";
-import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
-import {useUpdateField} from "@/utils/hooks/useUpdateField";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { editFieldSchema } from "@/utils/validations/editFieldSchema";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
+import { useUpdateField } from "@/utils/hooks/useUpdateField";
 import ResponseDialog from "@/components/response-dialog";
-import {ReactNode, useEffect, useState} from "react";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {Button} from "@/components/ui/button";
-import {useTranslation} from "react-i18next";
-import {Input} from "@/components/ui/input";
-import {useForm} from "react-hook-form";
+import { ReactNode, useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
 import Empresa from "@/types/empresa";
 import Talhao from "@/types/talhao";
-import {z} from "zod";
+import { z } from "zod";
+import { api } from "@/lib/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/utils/hooks/useAuth";
+import { toast } from "@/components/ui/use-toast";
+import { AxiosError } from "axios";
+import SubmitButton from "@/components/submit-button";
+import { useGetUnits } from "@/utils/hooks/useGetUnits";
 
 interface editFieldProps {
     children: ReactNode;
     field: Talhao;
 }
 
-const EditFieldModal = ({children, field}: editFieldProps) => {
-    const updateField = useUpdateField();
+type Form = z.infer<typeof editFieldSchema>;
+
+const EditFieldModal = ({ children, field }: editFieldProps) => {
     const [open, setOpen] = useState(false);
-    const {t} = useTranslation();
-    const [responseDialogOpen, setResponseDialogOpen] = useState(false);
-    const [responseMessage, setResponseMessage] = useState("");
-    const [responseSuccess, setResponseSuccess] = useState(false);
+    const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
+    const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
+    const { t } = useTranslation();
+    const queryClient = useQueryClient();
     const {
-        data: {empresas = []} = {}, // Objeto contendo a lista de empresas
-        error, // Erro retornado pela Api
-        isError, // Booleano que indica se houve erro
-        isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
-        isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(null, null, null, null, null);
+        user,
+        isLoading: isLoadingAuth,
+    } = useAuth();
 
-    const [companyOptions, setCompanyOptions] = useState<{id: number; nome: string}[]>([]);
-    const [statusOptions, setStatusOptions] = useState<{value: string}[]>([{value: "A"}, {value: "I"}]);
-
-    useEffect(() => {
-        if (isLoading || isRefetching) {
-            return;
-        }
-
-        if (open && empresas.length > 0) {
-            const options = empresas.map((empresa: any) => ({id: empresa.id, nome: empresa.nome}));
-            setCompanyOptions(options);
-        }
-    }, [open, isLoading, isRefetching, empresas]);
+    const isGestor = user?.usuario.tipo === "G";
 
     const form = useForm<z.infer<typeof editFieldSchema>>({
         resolver: zodResolver(editFieldSchema),
@@ -70,127 +62,149 @@ const EditFieldModal = ({children, field}: editFieldProps) => {
         },
     });
 
-    const onSubmit = async (data: z.infer<typeof editFieldSchema>) => {
-        try {
-            const talhaoData: Talhao = {
-                id: field.id,
-                codigo: data.codigo,
-                tamanho: data.tamanho,
-                empresa_id: field.empresa_id,
-                status: data.status || "",
-                gestor_id: 1, //da sessão?
-            };
-            const response = await updateField(talhaoData);
-            if (response.status === 201 || response.status === 200) {
-                setResponseMessage("Empresa atualizada com sucesso!");
-                setResponseSuccess(true);
-            } else {
-                setResponseMessage("Ocorreu um erro ao atualizar a Empresa.");
-                setResponseSuccess(false);
-            }
-            setResponseDialogOpen(true);
-        } catch (error) {
-            console.error("Erro ao criar talhao:", error);
-            setResponseMessage("Ocorreu um erro ao atualizar a Empresa.");
-            setResponseSuccess(false);
-            setResponseDialogOpen(true);
+    const { getValues, setValue, watch } = form;
+    const watchIdEmpresa = watch("empresa_id");
+
+    const {
+        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
+        error, // Erro retornado pela Api
+        isError, // Booleano que indica se houve erro
+        isLoading, // Booleano que indica se está carregando
+        refetch, // Função que faz a requisição novamente
+        isRefetching, // Booleano que indica se está fazendo a requisição novamente
+    } = useGetCompanies(isGestor ? parseInt(user?.usuario.empresa_id) : null /*parseInt(user?.grupo_empresarial_id!)*/, null, null, null, null);
+
+    const {
+        data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
+    } = useGetUnits(true, isGestor ? parseInt(user?.usuario.empresa_id) : null /* parseInt(watchIdEmpresa) */, null, null);
+
+    useEffect(() => {
+        if (isLoading || isRefetching) {
+            return;
         }
+
+        if (open && empresas.length > 0) {
+            const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
+            setCompanyOptions(options);
+        }
+    }, [open, isLoading, isRefetching, empresas, unidades, watchIdEmpresa]);
+
+
+    const editFieldRequest = async (putData: Talhao | null) => {
+        const { data } = await api.put("/talhoes", putData);
+        return data;
     };
 
-    const handleCloseResponseDialog = () => {
-        setResponseDialogOpen(false);
-        setOpen(false);
+    const { mutate, isPending, variables } = useMutation({
+        mutationFn: editFieldRequest,
+        onSuccess: () => {
+            toast({
+                className: "border-green-500 bg-green-500",
+                title: t("success"),
+                description: t("putField-success"),
+            });
+            // Refetch na lista de empresas
+            queryClient.refetchQueries({ queryKey: ["fields"], type: "active", exact: true });
+            setOpen(false);
+            form.reset();
+        },
+        onError: (error: AxiosError) => {
+            const { response } = error;
+            if (!response) {
+                toast({
+                    variant: "destructive",
+                    title: t("network-error"),
+                    description: t("network-error-description"),
+                });
+                return;
+            }
+
+            const { status } = response;
+            const titleCode = `postField-error-${status}`;
+            const descriptionCode = `postField-description-error-${status}`;
+
+            toast({
+                variant: "destructive",
+                title: t(titleCode),
+                description: t(descriptionCode),
+            });
+        },
+    });
+
+    const onHandleSubmit = (data: Form) => {
+        const formattedData = {
+            ...data,
+            id: field.id,
+            status: data.status!,
+            empresa_id: parseInt(data.empresa_id),
+            // unidade_id: parseInt(data.unidade_id),
+            gestor_id: field.gestor_id //sessão ou do seletor se adm/supergestor ter permisssao de criar talhoes  isGestor ? parseInt(user?.usuario.empresa_id) : data.gestor_id ,
+        };
+        // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
+        mutate(formattedData);
     };
+
 
     return (
-        <>
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>{children}</DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle className="font-poppins text-green-950">Editar Talhão</DialogTitle>
-                        <DialogDescription>Modifique as informações para alterar um Talhão.</DialogDescription>
-                    </DialogHeader>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle className="font-poppins text-green-950">Editar Talhão</DialogTitle>
+                    <DialogDescription>Modifique as informações para alterar um Talhão.</DialogDescription>
+                </DialogHeader>
 
-                    <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            id="company-form"
-                            className="grid grid-cols-2 gap-4 py-4"
-                        >
-                            <FormField
-                                control={form.control}
-                                name="codigo"
-                                render={({field}) => (
-                                    <FormItem className="col-span-2">
-                                        <FormControl>
-                                            <Input id="codigo" placeholder="Código" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="tamanho"
-                                render={({field}) => (
-                                    <FormItem className="col-span-1">
-                                        <FormControl>
-                                            <Input id="tamanho" placeholder="Tamanho" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            {!isLoading && (
-                                <FormField
-                                    control={form.control}
-                                    name="empresa_id"
-                                    render={({field}) => (
-                                        <FormItem className="col-span-1">
-                                            <FormControl>
-                                                <Select
-                                                    disabled
-                                                    onValueChange={(value) => {
-                                                        form.setValue("empresa_id", value);
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="h-10 w-[180px] ">
-                                                        <SelectValue placeholder="Selecione a Empresa" {...field} />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {companyOptions.map((company) => (
-                                                            <SelectItem key={company.id} value={company.id.toString()}>
-                                                                {company.nome}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onHandleSubmit)}
+                        id="edit-field-form"
+                        className="grid grid-cols-2 gap-4 py-4"
+                    >
+                        <FormField
+                            control={form.control}
+                            name="codigo"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormControl>
+                                        <Input id="codigo" placeholder="Código" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
                             )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="tamanho"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Input id="tamanho" placeholder="Tamanho" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        {!isLoading && (
                             <FormField
                                 control={form.control}
-                                name="status"
-                                render={({field}) => (
+                                name="empresa_id"
+                                render={({ field }) => (
                                     <FormItem className="col-span-1">
                                         <FormControl>
                                             <Select
+                                                disabled
                                                 onValueChange={(value) => {
-                                                    form.setValue("status", value);
+                                                    form.setValue("empresa_id", value);
                                                 }}
                                             >
-                                                <SelectTrigger className="h-10 w-[180px]">
-                                                    <SelectValue placeholder="Selecione o Status" {...field} />
+                                                <SelectTrigger className="h-10 w-[180px] ">
+                                                    <SelectValue placeholder="Selecione a Empresa" {...field} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {statusOptions.map((option) => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {t(option.value)}
+                                                    {companyOptions.map((company) => (
+                                                        <SelectItem key={company.id} value={company.id.toString()}>
+                                                            {company.nome}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -200,26 +214,71 @@ const EditFieldModal = ({children, field}: editFieldProps) => {
                                     </FormItem>
                                 )}
                             />
-                        </form>
-                    </Form>
-                    <DialogFooter>
-                        <Button
-                            type="submit"
-                            form="company-form"
-                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                        >
-                            Confirmar
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-            <ResponseDialog
-                open={responseDialogOpen}
-                onClose={handleCloseResponseDialog}
-                success={responseSuccess}
-                message={responseMessage}
-            />
-        </>
+                        )}
+
+                        {/* <FormField
+                            control={form.control}
+                            name="unidade_id"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("unidade_id", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={Factory}>
+                                                <SelectValue placeholder="Selecione a Unidade" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {unidades.map((unidade) => (
+                                                    <SelectItem key={unidade.id} value={unidade.id!.toString()}>
+                                                        {unidade.nome}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        /> */
+                        }
+                        <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("status", value);
+                                            }}
+                                        >
+                                            <SelectTrigger className="h-10 w-[180px]">
+                                                <SelectValue placeholder="Selecione o Status" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {statusOptions.map((option) => (
+                                                    <SelectItem key={option.value} value={option.value}>
+                                                        {t(option.value)}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </form>
+                </Form>
+                <DialogFooter>
+                    <SubmitButton isLoading={isPending} form="edit-field-form" />
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
     );
 };
 export default EditFieldModal;

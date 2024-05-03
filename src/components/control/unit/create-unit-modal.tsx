@@ -41,6 +41,7 @@ import { api } from "@/lib/api";
 import { AxiosError } from "axios";
 import { MaskedInput } from "@/components/ui/masked-input";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/utils/hooks/useAuth";
 
 
 interface createUnitProps {
@@ -51,29 +52,14 @@ type Form = z.infer<typeof editUnitSchema>;
 
 const CreateUnitModal = ({ children }: createUnitProps) => {
     const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
+    const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
-
-    const {
-        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-        error, // Erro retornado pela Api
-        isError, // Booleano que indica se houve erro
-        isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
-        isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(null, null, null, null, null);
-
-    const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
-
-    useEffect(() => {
-        if (empresas.length > 0) {
-            const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
-            setCompanyOptions(options);
-        }
-
-    }, [empresas]);
+    const auth = useAuth();
+    const user = auth.user?.usuario;
+    const isGestor = user?.tipo === "G";
 
     const form = useForm<Form>({
         resolver: zodResolver(editUnitSchema),
@@ -89,14 +75,32 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             numero: "",
             complemento: "",
             status: "",
-            empresa_id: "",
+            empresa_id: isGestor ? user.empresa_id.toString() : "",
         }
     });
 
     const { getValues, setValue, watch } = form;
-
     // Variavel usada para monitorar o campo do cnpj
+    const watchEmpresaId = watch("empresa_id");
     const watchCnpj = watch("cnpj");
+
+    const {
+        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
+        error, // Erro retornado pela Api
+        isError, // Booleano que indica se houve erro
+        isLoading, // Booleano que indica se está carregando
+        refetch, // Função que faz a requisição novamente
+        isRefetching, // Booleano que indica se está fazendo a requisição novamente
+    } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null, null, null, null, null);
+
+
+    useEffect(() => {
+        if (empresas.length > 0) {
+            const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
+            setCompanyOptions(options);
+        }
+    }, [empresas]);
+
     // Variavel para validar o tamanho do campo do cnpj
     const cnpjValidLength = watchCnpj.length === 18;
 
@@ -123,18 +127,18 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
         setIsLoadingCnpj(false);
     };
 
-    const createCompanyRequest = async (postData: Unidade | null) => {
+    const createUnitRequest = async (postData: Unidade | null) => {
         const { data } = await api.post("/unidades", postData);
         return data;
     };
 
     const { mutate, isPending, variables } = useMutation({
-        mutationFn: createCompanyRequest,
+        mutationFn: createUnitRequest,
         onSuccess: () => {
             toast({
                 className: "border-green-500 bg-green-500",
-                title: "Sucesso!",
-                description: "A unidade foi cadastrada no sistema com sucesso.",
+                title: t("success"),
+                description: t("postUnit-success"),
             });
             // Refetch na lista de empresas
             queryClient.refetchQueries({ queryKey: ["units"], type: "active", exact: true });
@@ -142,10 +146,24 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             form.reset();
         },
         onError: (error: AxiosError) => {
+            const { response } = error;
+            if (!response) {
+                toast({
+                    variant: "destructive",
+                    title: t("network-error"),
+                    description: t("network-error-description"),
+                });
+                return;
+            }
+
+            const { status } = response;
+            const titleCode = `postOrder-error-${status}`;
+            const descriptionCode = `postOrder-description-error-${status}`;
+
             toast({
                 variant: "destructive",
-                title: "Erro!",
-                description: "Ocorreu um erro ao cadastrar a unidade.",
+                title: t(titleCode),
+                description: t(descriptionCode),
             });
         },
     });
@@ -157,8 +175,8 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             //telefone: data.telefone.replace(/\D/g, ""),
             cep: data.cep.replace(/\D/g, ""),
             status: data.status,
-            empresa_id: parseInt(data.empresa_id),
-            gestor_id: 1 //sessão,
+            empresa_id: isGestor ? parseInt(user?.empresa_id) : parseInt(data.empresa_id),
+            gestor_id: user?.id //sessão ou do seletor se adm/supergestor ter permisssao de criar unidades:  isGestor ? parseInt(user?.id) : data.gestor_id ,
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -166,68 +184,68 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
 
 
     return (
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>{children}</DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle className="font-poppins text-green-950">Criar Unidade</DialogTitle>
-                        <DialogDescription>Insira as informações para criar uma Unidade.</DialogDescription>
-                    </DialogHeader>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle className="font-poppins text-green-950">Criar Unidade</DialogTitle>
+                    <DialogDescription>Insira as informações para criar uma Unidade.</DialogDescription>
+                </DialogHeader>
 
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onHandleSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
-                            <FormField
-                                control={form.control}
-                                name="nome"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-2">
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
+                        <FormField
+                            control={form.control}
+                            name="nome"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormControl>
+                                        <Input
+                                            Icon={Factory}
+                                            id="nome"
+                                            placeholder="Nome da Unidade"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="cnpj"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2 flex w-full flex-row items-start justify-center gap-3 space-y-0">
+                                    <div className="flex w-full flex-col gap-2">
                                         <FormControl>
-                                            <Input
-                                                Icon={Buildings}
-                                                id="nome"
-                                                placeholder="Nome da Unidade"
+                                            <MaskedInput
+                                                Icon={IdentificationCard}
                                                 {...field}
+                                                placeholder="CNPJ"
+                                                maskInput={{ input: InputMask, mask: "__.___.___/____-__" }}
                                             />
                                         </FormControl>
+
                                         <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                    </div>
+                                    <Button
+                                        onClick={onHandleClick}
+                                        disabled={cnpjValidLength ? false : true}
+                                        type="button"
+                                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                                    >
+                                        {isLoadingCnpj ? (
+                                            <CircleNotch className="h-5 w-5 animate-spin" />
+                                        ) : (
+                                            <MagnifyingGlass className="h-5 w-5" />
+                                        )}
+                                    </Button>
+                                </FormItem>
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="cnpj"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-2 flex w-full flex-row items-start justify-center gap-3 space-y-0">
-                                        <div className="flex w-full flex-col gap-2">
-                                            <FormControl>
-                                                <MaskedInput
-                                                    Icon={IdentificationCard}
-                                                    {...field}
-                                                    placeholder="CNPJ"
-                                                    maskInput={{ input: InputMask, mask: "__.___.___/____-__" }}
-                                                />
-                                            </FormControl>
-
-                                            <FormMessage />
-                                        </div>
-                                        <Button
-                                            onClick={onHandleClick}
-                                            disabled={cnpjValidLength ? false : true}
-                                            type="button"
-                                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                                        >
-                                            {isLoadingCnpj ? (
-                                                <CircleNotch className="h-5 w-5 animate-spin" />
-                                            ) : (
-                                                <MagnifyingGlass className="h-5 w-5" />
-                                            )}
-                                        </Button>
-                                    </FormItem>
-                                )}
-                            />
-
-                            {/*    <FormField
+                        {/*    <FormField
                             control={form.control}
                             name="telefone"
                             render={({field}) => (
@@ -239,147 +257,161 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                                 </FormItem>
                             )}*/}
 
-                            <FormField
-                                control={form.control}
-                                name="cep"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1 ">
-                                        <FormControl>
-                                            <MaskedInput
-                                                {...field}
-                                                Icon={NavigationArrow}
-                                                placeholder="CEP"
-                                                maskInput={{
-                                                    input: InputMask,
-                                                    mask: "_____-___",
-                                                }}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="cep"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <MaskedInput
+                                            {...field}
+                                            Icon={NavigationArrow}
+                                            placeholder="CEP"
+                                            maskInput={{
+                                                input: InputMask,
+                                                mask: "_____-___",
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
 
-                            <FormField
-                                control={form.control}
-                                name="estado"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1 ">
-                                        <FormControl>
-                                            <Input
-                                                disabled
-                                                Icon={MapTrifold}
-                                                id="estado"
-                                                placeholder={t(field.name)}
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="cidade"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1 ">
-                                        <FormControl>
-                                            <Input disabled Icon={MapPin} id="cidade" placeholder="Cidade" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="bairro"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1 ">
-                                        <FormControl>
-                                            <Input Icon={Factory} id="bairro" placeholder="Bairro" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="estado"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Input
+                                            disabled
+                                            Icon={MapTrifold}
+                                            id="estado"
+                                            placeholder={t(field.name)}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="cidade"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Input disabled Icon={MapPin} id="cidade" placeholder="Cidade" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="bairro"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Input Icon={Factory} id="bairro" placeholder="Bairro" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="logradouro"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1 ">
-                                        <FormControl>
-                                            <Input Icon={House} id="logradouro" placeholder="Endereço" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="numero"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1 ">
-                                        <FormControl>
-                                            <Input Icon={Hash} id="numero" placeholder="Número" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="complemento"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1 ">
-                                        <FormControl>
-                                            <Input Icon={Flag} id="complemento" placeholder="Complemento" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="empresa_id"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1">
-                                        <FormControl>
-                                            <Select
-                                                onValueChange={(value) => {
-                                                    form.setValue("empresa_id", value);
-                                                }}
-                                            >
-                                                <SelectTrigger className="h-10 w-[180px] ">
-                                                    <SelectValue placeholder="Selecione a Empresa" {...field} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {companyOptions.map((company) => (
-                                                        <SelectItem key={company.id} value={company.id.toString()}>
-                                                            {company.nome}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </form>
-                    </Form>
-                    <DialogFooter>
-                        <Button
-                            type="submit"
-                            form="company-form"
-                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                        >
-                            Confirmar
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+                        <FormField
+                            control={form.control}
+                            name="logradouro"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Input Icon={House} id="logradouro" placeholder="Endereço" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="numero"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Input Icon={Hash} id="numero" placeholder="Número" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="complemento"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Input Icon={Flag} id="complemento" placeholder="Complemento" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        {isGestor && <FormField
+                            control={form.control}
+                            name="empresa_id"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Input disabled Icon={Buildings} id="empresa_id" placeholder={companyOptions[0].nome || "Nome da Empresa"} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />}
+
+                        {!isGestor && <FormField
+                            control={form.control}
+                            name="empresa_id"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("empresa_id", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={Buildings} className="h-10 w-[180px] ">
+                                                <SelectValue placeholder="Selecione a Empresa" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {companyOptions.map((company) => (
+                                                    <SelectItem key={company.id} value={company.id.toString()}>
+                                                        {company.nome}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />}
+                    </form>
+                </Form>
+                <DialogFooter>
+                    <Button
+                        type="submit"
+                        form="company-form"
+                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                    >
+                        Confirmar
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 };
 export default CreateUnitModal;

@@ -44,6 +44,7 @@ import { useGetFields } from "@/utils/hooks/useGetFields";
 import { useGetOperators } from "@/utils/hooks/useGetOperators";
 import { useGetMachines } from "@/utils/hooks/useGetMachines";
 import { useAuth } from "@/utils/hooks/useAuth";
+import SubmitButton from "@/components/submit-button";
 
 
 interface createOrderProps {
@@ -60,8 +61,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     const { toast } = useToast();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
-    const [flag, setFlag] = useState<boolean>(false); //Contexto/Redux?
-
+    const [enableFlag, setEnableFlag] = useState<boolean>(false); 
+    const [derivedEnableFlag, setDerivedEnableFlag] = useState<boolean>(false); 
 
     const form = useForm<Form>({
         resolver: zodResolver(createOrderSchema),
@@ -83,7 +84,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
 
     const { getValues, setValue, watch } = form;
     const watchIdEmpresa = watch("id_empresa");
-    const getTalhao = getValues("id_talhao");
+    const watchIdUnit = watch("id_unidade");
+
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
@@ -97,61 +99,79 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
 
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(flag, parseInt(watchIdEmpresa!), "A", null);
+    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), "A", null);
 
     const {
         data: { talhoes = [] } = {}
-    } = useGetFields(flag, parseInt(watchIdEmpresa!), "A", null);
+    } = useGetFields(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "A", null);
 
     const {
         data: { maquinas = [] } = {}
-    } = useGetMachines(flag, parseInt(watchIdEmpresa!), "A", null);
+    } = useGetMachines(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "A", null);
 
     const {
         data: { operador: operadores_manha = [] } = {}
-    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Manhã", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "Manhã", "A", null, true);
 
     const {
         data: { operador: operadores_tarde = [] } = {}
-    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Tarde", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "Tarde", "A", null, true);
 
     const {
         data: { operador: operadores_noite = [] } = {}
-    } = useGetOperators(flag, parseInt(watchIdEmpresa!), "Noite", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "Noite", "A", null, true);
 
 
     useEffect(() => {
         if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined)
-            setFlag(true);
+            setEnableFlag(true);
+        if(watchIdUnit !== "" && watchIdUnit !== undefined)
+            setDerivedEnableFlag(true);
+        if (!open)
+            setEnableFlag(false);
+            setDerivedEnableFlag(false);
+    }, [empresas, unidades, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
 
-        console.log("talhao:" + getTalhao);
-    }, [empresas, watchIdEmpresa, flag]);
 
 
-
-    const createCompanyRequest = async (postData: OrdemServico | null) => {
+    const createOrderRequest = async (postData: OrdemServico | null) => {
         const { data } = await api.post("/ordens", postData);
         return data;
     };
 
     const { mutate, isPending, variables } = useMutation({
-        mutationFn: createCompanyRequest,
+        mutationFn: createOrderRequest,
         onSuccess: () => {
             toast({
                 className: "border-green-500 bg-green-500",
-                title: "Sucesso!",
-                description: "A ordem foi cadastrada no sistema com sucesso.",
+                title: t("success"),
+                description: t("postOrder-success"),
             });
             queryClient.refetchQueries({ queryKey: ["orders"], type: "active", exact: true });
-            setFlag(false);
+            setEnableFlag(false);
+            setDerivedEnableFlag(false);
             setOpen(false);
             form.reset();
         },
         onError: (error: AxiosError) => {
+            const { response } = error;
+            if (!response) {
+                toast({
+                    variant: "destructive",
+                    title: t("network-error"),
+                    description: t("network-error-description"),
+                });
+                return;
+            }
+
+            const { status } = response;
+            const titleCode = `postOrder-error-${status}`;
+            const descriptionCode = `postOrder-description-error-${status}`;
+
             toast({
                 variant: "destructive",
-                title: "Erro!",
-                description: "Ocorreu um erro ao cadastrar a ordem.",
+                title: t(titleCode),
+                description: t(descriptionCode),
             });
         },
     });
@@ -176,7 +196,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         mutate(formattedData);
     };
 
-// adicionar Campo data previsao (1 dia minimo)
+    // adicionar Campo data previsao (1 dia minimo)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
@@ -186,7 +206,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                     <DialogDescription>Insira as informações para criar uma Ordem.</DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="company-form" className="grid grid-cols-2 gap-4 py-4">
+                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="create-order-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
                             name="id_empresa"
@@ -202,7 +222,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 <SelectValue placeholder="Selecione a Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {empresas.map((company : any) => (
+                                                {empresas.map((company: any) => (
                                                     <SelectItem key={company.id} value={company.id!.toString()}>
                                                         {company.nome}
                                                     </SelectItem>
@@ -214,7 +234,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                 </FormItem>
                             )}
                         />
-                        
+
                         <FormField
                             control={form.control}
                             name="id_maquina"
@@ -448,13 +468,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                     </form>
                 </Form>
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        form="company-form"
-                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                    >
-                        Confirmar
-                    </Button>
+                    <SubmitButton isLoading={isPending} form="create-order-form" />
                 </DialogFooter>
             </DialogContent >
         </Dialog >

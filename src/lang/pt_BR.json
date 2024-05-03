@@ -44,7 +44,14 @@
     "success": "Sucesso",
     "postCompany-success": "Empresa cadastrada com sucesso",
     "putCompany-success": "Empresa atualizada com sucesso",
-
+    "postField-success": "Talhão cadastrado com sucesso",
+    "putField-success": "Talhão atualizado com sucesso",
+    "postUnit-success": "Unidade cadastrada com sucesso",
+    "putUnit-success": "Unidade atualizada com sucesso",
+    "postMachine-success": "Máquina cadastrada com sucesso",
+    "putMachine-success": "Máquina atualizada com sucesso",
+    "postOrder-success": "Ordem cadastrada com sucesso",
+    "putOrder-success": "Ordem atualizada com sucesso",
 
     "network-error": "Erro de conexão",
     "network-error-description": "Houve um problema de conexão com o servidor, tente novamente.",
@@ -56,6 +63,22 @@
     "postLogin-error-401": "Email ou Senha incorretos",
     "postLogin-description-error-401": "Essas credenciais não estão cadastradas em nosso sistema.",
     "postCompany-error-422": "Informações incorretas",
-    "postCompany-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente."
+    "postCompany-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
+    "postField-error-422": "Informações para talhão são incorretas",
+    "postField-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
+    "postOrder-error-422": "Informações para ordem são incorretas",
+    "postOrder-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
+    "postUnit-error-422": "Informações para unidade são incorretas",
+    "postUnit-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
+    "postLogin-error-500": "Algo deu errado!",
+    "postLogin-description-error-500": "Erro interno, contate o administrador.",
+    "postCompany-error-500": "Algo deu errado!",
+    "postCompany-description-error-500": "Erro interno, contate o administrador.",
+    "postField-error-500": "Algo deu errado!",
+    "postField-description-error-500": "Erro interno, contate o administrador.",
+    "postUnit-error-500": "Algo deu errado!",
+    "postUnit-description-error-500": "Erro interno, contate o administrador.",
+    "postMachine-error-500": "Algo deu errado!",
+    "postMachine-description-error-500": "Erro interno, contate o administrador."
    
 }
