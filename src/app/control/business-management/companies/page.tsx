@@ -57,7 +57,7 @@ export default function Companies() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isGestor ? parseInt(user?.empresa_id!) : null, cidade, estado, query, status);
+    } = useGetCompanies(isGestor ? parseInt(user?.empresa_id!) : null, !isGestor ? parseInt(user?.grupo_id!) : null, cidade, estado, query, status);
 
 
 

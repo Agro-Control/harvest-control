@@ -16,12 +16,6 @@ export const createCompanySchema = z.object({
         logradouro: optionalStringField(255),
         numero: optionalStringField(255),
         complemento: optionalStringField(255),
-        telefone_responsavel: requiredStringField(15, 255, "Telefone inválido"),
-        email_responsavel: requiredStringField(1, 255, "O email não pode estar vazio").refine(
-            (value) => value === null || emailRegex.test(value || "") || value === "",
-            {
-                message: "O email deve possuir este formato: exemplo@email.com",
-            },
-        ),
-        nome_responsavel: requiredStringField(1, 255, "O nome do responsável não pode estar vazio"),
+        gestor_id: optionalStringField(255),
+
 });

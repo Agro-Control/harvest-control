@@ -1,5 +1,10 @@
 "use client";
 import {
+    Buildings,
+    CompassTool,
+    Factory,
+} from "@phosphor-icons/react";
+import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -40,7 +45,6 @@ type Form = z.infer<typeof editFieldSchema>;
 
 const EditFieldModal = ({ children, field }: editFieldProps) => {
     const [open, setOpen] = useState(false);
-    const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
     const { t } = useTranslation();
     const queryClient = useQueryClient();
@@ -58,36 +62,17 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
             codigo: field.codigo,
             tamanho: field.tamanho,
             status: field.status,
-            empresa_id: field?.id?.toString(),
+            unidade_id: field?.unidade_id?.toString(),
         },
     });
 
     const { getValues, setValue, watch } = form;
-    const watchIdEmpresa = watch("empresa_id");
-
-    const {
-        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-        error, // Erro retornado pela Api
-        isError, // Booleano que indica se houve erro
-        isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
-        isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isGestor ? parseInt(user?.usuario.empresa_id) : null /*parseInt(user?.grupo_empresarial_id!)*/, null, null, null, null);
+    const watchUnidadeId = watch("unidade_id");
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? parseInt(user?.usuario.empresa_id) : null /* parseInt(watchIdEmpresa) */, null, null);
+    } = useGetUnits(true, isGestor ? parseInt(user?.usuario.empresa_id) : null, !isGestor ? parseInt(user?.usuario.grupo_id!) : null,  null, null);
 
-    useEffect(() => {
-        if (isLoading || isRefetching) {
-            return;
-        }
-
-        if (open && empresas.length > 0) {
-            const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
-            setCompanyOptions(options);
-        }
-    }, [open, isLoading, isRefetching, empresas, unidades, watchIdEmpresa]);
 
 
     const editFieldRequest = async (putData: Talhao | null) => {
@@ -136,9 +121,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
             ...data,
             id: field.id,
             status: data.status!,
-            empresa_id: parseInt(data.empresa_id),
-            // unidade_id: parseInt(data.unidade_id),
-            gestor_id: field.gestor_id //sessão ou do seletor se adm/supergestor ter permisssao de criar talhoes  isGestor ? parseInt(user?.usuario.empresa_id) : data.gestor_id ,
+            unidade_id: parseInt(data.unidade_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -185,38 +168,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
                                 </FormItem>
                             )}
                         />
-                        {!isLoading && (
-                            <FormField
-                                control={form.control}
-                                name="empresa_id"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-1">
-                                        <FormControl>
-                                            <Select
-                                                disabled
-                                                onValueChange={(value) => {
-                                                    form.setValue("empresa_id", value);
-                                                }}
-                                            >
-                                                <SelectTrigger className="h-10 w-[180px] ">
-                                                    <SelectValue placeholder="Selecione a Empresa" {...field} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {companyOptions.map((company) => (
-                                                        <SelectItem key={company.id} value={company.id.toString()}>
-                                                            {company.nome}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
-
-                        {/* <FormField
+                      {/*<FormField
                             control={form.control}
                             name="unidade_id"
                             render={({ field }) => (
@@ -242,8 +194,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        /> */
-                        }
+                        /> */}
                         <FormField
                             control={form.control}
                             name="status"

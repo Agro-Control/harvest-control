@@ -10,8 +10,7 @@ import {
     House,
     Hash,
     Flag,
-    User,
-    EnvelopeSimple,
+    UserPlus,
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -25,11 +24,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { editCompanySchema } from "@/utils/validations/editCompanySchema";
-import { useUpdateCompany } from "@/utils/hooks/useUpdateCompanies";
-import { PasswordInput } from "@/components/ui/password-input";
-import ResponseDialog from "@/components/response-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { ReactNode, useState } from "react";
@@ -42,6 +37,7 @@ import { api } from "@/lib/api";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
 import { useAuth } from "@/utils/hooks/useAuth";
+import { useGetManagers } from "@/utils/hooks/useGetManagers";
 
 interface EditCompanyProps {
     company: Empresa;
@@ -52,7 +48,6 @@ type Form = z.infer<typeof editCompanySchema>;
 
 const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     const { t } = useTranslation();
-    const updateCompany = useUpdateCompany();
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
     const auth = useAuth();
@@ -62,14 +57,14 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
 
 
     
-  /*  const {
-        data: {gestores = []} = {}, // Objeto contendo a lista de empresas
+    const {
+        data: {gestor : gestores = []} = {}, // Objeto contendo a lista de gestores
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(isGestor ? parseInt(user?.grupo_empresarial_id!) : null);*/
+    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);
 
     const form = useForm<Form>({
         resolver: zodResolver(editCompanySchema),
@@ -85,11 +80,8 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
             logradouro: company.logradouro,
             numero: company.numero || "",
             complemento: company.complemento || "",
-            telefone_responsavel: company.telefone_responsavel,
-            email_responsavel: company.email_responsavel,
-            nome_responsavel: company.nome_responsavel,
             status: company.status,
-           // gestor_id: company.gestor_id!
+            gestor_id: company.gestor_id! ? company.gestor_id!.toString() : "",
         },
     });
 
@@ -145,8 +137,9 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
             telefone: data.telefone.replace(/\D/g, ""),
             cep: data.CEP.replace(/\D/g, ""),
             status: data.status,
-            telefone_responsavel: data.telefone_responsavel.replace(/\D/g, ""),
-            gestor_id: company.gestor_id                // isGestor ? company.gestor_id : parseInt(data.gestor_id) ,
+            data_criacao: company.data_criacao,
+            gestor_id: data.gestor_id != null ? parseInt(data.gestor_id) : null,
+            grupo_id: user?.grupo_id,             
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -320,7 +313,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                 </FormItem>
                             )}
                         />
-                           {/*!isGestor && <FormField
+                           {!isGestor && <FormField
                             control={form.control}
                             name="gestor_id"
                             render={({ field }) => (
@@ -331,7 +324,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                                 form.setValue("gestor_id", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Factory}>
+                                            <SelectTrigger Icon={UserPlus}>
                                                 <SelectValue placeholder="Selecione o Gestor" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -346,58 +339,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />*/}
-                        <FormField
-                            control={form.control}
-                            name="nome_responsavel"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input
-                                            Icon={User}
-                                            id="nome_responsavel"
-                                            placeholder="Nome do Responsável"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="email_responsavel"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input
-                                            Icon={EnvelopeSimple}
-                                            id="email_responsavel"
-                                            placeholder="Email do Responsável"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="telefone_responsavel"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input
-                                            Icon={Phone}
-                                            id="telefone_responsavel"
-                                            placeholder="Telefone do Responsável"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        />}
                         <FormField
                             control={form.control}
                             name="status"

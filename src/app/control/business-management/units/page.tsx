@@ -44,7 +44,7 @@ export default function Units() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : null, status, query);
+    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : null, !isGestor ? parseInt(user!.grupo_id) : null, status, query);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição

@@ -3,8 +3,8 @@ interface Talhao {
     codigo: string;
     tamanho: string;
     status: string;
-    gestor_id?: number; 
-    empresa_id: number;
+    unidade_id: number;
+    
 }
 
 

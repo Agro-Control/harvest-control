@@ -1,4 +1,4 @@
-export interface UserData {
+export interface Gestor {
     id: number;
     nome: string;
     email: string;
@@ -10,13 +10,6 @@ export interface UserData {
     empresa_id: string;
     matricula: string | null;
     turno: string | null;
-    tipo: string;
-    grupo_id: string;
+    tipo: string | null;
+    grupo_id: string | null;
 }
-
-interface User {
-    usuario: UserData;
-    token: string;
-}
-
-export default User;

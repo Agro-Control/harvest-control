@@ -14,7 +14,7 @@ interface UserInformationCardProps {
 const UserInformationCard = ({user}: UserInformationCardProps) => {
     const {t} = useTranslation();
     const userData =  user ? user.usuario : null;
-    const formattedPhone = userData ? userData.telefone.replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3") : '';
+    const formattedPhone = userData?.telefone ? userData.telefone.replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3") : '';
 
     return (
         <div className="flex w-full flex-col items-start justify-start gap-4 min-h-[115px]">

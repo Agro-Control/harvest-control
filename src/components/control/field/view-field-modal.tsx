@@ -13,6 +13,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Talhao from "@/types/talhao";
+import { useGetUnit } from "@/utils/hooks/useGetUnit";
 
 
 
@@ -27,13 +28,13 @@ interface EditFieldProps {
 const ViewFieldModal = ({ children, field }: EditFieldProps) => {
     const [open, setOpen] = useState(false);
     const {
-        data: empresa,
+        data: unidade,
         error,
         isError,
         isLoading,
         refetch,
         isRefetching,
-    } = useGetCompanie(field.empresa_id);
+    } = useGetUnit(field.unidade_id);
 
     useEffect(() => {
         if (open && !isLoading && !isRefetching) {
@@ -57,8 +58,8 @@ const ViewFieldModal = ({ children, field }: EditFieldProps) => {
 
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <Input disabled className=" col-span-2" id="codigo" placeholder="Codigo" value={field.codigo} />
-                    <Input disabled className="col-span-1 " id="tamanho" placeholder="Tamanho" value={field.tamanho + "ha"} />
-                    <Input disabled className="col-span-1 " id="Empresa" placeholder="Empresa" value={empresa?.nome}/>
+                    <Input disabled className="col-span-1 " id="tamanho" placeholder="Tamanho" value={field.tamanho + " ha"} />
+                    <Input disabled className="col-span-1 " id="Empresa" placeholder="Empresa" value={unidade?.nome}/>
                     <Input disabled className="col-span-1 " id="status" placeholder="Status" value={field.status === 'A' ? 'Ativo' : 'Inativo'} />
                 </div>
 

@@ -10,8 +10,7 @@ import {
     House,
     Hash,
     Flag,
-    User,
-    EnvelopeSimple,
+    UserPlus,
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -136,31 +135,15 @@ const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
                     />
 
                     <Input
-                        Icon={User}
+                        Icon={UserPlus}
                         disabled
-                        className="col-span-1"
-                        id="nomeResponsavel"
-                        placeholder="Nome Responsável"
-                        value={empresa.nome_responsavel || "Não Informado"}
+                        className="col-span-1 "
+                        id="gestor_id"
+                        placeholder="Gestor"
+                        value={empresa.gestor_id || "Não Informado"}
                     />
 
-                    <Input
-                        Icon={EnvelopeSimple}
-                        disabled
-                        className="col-span-1"
-                        id="emailResponsavel"
-                        placeholder="Email Responsável"
-                        value={empresa.email_responsavel || "Não Informado"}
-                    />
 
-                    <Input
-                        Icon={Phone}
-                        disabled
-                        className="col-span-1"
-                        id="telefoneResponsavel"
-                        placeholder="Telefone Responsável"
-                        value={empresa.telefone_responsavel || "Não Informado"}
-                    />
                 </div>
 
                 <DialogFooter>

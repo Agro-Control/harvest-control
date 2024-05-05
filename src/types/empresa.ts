@@ -12,10 +12,7 @@ interface Empresa {
   complemento?: string;
   status: string;
   data_criacao?: string; 
-  telefone_responsavel?: string;
-  email_responsavel?: string;
-  nome_responsavel?: string;
-  gestor_id?: number;
+  gestor_id: number | null;
 }
 
 export default Empresa;

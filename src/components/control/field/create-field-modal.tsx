@@ -3,6 +3,7 @@ import {
     Buildings,
     CompassTool,
     Factory,
+    HashStraight
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -19,10 +20,8 @@ import { editFieldSchema } from "@/utils/validations/editFieldSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { ReactNode, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
-import { InputMask } from "@react-input/mask";
 import { useForm } from "react-hook-form";
 import Talhao from "@/types/talhao";
 import { z } from "zod";
@@ -60,21 +59,16 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             codigo: "",
             tamanho: "",
             status: "",
-            empresa_id: "",
-            //   unidade_id: ""
+            unidade_id: ""
         }
     });
 
     const { getValues, setValue, watch } = form;
-    const watchIdEmpresa = watch("empresa_id");
-
-    const {
-        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(isGestor ? parseInt(user?.usuario.empresa_id) : null /*parseInt(user?.grupo_empresarial_id!)*/, null, null, null, null);
+    const watchIdUnidade = watch("unidade_id");
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? parseInt(user?.usuario.empresa_id) : null /* parseInt(watchIdEmpresa) */, null, null);
+    } = useGetUnits(true, isGestor ? parseInt(user?.usuario.empresa_id) : null, !isGestor ? parseInt(user?.usuario.grupo_id!) : null, null, null);
 
 
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
@@ -84,11 +78,8 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
     ]);
 
     useEffect(() => {
-        if (empresas.length > 0) {
-            const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
-            setCompanyOptions(options);
-        }
-    }, [empresas, unidades, watchIdEmpresa]);
+        
+    }, [unidades, watchIdUnidade]);
 
 
 
@@ -138,9 +129,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             ...data,
             id: null,
             status: typeof data.status === 'string' ? data.status : 'A',
-            empresa_id: parseInt(data.empresa_id),
-            // unidade_id: parseInt(data.unidade_id),
-            gestor_id: user?.usuario.id //sessão ou do seletor se adm/supergestor ter permisssao de criar talhoes  isGestor ? parseInt(user?.usuario.id) : data.gestor_id ,
+            unidade_id: parseInt(data.unidade_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -164,7 +153,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input Icon={Buildings} id="codigo" placeholder="Código" {...field} />
+                                        <Input Icon={HashStraight} id="codigo" placeholder="Código" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -184,33 +173,6 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                             )}
                         />
                         <FormField
-                            control={form.control}
-                            name="empresa_id"
-                            render={({ field }) => (
-                                <FormItem className="col-span-2">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("empresa_id", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={Buildings}>
-                                                <SelectValue placeholder="Selecione a Empresa" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {companyOptions.map((company) => (
-                                                    <SelectItem key={company.id} value={company.id.toString()}>
-                                                        {company.nome}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {/* <FormField
                             control={form.control}
                             name="unidade_id"
                             render={({ field }) => (
@@ -236,10 +198,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        /> */
-
-
-                        }
+                        /> 
                         <FormField
                             control={form.control}
                             name="status"

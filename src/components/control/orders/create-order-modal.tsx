@@ -94,32 +94,32 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null, null, null, null, null);
+    } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
 
 
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), "A", null);
+    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), null, "A", null);
 
     const {
         data: { talhoes = [] } = {}
-    } = useGetFields(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "A", null);
+    } = useGetFields(derivedEnableFlag, parseInt(watchIdUnit!), "A", null);
 
     const {
         data: { maquinas = [] } = {}
-    } = useGetMachines(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "A", null);
+    } = useGetMachines(derivedEnableFlag, parseInt(watchIdUnit!), "A", null);
 
     const {
         data: { operador: operadores_manha = [] } = {}
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "Manhã", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "Manhã", "A", null, true);
 
     const {
         data: { operador: operadores_tarde = [] } = {}
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "Tarde", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "Tarde", "A", null, true);
 
     const {
         data: { operador: operadores_noite = [] } = {}
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdEmpresa! /*watchIdUnit!*/), "Noite", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "Noite", "A", null, true);
 
 
     useEffect(() => {

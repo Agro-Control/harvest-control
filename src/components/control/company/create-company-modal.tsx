@@ -1,6 +1,7 @@
 "use client";
 import {
     Buildings,
+    UserPlus,
     IdentificationCard,
     Phone,
     MapPin,
@@ -10,8 +11,6 @@ import {
     House,
     Hash,
     Flag,
-    User,
-    EnvelopeSimple,
     MagnifyingGlass,
     CircleNotch,
 } from "@phosphor-icons/react";
@@ -43,6 +42,8 @@ import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 import { z } from "zod";
 import { useAuth } from "@/utils/hooks/useAuth";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useGetManagers } from "@/utils/hooks/useGetManagers";
 
 interface CreateCompanyProps {
     children: ReactNode;
@@ -63,9 +64,6 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     const queryClient = useQueryClient();
     const { t } = useTranslation();
 
-
-
-
     const form = useForm<Form>({
         resolver: zodResolver(createCompanySchema),
         defaultValues: {
@@ -79,22 +77,19 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
             logradouro: "",
             numero: "",
             complemento: "",
-            telefone_responsavel: "",
-            email_responsavel: "",
-            nome_responsavel: "",
-            //gestor_id: "",
+            gestor_id: "",
         },
     });
 
-  /*  const {
-        data: {gestores = []} = {}, // Objeto contendo a lista de empresas
+  const {
+        data: {gestor : gestores = []} = {}, // Objeto contendo a lista de gestores
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(!isGestor ? parseInt(user?.grupo_empresarial_id!) : null);*/
-    
+    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);
+
     // Desenstruturando funcões do hook form
     const { getValues, setValue, watch } = form;
 
@@ -177,8 +172,8 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
             telefone: data.telefone.replace(/\D/g, ""),
             cep: data.cep.replace(/\D/g, ""),
             status: "A",
-            telefone_responsavel: data.telefone_responsavel.replace(/\D/g, ""),
-            gestor_id: user?.id   // isGestor ? company.gestor_id : parseInt(data.gestor_id) ,
+            gestor_id: data.gestor_id != null ? parseInt(data.gestor_id) : null,
+            grupo_id: user?.grupo_id,
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -371,7 +366,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
                                 </FormItem>
                             )}
                         />
-                       {/*!isGestor && <FormField
+                       {!isGestor && <FormField
                             control={form.control}
                             name="gestor_id"
                             render={({ field }) => (
@@ -382,12 +377,12 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
                                                 form.setValue("gestor_id", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Factory}>
+                                            <SelectTrigger Icon={UserPlus}>
                                                 <SelectValue placeholder="Selecione o Gestor" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {gestores.map((gestor) => (
-                                                    <SelectItem key={gestor.id} value={gestor.id.toString()}>
+                                                    <SelectItem key={gestor.id} value={gestor.id.toString() || ""}>
                                                         {gestor.nome}
                                                     </SelectItem>
                                                 ))}
@@ -397,61 +392,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />*/}
-                        <FormField
-                            control={form.control}
-                            name="nome_responsavel"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input
-                                            Icon={User}
-                                            id="nome_responsavel"
-                                            placeholder="Nome do Responsável"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="email_responsavel"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input
-                                            Icon={EnvelopeSimple}
-                                            id="email_responsavel"
-                                            placeholder="Email do Responsável"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="telefone_responsavel"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <MaskedInput
-                                            {...field}
-                                            Icon={Phone}
-                                            placeholder="Telefone do Responsável"
-                                            maskInput={{
-                                                input: InputMask,
-                                                mask: "(__) _____-____",
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        />}
                     </form>
                 </Form>
                 <DialogFooter>

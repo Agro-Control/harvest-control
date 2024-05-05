@@ -25,6 +25,7 @@ interface EditUnitProps {
 const ViewUnitModal = ({children, unit}: EditUnitProps) => {
     const [open, setOpen] = useState(false);
 
+    
     const handleClose = () => {
         setOpen(false);
     };
@@ -40,9 +41,6 @@ const ViewUnitModal = ({children, unit}: EditUnitProps) => {
 
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <Input disabled className=" col-span-2" id="nome" placeholder="Nome" value={unit.nome} />
-                    <Input disabled className="col-span-1 " id="cnpj" placeholder="CNPJ" value={unit.cnpj} />
-
-                  {/*  <Input disabled className="col-span-1 " id="telefone" placeholder="Telefone da unidade" value={unit.telefone}  />*/}
 
                     <Input disabled className="col-span-1 " id="CEP" placeholder="CEP" value={unit.cep} />
 

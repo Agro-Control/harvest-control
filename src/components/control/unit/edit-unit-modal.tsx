@@ -1,5 +1,15 @@
 "use client";
-
+import {
+    Buildings,
+    UserPlus,
+    MapPin,
+    MapTrifold,
+    NavigationArrow,
+    Factory,
+    House,
+    Hash,
+    Flag,
+} from "@phosphor-icons/react";
 import {
     Dialog,
     DialogContent,
@@ -13,10 +23,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { editUnitSchema } from "@/utils/validations/editUnitSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { useUpdateUnit } from "@/utils/hooks/useUpdateUnit";
 import { ReactNode, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -28,6 +36,7 @@ import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
+import { useGetManagers } from "@/utils/hooks/useGetManagers";
 
 
 interface EditUnitProps {
@@ -38,7 +47,6 @@ interface EditUnitProps {
 type Form = z.infer<typeof editUnitSchema>;
 
 const EditUnitModal = ({ children, unit }: EditUnitProps) => {
-    const updateUnit = useUpdateUnit();
     const [open, setOpen] = useState(false);
     const { t } = useTranslation();
     const { toast } = useToast();
@@ -56,28 +64,33 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
         defaultValues: {
             id: unit.id,
             nome: unit.nome,
-            cnpj: unit.cnpj,
-            // telefone: unit.telefone,
             cep: unit.cep,
             estado: unit.estado,
             cidade: unit.cidade,
             bairro: unit.bairro,
-            logradouro: unit.logradouro,
-            numero: unit.numero,
-            complemento: unit.complemento,
+            logradouro: unit.logradouro || "",
+            numero: unit.numero  || "",
+            complemento: unit.complemento  || "",
             status: unit.status,
-            empresa_id: unit.empresa_id?.toString()
+            empresa_id: unit.empresa_id?.toString(),
+            gestor_id: unit.gestor_id?.toString()
         }
     });
 
-    const { data: { empresas = [] } = {} } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null, null, null, null, null);
-
+    const { data: { empresas = [] } = {} } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null,  !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+    const {
+        data: {gestor : gestores = []} = {}, // Objeto contendo a lista de gestores
+        error, // Erro retornado pela Api
+        isError, // Booleano que indica se houve erro
+        isLoading, // Booleano que indica se está carregando
+        refetch, // Função que faz a requisição novamente
+        isRefetching, // Booleano que indica se está fazendo a requisição novamente
+    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);
 
     const { getValues, setValue, watch } = form;
     // Variavel usada para monitorar o campo do cnpj
     const watchEmpresaId = watch("empresa_id");
-    const watchCnpj = watch("cnpj");
-
+    console.log(watchEmpresaId);
 
     useEffect(() => {
         if (empresas.length > 0) {
@@ -88,7 +101,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
 
 
     const editUnitRequest = async (putData: Unidade | null) => {
-        const { data } = await api.post("/unidades", putData);
+        const { data } = await api.put("/unidades", putData);
         return data;
     };
 
@@ -131,12 +144,9 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
     const onHandleSubmit = (data: Form) => {
         const formattedData = {
             ...data,
-            cnpj: data.cnpj.replace(/\D/g, ""),
-            //telefone: data.telefone.replace(/\D/g, ""),
             cep: data.cep.replace(/\D/g, ""),
-            status: data.status,
             empresa_id: isGestor ? parseInt(user?.empresa_id) : parseInt(data.empresa_id),
-            gestor_id: user?.id //sessão ou do seletor se adm/supergestor ter permisssao de criar unidades:  isGestor ? parseInt(user?.id) : data.gestor_id ,
+            gestor_id: isGestor ? user?.id : (data.gestor_id ? parseInt(data.gestor_id) : parseInt(watchEmpresaId)) ,
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -155,44 +165,25 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="unit-form" className="grid grid-cols-2 gap-4 py-4">
+                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="update-unit-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
                             name="nome"
                             render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input id="nome" placeholder="Nome da Unidade" {...field} />
+                                        <Input
+                                            Icon={Factory}
+                                            id="nome"
+                                            placeholder="Nome da Unidade"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
-                        <FormField
-                            control={form.control}
-                            name="cnpj"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input disabled id="cnpj" placeholder="CNPJ" {...field} readOnly />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/*    <FormField
-                            control={form.control}
-                            name="telefone"
-                            render={({field}) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input id="telefone" placeholder="Telefone da Empresa" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}*/}
 
                         <FormField
                             control={form.control}
@@ -200,12 +191,17 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="cep" placeholder="CEP" {...field} />
+                                        <Input
+                                            {...field}
+                                            Icon={NavigationArrow}
+                                            placeholder="CEP"
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
 
                         <FormField
                             control={form.control}
@@ -213,20 +209,25 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="estado" placeholder="Estado" {...field} />
+                                        <Input
+                                            disabled
+                                            Icon={MapTrifold}
+                                            id="estado"
+                                            placeholder={t(field.name)}
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-
                         <FormField
                             control={form.control}
                             name="cidade"
                             render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="cidade" placeholder="Cidade" {...field} />
+                                        <Input disabled Icon={MapPin} id="cidade" placeholder="Cidade" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -238,7 +239,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="bairro" placeholder="Bairro" {...field} />
+                                        <Input Icon={Factory} id="bairro" placeholder="Bairro" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -251,7 +252,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="logradouro" placeholder="Endereço" {...field} />
+                                        <Input Icon={House} id="logradouro" placeholder="Endereço" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -263,7 +264,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="numero" placeholder="Número" {...field} />
+                                        <Input Icon={Hash} id="numero" placeholder="Número" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -275,13 +276,26 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="complemento" placeholder="Complemento" {...field} />
+                                        <Input Icon={Flag} id="complemento" placeholder="Complemento" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                        {isGestor && <FormField
+                            control={form.control}
+                            name="empresa_id"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Input disabled Icon={Buildings} id="empresa_id" placeholder={companyOptions[0].nome || "Nome da Empresa"} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />}
+
+                        {!isGestor && <FormField
                             control={form.control}
                             name="empresa_id"
                             render={({ field }) => (
@@ -292,7 +306,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                                                 form.setValue("empresa_id", value);
                                             }}
                                         >
-                                            <SelectTrigger className="h-10 w-[180px] ">
+                                            <SelectTrigger Icon={Buildings} className="h-10 w-[180px] ">
                                                 <SelectValue placeholder="Selecione a Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -303,11 +317,39 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                                                 ))}
                                             </SelectContent>
                                         </Select>
+
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />}
+                        {!isGestor && <FormField
+                            control={form.control}
+                            name="gestor_id"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("gestor_id", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={UserPlus}>
+                                                <SelectValue placeholder="Selecione o Gestor" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {gestores.map((gestor) => (
+                                                    <SelectItem key={gestor.id} value={gestor.id.toString() || ""}>
+                                                        {gestor.nome}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />}
                         <FormField
                             control={form.control}
                             name="status"
@@ -338,7 +380,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                     </form>
                 </Form>
                 <DialogFooter>
-                    <SubmitButton isLoading={isPending} form="unit-form" />
+                    <SubmitButton isLoading={isPending} form="update-unit-form" />
                 </DialogFooter>
             </DialogContent>
         </Dialog>
