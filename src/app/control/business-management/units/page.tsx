@@ -14,6 +14,8 @@ import {useQueryState} from "nuqs";
 import { AxiosError } from "axios";
 import { useEffect} from "react";
 import { useAuth } from "@/utils/hooks/useAuth";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
+import Empresa from "@/types/empresa";
 
 
 
@@ -31,11 +33,14 @@ const statusFilter: FilterInformation = {
 export default function Units() {
     const [query] = useQueryState("query");
     const [status]= useQueryState("status");
+    const [empresa] = useQueryState("Empresas");
     const auth = useAuth();
     const user = auth.user?.usuario;
     const isGestor = user?.tipo === "G";
-
-
+   
+    const {
+        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
 
     const {
         data: {unidades = []} = {}, 
@@ -44,13 +49,22 @@ export default function Units() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : null, !isGestor ? parseInt(user!.grupo_id) : null, status, query);
+    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), status, query);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição
     const isLoadingData = isLoading || isRefetching; 
-    
 
+    const companyFilter: FilterInformation = {
+        filterItem: [
+            { value: "all" },
+            ...empresas.map((empresa: Empresa) => ({
+                value: empresa.id?.toString()!,
+                label: empresa.nome,
+            })),
+        ],
+    };
+    
     useEffect(() => {
         refetch();
     }, [query, status]);
@@ -65,6 +79,7 @@ export default function Units() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
+                {!isGestor && <Filter filter={companyFilter} paramType="Empresas" />}
                 <CreateUnitModal>
                     <Button
                         type="button"

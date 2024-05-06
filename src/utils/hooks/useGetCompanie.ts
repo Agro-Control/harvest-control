@@ -1,28 +1,15 @@
-import {useQuery} from "@tanstack/react-query";
-import {api} from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
-const getCompanieRequest = async (id: number) => {
-    try {
-        const response = await api.get("/empresas/", {
-            params: {
-                id: id
-            },
-        });
-        if (response.data && response.data.empresas && response.data.empresas.length > 0) {
-            
-            return response.data.empresas[0];
-        } else {
-            throw new Error("Empresa não encontrada");
-        }
-    } catch (error) {
-        // Se ocorrer um erro na solicitação, lance-o para ser tratado no componente que chama o hook
-        throw error;
-    }
+const getCompanieRequest = async (id: number | null) => {
+    const { data } = await api.get(`/empresas/${id}`);
+    return data;
 };
 
-export const useGetCompanie = (id: number) => {
+export const useGetCompanie = (id: number | null) => {
     return useQuery({
         queryKey: ["companie"],
+        enabled: !!id,
         queryFn: () => getCompanieRequest(id),
     });
 };

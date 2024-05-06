@@ -13,6 +13,11 @@ import Talhao from "@/types/talhao";
 import { AxiosError } from "axios";
 import {useQueryState} from "nuqs";
 import { useEffect} from "react";
+import { useAuth } from "@/utils/hooks/useAuth";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
+import { useGetUnits } from "@/utils/hooks/useGetUnits";
+import Unidade from "@/types/unidade";
+import Empresa from "@/types/empresa";
 
 
 const statusFilter: FilterInformation = {
@@ -28,7 +33,21 @@ const statusFilter: FilterInformation = {
 export default function Field() {
     const [query] = useQueryState("query");
     const [status]= useQueryState("status");
+    const [unidade] = useQueryState("Unidades");
+    const [empresa] = useQueryState("Empresas");
+    const auth = useAuth();
+    const user = auth.user?.usuario;
+    const isGestor = user?.tipo === "G";
 
+    const {
+        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
+
+    const {
+        data: { unidades = [] } = {},
+        isLoading: isLoadingUnits, // Booleano que indica se está carregando
+        refetch: refectchUnits, // Função que faz a requisição novamente
+    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)),"A", null);
 
 
     const {
@@ -38,9 +57,26 @@ export default function Field() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetFields(true, null, status, query);
+    } = useGetFields(true, parseInt(unidade!), status, query);
 
+    const companyFilter: FilterInformation = {
+        filterItem: [
+            { value: "all" },
+            ...empresas.map((empresa: Empresa) => ({
+                value: empresa.id?.toString()!,
+                label: empresa.nome,
+            })),
+        ],
+    };
 
+    const unitFilter: FilterInformation = {
+        filterItem: [
+            { value: "all" },
+            ...unidades.map((unit: Unidade) => ({
+                value: unit.id?.toString()!
+            })),
+        ],
+    };
     // Variavel que indica se está carregando ou refazendo a requisição
     const isLoadingData = isLoading || isRefetching; 
 
@@ -56,6 +92,8 @@ export default function Field() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
+                {!isGestor && <Filter filter={companyFilter} paramType="Empresas" />}
+                <Filter filter={unitFilter} paramType="Unidades" />
                 <CreateFieldModal>
                     <Button
                         type="button"

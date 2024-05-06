@@ -35,6 +35,7 @@ import { toast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
 import { useGetUnits } from "@/utils/hooks/useGetUnits";
+import { useQueryState } from "nuqs";
 
 interface editFieldProps {
     children: ReactNode;
@@ -48,6 +49,8 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
     const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
     const { t } = useTranslation();
     const queryClient = useQueryClient();
+    const [unidade] = useQueryState("Unidades");
+    const [empresa] = useQueryState("Empresas");
     const {
         user,
         isLoading: isLoadingAuth,
@@ -69,9 +72,11 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
     const { getValues, setValue, watch } = form;
     const watchUnidadeId = watch("unidade_id");
 
+    /*
+    
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? parseInt(user?.usuario.empresa_id) : null, !isGestor ? parseInt(user?.usuario.grupo_id!) : null,  null, null);
+    } = useGetUnits(true, isGestor ? parseInt(user.usuario.empresa_id) : (isNaN(parseInt(unidade!)) ? null : parseInt(unidade!)),  null, null);*/
 
 
 

@@ -69,6 +69,8 @@
     "postField-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
     "postOrder-error-422": "Informações para ordem são incorretas",
     "postOrder-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
+    "postMachine-error-422": "Informações para máquina são incorretas",
+    "postMachine-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
     "postUnit-error-422": "Informações para unidade são incorretas",
     "postUnit-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
     "postLogin-error-500": "Algo deu errado!",

@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import GetUnidade from "@/types/get-unidade";
 
-const getUnitsRequest = async (id_empresa: number | null, id_grupo: number | null, codigo: string | null, status: string | null) => {
+const getUnitsRequest = async (empresa_id: number | null, codigo: string | null, status: string | null) => {
   const { data } = await api.get<GetUnidade>("/unidades", {
     params: {
-      id_empresa: id_empresa,
+      empresa_id: empresa_id,
       codigo: codigo,
       status: status,
     },
@@ -13,10 +13,10 @@ const getUnitsRequest = async (id_empresa: number | null, id_grupo: number | nul
   return data;
 };
 
-export const useGetUnits = (enableFlag: boolean, id_empresa: number | null, id_grupo: number | null, status: string | null, codigo: string | null) => {
+export const useGetUnits = (enableFlag: boolean, empresa_id: number | null, status: string | null, codigo: string | null) => {
   return useQuery({
-    queryKey: ["units", id_empresa,id_grupo, codigo, status],
-    queryFn: () => getUnitsRequest(id_empresa, id_grupo, codigo, status),
+    queryKey: ["units", empresa_id, codigo, status],
+    queryFn: () => getUnitsRequest(empresa_id, codigo, status),
     enabled: enableFlag,
     retry: (failureCount, error) => {
 

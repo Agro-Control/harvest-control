@@ -59,7 +59,7 @@ const ViewFieldModal = ({ children, field }: EditFieldProps) => {
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <Input disabled className=" col-span-2" id="codigo" placeholder="Codigo" value={field.codigo} />
                     <Input disabled className="col-span-1 " id="tamanho" placeholder="Tamanho" value={field.tamanho + " ha"} />
-                    <Input disabled className="col-span-1 " id="Empresa" placeholder="Empresa" value={unidade?.nome}/>
+                    <Input disabled className="col-span-1 " id="Empresa" placeholder="Empresa" value={!isLoading && unidade?.nome}/>
                     <Input disabled className="col-span-1 " id="status" placeholder="Status" value={field.status === 'A' ? 'Ativo' : 'Inativo'} />
                 </div>
 

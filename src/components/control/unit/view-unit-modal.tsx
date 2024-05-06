@@ -12,6 +12,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {ReactNode, useState} from "react";
 import Unidade from "@/types/unidade";
+import { useGetCompanie } from "@/utils/hooks/useGetCompanie";
 
 
 
@@ -24,6 +25,14 @@ interface EditUnitProps {
 
 const ViewUnitModal = ({children, unit}: EditUnitProps) => {
     const [open, setOpen] = useState(false);
+    const {
+        data: empresa,
+        error,
+        isError,
+        isLoading,
+        refetch,
+        isRefetching,
+    } = useGetCompanie(unit.empresa_id!);
 
     
     const handleClose = () => {
@@ -56,7 +65,7 @@ const ViewUnitModal = ({children, unit}: EditUnitProps) => {
 
                     <Input disabled className="col-span-1 " id="complemento" placeholder="Complemento"  value={unit.complemento}/>
 
-                    <Input disabled className="col-span-1 " id="empresa_nome" placeholder="Matriz" value={unit.empresa_nome}  />
+                    <Input disabled className="col-span-1 " id="empresa_nome" placeholder="Matriz" value={!isLoading && empresa.nome}  />
 
                     <Input disabled className="col-span-1 " id="status" placeholder="Status" value={unit.status === 'A' ? 'Ativo' : 'Inativo'} />
                 </div>

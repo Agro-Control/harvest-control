@@ -61,8 +61,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     const { toast } = useToast();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
-    const [enableFlag, setEnableFlag] = useState<boolean>(false); 
-    const [derivedEnableFlag, setDerivedEnableFlag] = useState<boolean>(false); 
+    const [enableFlag, setEnableFlag] = useState<boolean>(false);
+    const [derivedEnableFlag, setDerivedEnableFlag] = useState<boolean>(false);
 
     const form = useForm<Form>({
         resolver: zodResolver(createOrderSchema),
@@ -75,7 +75,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             id_unidade: "",
             id_gestor: "",
             id_maquina: "",
-            id_empresa: "",
+            id_empresa: isGestor ? user.empresa_id : "",
             operador_manha: "",
             operador_tarde: "",
             operador_noturno: "",
@@ -94,12 +94,12 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
 
 
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), null, "A", null);
+    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), null, "A");
 
     const {
         data: { talhoes = [] } = {}
@@ -111,25 +111,29 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
 
     const {
         data: { operador: operadores_manha = [] } = {}
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "Manhã", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "M", "A", null, true);
 
     const {
         data: { operador: operadores_tarde = [] } = {}
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "Tarde", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "T", "A", null, true);
 
     const {
         data: { operador: operadores_noite = [] } = {}
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "Noite", "A", null, true);
+    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "N", "A", null, true);
 
 
     useEffect(() => {
         if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined)
             setEnableFlag(true);
-        if(watchIdUnit !== "" && watchIdUnit !== undefined)
+        console.log("flag unidade " + derivedEnableFlag)
+        if (watchIdUnit !== "" && watchIdUnit !== undefined)
             setDerivedEnableFlag(true);
-        if (!open)
+        console.log("pos flag unidade " + derivedEnableFlag)
+        console.log(watchIdUnit);
+        if (!open) {
             setEnableFlag(false);
             setDerivedEnableFlag(false);
+        }
     }, [empresas, unidades, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
 
 
@@ -234,34 +238,6 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                 </FormItem>
                             )}
                         />
-
-                        <FormField
-                            control={form.control}
-                            name="id_maquina"
-                            render={({ field }) => (
-                                <FormItem className="col-span-2">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("id_maquina", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={Truck} className="h-10">
-                                                <SelectValue placeholder="Selecione a Máquina" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {maquinas.map((machine) => (
-                                                    <SelectItem key={machine.id} value={machine.id!.toString()}>
-                                                        {machine.nome}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="id_unidade"
@@ -280,6 +256,33 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 {unidades.map((unit) => (
                                                     <SelectItem key={unit.id} value={unit.id!.toString()}>
                                                         {unit.nome}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="id_maquina"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("id_maquina", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={Truck} className="h-10">
+                                                <SelectValue placeholder="Selecione a Máquina" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {maquinas.map((machine) => (
+                                                    <SelectItem key={machine.id} value={machine.id!.toString()}>
+                                                        {machine.nome}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

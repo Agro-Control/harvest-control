@@ -87,7 +87,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+    } = useGetCompanies(!isGestor ? true : false,!isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
 
     const {
         data: { gestor: gestores = [] } = {}, // Objeto contendo a lista de gestores

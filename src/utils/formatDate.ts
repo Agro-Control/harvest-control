@@ -1,5 +1,5 @@
-export default function useFormattedDate(): (dateString: string | undefined) => string {
-    return function formatDate(dateString: string | undefined): string {
+export default function useFormattedDate(): (dateString: Date | undefined) => string {
+    return function formatDate(dateString: Date | undefined): string {
       if (!dateString || typeof dateString !== 'string') {
         return "";
       }

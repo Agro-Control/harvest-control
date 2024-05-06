@@ -1,10 +1,5 @@
 "use client";
-import {
-    Buildings,
-    CompassTool,
-    Factory,
-    HashStraight
-} from "@phosphor-icons/react";
+
 import {
     Dialog,
     DialogContent,
@@ -16,33 +11,34 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { editFieldSchema } from "@/utils/validations/editFieldSchema";
-import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { ReactNode, useEffect, useState } from "react";
+import { Factory, GasPump, GearSix, Truck, Wrench } from "@phosphor-icons/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
+import {format} from "date-fns";
+import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Talhao from "@/types/talhao";
 import { z } from "zod";
+import { createMachineSchema } from "@/utils/validations/createMachineSchema";
 import { useToast } from "@/components/ui/use-toast";
-import { api } from "@/lib/api";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import SubmitButton from "@/components/submit-button";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useGetUnits } from "@/utils/hooks/useGetUnits";
-import { parse } from "path";
+import { AxiosError } from "axios";
+import { api } from "@/lib/api";
+import Maquina from "@/types/maquina";
+import { DatePicker } from "@/components/ui/date-picker";
+import SubmitButton from "@/components/submit-button";
 
-interface createFieldProps {
+interface EditMachineModalProps {
     children: ReactNode;
+    maquina: Maquina;
 }
 
-type Form = z.infer<typeof editFieldSchema>;
+type Form = z.infer<typeof createMachineSchema>;
 
-const CreateFieldModal = ({ children }: createFieldProps) => {
+const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
     const [open, setOpen] = useState(false);
-    const [enableFlag, setEnableFlag] = useState(false);
     const { toast } = useToast();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
@@ -50,60 +46,51 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
         user,
         isLoading,
     } = useAuth();
-
     const isGestor = user?.usuario.tipo === "G";
-
-    const form = useForm<z.infer<typeof editFieldSchema>>({
-        resolver: zodResolver(editFieldSchema),
-        defaultValues: {
-            id: 0,
-            codigo: "",
-            tamanho: "",
-            status: "",
-            unidade_id: ""
-        }
-    });
-
-    const { getValues, setValue, watch } = form;
-    const watchIdUnidade = watch("unidade_id");
-    const watchIdEmpresa = watch("empresa_id");
-    const {
-        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.usuario.grupo_id!) : null, null, null, null, "A");
-
-    const {
-        data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? parseInt(user.usuario.empresa_id) : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);
-
 
     const [statusOptions] = useState<{ value: string }[]>([
         { value: 'A' },
         { value: 'I' }
     ]);
 
+    const form = useForm<z.infer<typeof createMachineSchema>>({
+        resolver: zodResolver(createMachineSchema),
+        defaultValues: {
+            nome: maquina.nome || "",
+            fabricante: maquina.fabricante || "",
+            modelo: maquina.modelo || "",
+            status: maquina.status || "",
+            capacidade_operacional: maquina.capacidade_operacional!.toString() || "",
+         //   data_aquisicao: new Date(),
+            unidade_id: maquina.unidade_id!.toString(),
+        },
+    });
+    const { getValues, setValue, watch } = form;
+    const watchIdUnidade = watch("unidade_id");
+
     useEffect(() => {
-        if (watchIdEmpresa != null && watchIdEmpresa != "" && watchIdEmpresa != undefined)
-            setEnableFlag(true);
+    
+    }, [watchIdUnidade]);
 
-    }, [unidades, watchIdUnidade]);
+   /* const {
+        data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
+    } = useGetUnits(true, isGestor ? parseInt(user.usuario.empresa_id) : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);*/
 
-
-
-    const createFieldRequest = async (postData: Talhao | null) => {
-        const { data } = await api.post("/talhoes", postData);
+    const createMachineRequest = async (putData: Maquina | null) => {
+        const { data } = await api.put("/maquinas", putData);
         return data;
     };
 
     const { mutate, isPending, variables } = useMutation({
-        mutationFn: createFieldRequest,
+        mutationFn: createMachineRequest,
         onSuccess: () => {
             toast({
                 className: "border-green-500 bg-green-500",
                 title: t("success"),
-                description: t("postField-success"),
+                description: t("putMachine-success"),
             });
             // Refetch na lista de empresas
-            queryClient.refetchQueries({ queryKey: ["fields"], type: "active", exact: true });
+            queryClient.refetchQueries({ queryKey: ["machines"], type: "active", exact: true });
             setOpen(false);
             form.reset();
         },
@@ -119,8 +106,8 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             }
 
             const { status } = response;
-            const titleCode = `postField-error-${status}`;
-            const descriptionCode = `postField-description-error-${status}`;
+            const titleCode = `postMachine-error-${status}`;
+            const descriptionCode = `postMachine-description-error-${status}`;
 
             toast({
                 variant: "destructive",
@@ -132,14 +119,19 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
 
     const onHandleSubmit = (data: Form) => {
         const formattedData = {
-            ...data,
-            id: null,
-            status: typeof data.status === 'string' ? data.status : 'A',
-            unidade_id: parseInt(data.unidade_id),
+            id: maquina.id,
+            fabricante: data.fabricante!,
+            modelo: data.modelo!,
+            nome: data.nome!,
+            data_aquisicao: maquina.data_aquisicao, //format(data.data_aquisicao,'yyyy-MM-dd HH:mm:ss') ,
+            status: data.status!,
+            capacidade_operacional: parseInt(data.capacidade_operacional!),
+            unidade_id: isGestor ? parseInt(user.usuario.unidade_id) : parseInt(data.unidade_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
     };
+
 
 
     return (
@@ -147,19 +139,31 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="font-poppins text-green-950">Criar Talhão</DialogTitle>
-                    <DialogDescription>Insira as informações para criar um Talhão.</DialogDescription>
+                    <DialogTitle className="font-poppins text-green-950">Criar Máquina</DialogTitle>
+                    <DialogDescription>Insira as informações para criar uma Máquina.</DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="field-form" className="grid grid-cols-2 gap-4 py-4">
+                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="edit-machine-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
-                            name="codigo"
+                            name="nome"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Input Icon={Truck} id="nome" placeholder="Nome" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="modelo"
                             render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input Icon={HashStraight} id="codigo" placeholder="Código" {...field} />
+                                        <Input Icon={GearSix} id="modelo" placeholder="Modelo" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -168,44 +172,31 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
 
                         <FormField
                             control={form.control}
-                            name="tamanho"
+                            name="fabricante"
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input Icon={CompassTool} id="tamanho" placeholder="Tamanho" {...field} />
+                                        <Input Icon={Wrench} id="fabricante" placeholder="Fabricante" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        {!isGestor && <FormField
+
+                        <FormField
                             control={form.control}
-                            name="empresa_id"
+                            name="capacidade_operacional"
                             render={({ field }) => (
-                                <FormItem className="col-span-2">
+                                <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("empresa_id", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={Factory}>
-                                                <SelectValue placeholder="Selecione a Empresa" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {empresas.map((empresa) => (
-                                                    <SelectItem key={empresa.id} value={empresa.id!.toString()}>
-                                                        {empresa.nome}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <Input Icon={GasPump} id="capacidade_operacional" placeholder="Capacidade Operacional" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />}
-                        <FormField
+                        />
+
+                        {/*!isGestor && <FormField
                             control={form.control}
                             name="unidade_id"
                             render={({ field }) => (
@@ -231,7 +222,8 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />*/}
+
                         <FormField
                             control={form.control}
                             name="status"
@@ -258,14 +250,17 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        /> 
+
                     </form>
                 </Form>
                 <DialogFooter>
-                    <SubmitButton isLoading={isPending} form="field-form" />
+                    <SubmitButton isLoading={isPending} form="edit-machine-form" />
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
     );
+
 };
-export default CreateFieldModal;
+export default EditMachineModal;

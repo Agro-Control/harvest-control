@@ -77,28 +77,19 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
         }
     });
 
-    const { data: { empresas = [] } = {} } = useGetCompanies(isGestor ? parseInt(user.empresa_id) : null,  !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
-    const {
+    /*const {
         data: {gestor : gestores = []} = {}, // Objeto contendo a lista de gestores
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);
+    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);*/
 
     const { getValues, setValue, watch } = form;
     // Variavel usada para monitorar o campo do cnpj
     const watchEmpresaId = watch("empresa_id");
-    console.log(watchEmpresaId);
-
-    useEffect(() => {
-        if (empresas.length > 0) {
-            const options = empresas.map((empresa: any) => ({ id: empresa.id, nome: empresa.nome }));
-            setCompanyOptions(options);
-        }
-    }, [empresas]);
-
+    console.log(watchEmpresaId)
 
     const editUnitRequest = async (putData: Unidade | null) => {
         const { data } = await api.put("/unidades", putData);
@@ -295,7 +286,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                             )}
                         />}
 
-                        {!isGestor && <FormField
+                        {/*!isGestor && <FormField
                             control={form.control}
                             name="empresa_id"
                             render={({ field }) => (
@@ -349,7 +340,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />}
+                        />*/}
                         <FormField
                             control={form.control}
                             name="status"
