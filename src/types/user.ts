@@ -8,7 +8,7 @@ export interface UserData {
     data_contratação: string;
     gestor_id: string;
     unidade_id: string;
-    empresa_id: string;
+    empresa_id: number;
     matricula: string | null;
     turno: string | null;
     tipo: string;
