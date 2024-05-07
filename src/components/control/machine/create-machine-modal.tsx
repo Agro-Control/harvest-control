@@ -81,7 +81,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? parseInt(user.usuario.empresa_id) : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), null, null);
+    } = useGetUnits(true, isGestor ? user.usuario.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), null, null);
 
     const createMachineRequest = async (postData: Maquina | null) => {
         const { data } = await api.post("/maquinas", postData);
