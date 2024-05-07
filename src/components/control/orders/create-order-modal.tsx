@@ -75,6 +75,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             id_unidade: "",
             id_gestor: "",
             id_maquina: "",
+            //TODO: ver esse erro aqui rs
             id_empresa: isGestor ? user.empresa_id : "",
             operador_manha: "",
             operador_tarde: "",
