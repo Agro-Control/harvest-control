@@ -94,7 +94,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createFieldRequest,
         onSuccess: () => {
             toast({

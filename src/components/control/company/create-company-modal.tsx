@@ -24,6 +24,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createCompanySchema } from "@/utils/validations/createCompanySchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MaskedInput } from "@/components/ui/masked-input";
@@ -42,7 +43,6 @@ import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 import { z } from "zod";
 import { useAuth } from "@/utils/hooks/useAuth";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGetManagers } from "@/utils/hooks/useGetManagers";
 
 interface CreateCompanyProps {
@@ -126,7 +126,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     };
 
     // Hook do react query para fazer a validação se foi sucesso ou se a requisição deu problema
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createCompanyRequest,
         onSuccess: () => {
             toast({

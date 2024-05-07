@@ -91,7 +91,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     };
 
     // Hook do react query para fazer a validação se foi sucesso ou se a requisição deu problema
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createCompanyRequest,
         onSuccess: () => {
             toast({
