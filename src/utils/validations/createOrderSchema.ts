@@ -87,5 +87,5 @@ export const createOrderSchema = z.object({
     ),
 }).refine((data) => data.data_fim > data.data_inicio, {
     message: "A data final não deve ser menor que a inicial.",
-    path: ["endDate"],
+    path: ["data_fim"],
   });
