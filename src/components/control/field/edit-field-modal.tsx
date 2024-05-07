@@ -85,7 +85,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: editFieldRequest,
         onSuccess: () => {
             toast({

@@ -96,7 +96,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: editUnitRequest,
         onSuccess: () => {
             toast({

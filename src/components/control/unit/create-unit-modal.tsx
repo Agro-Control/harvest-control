@@ -105,7 +105,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createUnitRequest,
         onSuccess: () => {
             toast({

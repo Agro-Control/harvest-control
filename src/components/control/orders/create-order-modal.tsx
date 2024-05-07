@@ -143,7 +143,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createOrderRequest,
         onSuccess: () => {
             toast({

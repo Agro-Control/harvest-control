@@ -88,7 +88,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createMachineRequest,
         onSuccess: () => {
             toast({
