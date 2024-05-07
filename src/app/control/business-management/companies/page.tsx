@@ -14,7 +14,7 @@ import { useQueryState } from "nuqs";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useAuth } from "@/utils/hooks/useAuth";
-import { useGetCompanie } from "@/utils/hooks/useGetCompanie";
+import { useGetCompany } from "@/utils/hooks/useGetCompany";
 
 const estadoFilter: FilterInformation = {
     filterItem: [
@@ -61,7 +61,7 @@ export default function Companies() {
         isLoading: isLoadingEmpresa,
         isRefetching: isRefetchingEmpresa,
         refetch: refetchEmpresa,
-    } = useGetCompanie(isGestor ? parseInt(user?.empresa_id!) : null);
+    } = useGetCompany(isGestor ? user?.empresa_id! : null);
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas

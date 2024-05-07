@@ -37,19 +37,22 @@ const Machines = () => {
     const [status] = useQueryState("status");
     const [unidade] = useQueryState("Unidades");
     const [empresa] = useQueryState("Empresas");
+    const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user?.usuario;
     const isGestor = user?.tipo === "G";
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
+        isError: isCompanyError,
+        refetch: refetchCompanies,
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
         isLoading: isLoadingUnits, // Booleano que indica se está carregando
-        refetch: refectchUnits, // Função que faz a requisição novamente
-    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)),"A", null);
+        refetch: refetchUnits, // Função que faz a requisição novamente
+    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id :  parseInt(empresa!), status, query);
 
 
     const {
@@ -82,9 +85,18 @@ const Machines = () => {
     };
 
     useEffect(() => {
-       
-            refetch();
-    }, [unidade, query, status]);
+        if (isCompanyError)
+            refetchCompanies();
+        if (empresa != null && empresa != "" && empresa != undefined) {
+            setEnableFlag(true);
+            refetchUnits();
+        } else {
+            setEnableFlag(false);
+        }
+        refetch();
+
+
+    }, [empresa, unidade, query, status]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -132,8 +144,9 @@ const Machines = () => {
             </Table>
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoading && <LoadingAnimation />}
+            {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir as máquinas</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
-            {isError && !isLoading && <StatusCodeHandler requisitionType="field" error={error as AxiosError} />}
+            {isError && !isLoading && <StatusCodeHandler requisitionType="machine" error={error as AxiosError} />}
         </div>
     );
 }

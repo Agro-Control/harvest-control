@@ -10,18 +10,19 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {CalendarBlank} from "@phosphor-icons/react";
 
 interface DatePickerProps {
+    placeHolder: string | null;
     value: Date | undefined;
     onChange: (date: Date | undefined) => void;
   }
   
-  export function DatePicker({ value, onChange }: DatePickerProps) {
+  export function DatePicker({ value, onChange, placeHolder }: DatePickerProps) {
     const [date, setDate] = React.useState<Date | undefined>(value);
   
     React.useEffect(() => {
       if (!date) return;
   
       const formattedDate = format(date, 'dd-MM-yyyy HH:mm:ss');
-      console.log(formattedDate);
+      console.log("datapicker" + formattedDate);
       onChange(date); // Atualiza o valor no componente pai, se necessário
     }, [date, onChange]);
   
@@ -37,7 +38,7 @@ interface DatePickerProps {
             className={cn("w-full justify-start text-left font-normal", !date && "text-gray-500")}
           >
             <CalendarBlank className="-ml-1 mr-2 h-5 w-5 text-green-950" />
-            {date ? format(date, "dd/MM/yyyy") : <span>Selecione a data</span>}
+            {date ? format(date, "dd/MM/yyyy") : <span>{placeHolder || "Selecione a data" }</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0 ">

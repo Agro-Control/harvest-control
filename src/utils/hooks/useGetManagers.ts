@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import GetGestor from "@/types/get-gestor";
 
-const getManagersRequest = async (id_grupo: number | null, codigo: string | null, status: string | null) => {
+const getManagersRequest = async (grupo_id: number | null, codigo: string | null, status: string | null) => {
     const { data } = await api.get<GetGestor>("/gestores", {
         params: {
-            id_grupo: id_grupo,
+            grupo_id: grupo_id,
             codigo: codigo,
             status: status,
         },
@@ -13,11 +13,11 @@ const getManagersRequest = async (id_grupo: number | null, codigo: string | null
     return data;
 };
 
-export const useGetManagers = (id_grupo: number | null, status: string | null, codigo: string | null) => {
+export const useGetManagers = (grupo_id: number | null, status: string | null, codigo: string | null) => {
     return useQuery({
-        queryKey: ["managers", id_grupo, codigo, status],
-        queryFn: () => getManagersRequest(id_grupo, codigo, status),
-        enabled: !!id_grupo,
+        queryKey: ["managers", grupo_id, codigo, status],
+        queryFn: () => getManagersRequest(grupo_id, codigo, status),
+        enabled: !!grupo_id,
         retry: (failureCount, error) => {
 
             if (error instanceof Error && error.message.includes("404")) {

@@ -147,7 +147,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             //telefone: data.telefone.replace(/\D/g, ""),
             cep: data.cep.replace(/\D/g, ""),
             status: data.status,
-            empresa_id: isGestor ? parseInt(user?.empresa_id) : parseInt(data.empresa_id),
+            empresa_id: isGestor ? user?.empresa_id : parseInt(data.empresa_id),
             gestor_id: isGestor ? user?.id : parseInt(data.gestor_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda

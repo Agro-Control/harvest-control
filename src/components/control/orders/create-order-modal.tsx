@@ -45,6 +45,8 @@ import { useGetOperators } from "@/utils/hooks/useGetOperators";
 import { useGetMachines } from "@/utils/hooks/useGetMachines";
 import { useAuth } from "@/utils/hooks/useAuth";
 import SubmitButton from "@/components/submit-button";
+import { DatePicker } from "@/components/ui/date-picker";
+import { format } from "date-fns";
 
 
 interface createOrderProps {
@@ -52,6 +54,23 @@ interface createOrderProps {
 }
 
 type Form = z.infer<typeof createOrderSchema>;
+
+const addTimeToDate = (date: Date): Date => {
+    // Cria uma nova data baseada na data fornecida
+    const newDate = new Date(date);
+
+    // Obtém a hora, minuto e segundo atuais
+    const currentHour = new Date().getHours();
+    const currentMinute = new Date().getMinutes();
+    const currentSecond = new Date().getSeconds();
+
+    // Define a hora, minuto e segundo atuais na nova data
+    newDate.setHours(currentHour);
+    newDate.setMinutes(currentMinute);
+    newDate.setSeconds(currentSecond);
+
+    return newDate;
+};
 
 const CreateOrderModal = ({ children }: createOrderProps) => {
     const auth = useAuth();
@@ -75,7 +94,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             id_unidade: "",
             id_gestor: "",
             id_maquina: "",
-            id_empresa: isGestor ? user.empresa_id : "",
+            id_empresa: isGestor ? user.empresa_id.toString() : "",
             operador_manha: "",
             operador_tarde: "",
             operador_noturno: "",
@@ -85,6 +104,8 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     const { getValues, setValue, watch } = form;
     const watchIdEmpresa = watch("id_empresa");
     const watchIdUnit = watch("id_unidade");
+    const watchDataIncio = watch("data_inicio");
+    const watchDataFim = watch("data_fim");
 
 
     const {
@@ -96,10 +117,9 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
 
-
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), null, "A");
+    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), "A", null);
 
     const {
         data: { talhoes = [] } = {}
@@ -134,7 +154,9 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             setEnableFlag(false);
             setDerivedEnableFlag(false);
         }
-    }, [empresas, unidades, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
+        console.log("inicio  " + watchDataIncio);
+        console.log("fim  " + watchDataFim);
+    }, [empresas, unidades, watchDataIncio, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
 
 
 
@@ -181,13 +203,18 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     });
 
     const onHandleSubmit = (data: Form) => {
+        const startDate = addTimeToDate(data.data_inicio);
+        const endDate = addTimeToDate(data.data_fim);
+
         const formattedData = {
             status: "A",
-            id_empresa: parseInt(data.id_empresa!),
-            id_talhao: parseInt(data.id_talhao!),
-            id_gestor: user.id,
-            id_unidade: parseInt(data.id_unidade!),
-            id_maquina: parseInt(data.id_maquina!),
+            empresa_id: isGestor ? user.empresa_id : parseInt(data.id_empresa!),
+            talhao_id: parseInt(data.id_talhao!),
+            gestor_id: user.id,
+            unidade_id: parseInt(data.id_unidade!),
+            maquina_id: parseInt(data.id_maquina!),
+            data_inicio: format(startDate, 'yyyy-MM-dd HH:mm:ss'),
+            data_fim: format(endDate, 'yyyy-MM-dd HH:mm:ss'),
             velocidade_minima: parseFloat(data.velocidade_minima),
             velocidade_maxima: parseFloat(data.velocidade_maxima),
             rpm: parseInt(data.rpm),
@@ -242,7 +269,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                             control={form.control}
                             name="id_unidade"
                             render={({ field }) => (
-                                <FormItem className="col-span-2">
+                                <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
@@ -269,7 +296,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                             control={form.control}
                             name="id_maquina"
                             render={({ field }) => (
-                                <FormItem className="col-span-2">
+                                <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
@@ -287,6 +314,30 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 ))}
                                             </SelectContent>
                                         </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="data_inicio"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <DatePicker placeHolder={"Data de Início"} {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="data_fim"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <DatePicker placeHolder={"Data de Finalização"} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -453,19 +504,6 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                 </FormItem>
                             )}
                         />
-
-
-                        {/*    <FormField
-                            control={form.control}
-                            name="telefone"
-                            render={({field}) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input id="telefone" placeholder="Telefone da Empresa" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}*/}
 
 
                     </form>
