@@ -130,7 +130,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
             fabricante: data.fabricante!,
             modelo: data.modelo!,
             nome: data.nome!,
-            data_aquisicao: null, //format(data.data_aquisicao,'yyyy-MM-dd HH:mm:ss') ,
+            data_aquisicao: null, //format(data.data_aquisicao,'yy-MM-dd HH:mm:ss') ,
             status: null,
             capacidade_operacional: parseInt(data.capacidade_operacional!),
             unidade_id: parseInt(data.unidade_id),

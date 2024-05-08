@@ -1,18 +1,18 @@
 "use client";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import CreateUnitModal from "@/components/control/unit/create-unit-modal";
 import StatusCodeHandler from "@/components/status-code-handler";
 import LoadingAnimation from "@/components/loading-animation";
 import FilterInformation from "@/types/filter-information";
 import UnitRow from "@/components/control/unit/unit-row";
 import SearchBar from "@/components/control/search-bar";
-import {useGetUnits} from "@/utils/hooks/useGetUnits";
+import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import Filter from "@/components/control/filter";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Unidade from "@/types/unidade";
-import {useQueryState} from "nuqs";
+import { useQueryState } from "nuqs";
 import { AxiosError } from "axios";
-import { useEffect} from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import Empresa from "@/types/empresa";
@@ -22,8 +22,8 @@ import Empresa from "@/types/empresa";
 
 const statusFilter: FilterInformation = {
     filterItem: [
-        {value: "all"},
-        {value: "A"},
+        { value: "all" },
+        { value: "A" },
         {
             value: "I",
         },
@@ -32,28 +32,33 @@ const statusFilter: FilterInformation = {
 
 export default function Units() {
     const [query] = useQueryState("query");
-    const [status]= useQueryState("status");
+    const [status] = useQueryState("status");
     const [empresa] = useQueryState("Empresas");
+    const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user?.usuario;
     const isGestor = user?.tipo === "G";
-   
-    const {
-        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
+
 
     const {
-        data: {unidades = []} = {}, 
+        data: { empresas = [] } = {},
+        isError: isCompanyError,
+        refetch: refetchEmpresa,
+        // Objeto contendo a lista de empresas
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+
+    const {
+        data: { unidades = [] } = {},
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), status, query);
+    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id : parseInt(empresa!), status, query);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição
-    const isLoadingData = isLoading || isRefetching; 
+    const isLoadingData = isLoading || isRefetching;
 
     const companyFilter: FilterInformation = {
         filterItem: [
@@ -64,13 +69,21 @@ export default function Units() {
             })),
         ],
     };
-    
-    useEffect(() => {
-        refetch();
-    }, [query, status]);
 
-    
-    
+    useEffect(() => {
+        console.log(isCompanyError);
+        if (isCompanyError)
+            refetchEmpresa();
+        if (empresa != null && empresa != "" && empresa != undefined) {
+            setEnableFlag(true);
+        } else {
+            setEnableFlag(false);
+        }
+        refetch();
+    }, [empresa, query, status]);
+
+
+
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
             <div className="flex w-full flex-row ">
@@ -100,8 +113,8 @@ export default function Units() {
                         <TableHead>Ações</TableHead>
                     </TableRow>
                 </TableHeader>
-               
-        
+
+
                 {!isError &&
                     !isLoadingData &&
                     unidades.map((unidade: Unidade) => {
@@ -115,6 +128,7 @@ export default function Units() {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
+            {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas para exibir as unidades</div>}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="unit" error={error as AxiosError} />}
         </div>
     );

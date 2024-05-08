@@ -1,6 +1,15 @@
 import { z } from "zod";
 import { requiredStringField, optionalStringField } from "./reusableSchemes";
-;
+
+const isEndDateValid = (value: Date, context : any) => {
+    const startDate = context?.parent?.data_inicio; // Obtém a data de início do contexto
+    if (!startDate) return ; // Se a data de início não estiver definida, a validação passa
+    const endDate = new Date(value);
+    const nextDayStartDate = new Date(startDate);
+    nextDayStartDate.setDate(nextDayStartDate.getDate() + 1); // Adiciona um dia à data de início
+    return endDate > nextDayStartDate;
+};
+
 export const createOrderSchema = z.object({
     id_gestor: optionalStringField(255),
     id_talhao: requiredStringField(1, 255, "Selecione um Talhão").refine((value) => {
@@ -22,6 +31,16 @@ export const createOrderSchema = z.object({
         return value !== null && value !== undefined;
     }, {
         message: "Por favor, selecione uma Máquina",
+    }),
+    data_inicio: z.coerce.date().refine((value) => {
+        return value !== null && value !== undefined;
+    }, {
+        message: "Por favor, selecione uma Data de Início",
+    }),
+    data_fim: z.coerce.date().refine((data) => {
+        return data !== null && data !== undefined;
+    }, {
+        message: "A data de término deve ser maior em um dia do que a data de início",
     }),
     status: optionalStringField(255),
     operador_manha: requiredStringField(1, 255, "Selecione um Operador").refine((value) => {
@@ -66,6 +85,7 @@ export const createOrderSchema = z.object({
             message: "O RPM permitido é entre 1000 a 1500",
         },
     ),
-});
-
-
+}).refine((data) => data.data_fim > data.data_inicio, {
+    message: "A data final não deve ser menor que a inicial.",
+    path: ["data_fim"],
+  });

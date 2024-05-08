@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import GetOrdemDeServico from "@/types/get-ordem-de-servico";
 
-const getOrdersRequest = async (id_empresa: number | null, codigo: string | null, status: string | null) => {
+const getOrdersRequest = async (empresa_id: number | null, codigo: string | null, status: string | null) => {
   const { data } = await api.get<GetOrdemDeServico>("/ordens", {
     params: {
-      id_empresa: id_empresa,
+      empresa_id: empresa_id,
       codigo: codigo,
       status: status,
     },
@@ -13,10 +13,10 @@ const getOrdersRequest = async (id_empresa: number | null, codigo: string | null
   return data;
 };
 
-export const useGetOrders = (id_empresa: number | null, status: string | null, codigo: string | null) => {
+export const useGetOrders = (empresa_id: number | null, status: string | null, codigo: string | null) => {
   return useQuery({
-    queryKey: ["orders", id_empresa, codigo, status],
-    queryFn: () => getOrdersRequest(id_empresa, codigo, status),
+    queryKey: ["orders", empresa_id, codigo, status],
+    queryFn: () => getOrdersRequest(empresa_id, codigo, status),
     retry: (failureCount, error) => {
 
       if (error instanceof Error && error.message.includes("404")) {

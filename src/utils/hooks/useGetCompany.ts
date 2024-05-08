@@ -9,7 +9,7 @@ const getCompanyRequest = async (id: number | null) => {
 export const useGetCompany = (id: number | null) => {
     return useQuery({
         queryKey: ["company"],
-        enabled: false,
+        enabled: !!id, 
         queryFn: () => getCompanyRequest(id),
     });
 };

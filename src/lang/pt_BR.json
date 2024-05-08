@@ -59,6 +59,8 @@
     "company-error-404": "Não encontramos nenhuma empresa para sua busca.",
     "unit-error-404": "Não encontramos nenhuma unidade para sua busca.",
     "field-error-404": "Não encontramos nenhum talhão para sua busca",
+    "order-error-404": "Não encontramos nenhuma ordem para sua busca",
+    "machine-error-404": "Não encontramos nenhuma máquina para sua busca",
     "postLogin-error-422": "Email ou Senha incorretos",
     "postLogin-description-error-422": "Essas credenciais não estão cadastradas em nosso sistema.",
     "postLogin-error-401": "Email ou Senha incorretos",

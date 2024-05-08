@@ -105,6 +105,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             // Refetch na lista de empresas
             queryClient.refetchQueries({ queryKey: ["fields"], type: "active", exact: true });
             setOpen(false);
+            setEnableFlag(false);
             form.reset();
         },
         onError: (error: AxiosError) => {

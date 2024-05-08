@@ -1,27 +1,31 @@
 "use client";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import StatusCodeHandler from "@/components/status-code-handler";
 import LoadingAnimation from "@/components/loading-animation";
 import FilterInformation from "@/types/filter-information";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { AxiosError } from "axios";
-import {useQueryState} from "nuqs";
-import { useEffect} from "react";
+import { useQueryState } from "nuqs";
+import { useEffect, useState } from "react";
 import { useGetOrders } from "@/utils/hooks/useGetOrders";
 import OrdemServico from "@/types/ordem-de-servico";
 import OrdersRow from "@/components/control/orders/orders-row";
 import CreateOrderModal from "@/components/control/orders/create-order-modal";
 import { useAuth } from "@/utils/hooks/useAuth";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
+import { useGetUnits } from "@/utils/hooks/useGetUnits";
+import Empresa from "@/types/empresa";
+import Unidade from "@/types/unidade";
 
 
 const statusFilter: FilterInformation = {
     filterItem: [
-        {value: "all"},
-        {value: "A"},
-        {value: "E"},
-        {value: "C"},
+        { value: "all" },
+        { value: "A" },
+        { value: "E" },
+        { value: "C" },
         {
             value: "F",
         },
@@ -30,27 +34,54 @@ const statusFilter: FilterInformation = {
 
 export default function Orders() {
     const [query] = useQueryState("query");
-    const [status]= useQueryState("status");
+    const [status] = useQueryState("status");
+    const [empresa] = useQueryState("Empresas");
+    const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user?.usuario;
     const isGestor = user?.tipo === "G";
-    
+
+
     const {
-        data: {ordens_servico = []} = {}, 
+        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
+        isError: isCompanyError,
+        refetch: refetchCompanies,
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+
+    const {
+        data: { ordens_servico = [] } = {},
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetOrders(isGestor ? parseInt(user.empresa_id) : null, status, query);
+    } = useGetOrders(isGestor ? user.empresa_id : parseInt(empresa!), status, query);
+
+    const companyFilter: FilterInformation = {
+        filterItem: [
+            { value: "all" },
+            ...empresas.map((empresa: Empresa) => ({
+                value: empresa.id?.toString()!,
+                label: empresa.nome,
+            })),
+        ],
+    };
+
 
 
     // Variavel que indica se está carregando ou refazendo a requisição
-    const isLoadingData = isLoading || isRefetching; 
+    const isLoadingData = isLoading || isRefetching;
 
     useEffect(() => {
+        if (isCompanyError)
+            refetchCompanies();
+        if (empresa != null && empresa != "" && empresa != undefined) {
+            setEnableFlag(true);
+        } else {
+            setEnableFlag(false);
+        }
         refetch();
-    }, [query, status]);
+    }, [empresa, query, status]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -60,6 +91,7 @@ export default function Orders() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
+                {!isGestor && <Filter filter={companyFilter} paramType="Empresas" />}
                 <CreateOrderModal>
                     <Button
                         type="button"
@@ -81,8 +113,8 @@ export default function Orders() {
                         <TableHead>Ações</TableHead>
                     </TableRow>
                 </TableHeader>
-               
-        
+
+
                 {!isError &&
                     !isLoadingData &&
                     ordens_servico.map((ordem: OrdemServico) => {
@@ -95,8 +127,9 @@ export default function Orders() {
             </Table>
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
+            {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas para exibir as ordens</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
-            {isError && !isLoadingData && <StatusCodeHandler requisitionType="field" error={error as AxiosError} />}
+            {isError && !isLoadingData && <StatusCodeHandler requisitionType="order" error={error as AxiosError} />}
         </div>
     );
 }

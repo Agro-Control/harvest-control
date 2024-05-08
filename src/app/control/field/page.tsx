@@ -1,18 +1,18 @@
 "use client";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import CreateFieldModal from "@/components/control/field/create-field-modal";
 import StatusCodeHandler from "@/components/status-code-handler";
 import LoadingAnimation from "@/components/loading-animation";
 import FieldRow from "@/components/control/field/field-row";
 import FilterInformation from "@/types/filter-information";
-import {useGetFields} from "@/utils/hooks/useGetFields";
+import { useGetFields } from "@/utils/hooks/useGetFields";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Talhao from "@/types/talhao";
 import { AxiosError } from "axios";
-import {useQueryState} from "nuqs";
-import { useEffect} from "react";
+import { useQueryState } from "nuqs";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { useGetUnits } from "@/utils/hooks/useGetUnits";
@@ -22,8 +22,8 @@ import Empresa from "@/types/empresa";
 
 const statusFilter: FilterInformation = {
     filterItem: [
-        {value: "all"},
-        {value: "A"},
+        { value: "all" },
+        { value: "A" },
         {
             value: "I",
         },
@@ -32,26 +32,30 @@ const statusFilter: FilterInformation = {
 
 export default function Field() {
     const [query] = useQueryState("query");
-    const [status]= useQueryState("status");
+    const [status] = useQueryState("status");
     const [unidade] = useQueryState("Unidades");
     const [empresa] = useQueryState("Empresas");
+    const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user?.usuario;
     const isGestor = user?.tipo === "G";
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
+        isError: isCompanyError,
+        refetch: refetchCompanies,
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
         isLoading: isLoadingUnits, // Booleano que indica se está carregando
-        refetch: refectchUnits, // Função que faz a requisição novamente
-    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)),"A", null);
+        refetch: refetchUnits, // Função que faz a requisição novamente
+    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id : parseInt(empresa!), null, null);
+
 
 
     const {
-        data: {talhoes = []} = {}, 
+        data: { talhoes = [] } = {},
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
@@ -78,11 +82,20 @@ export default function Field() {
         ],
     };
     // Variavel que indica se está carregando ou refazendo a requisição
-    const isLoadingData = isLoading || isRefetching; 
+    const isLoadingData = isLoading || isRefetching;
 
     useEffect(() => {
+        console.log(enableFlag);
+        if (isCompanyError)
+            refetchCompanies();
+        if (empresa != null && empresa != "" && empresa != undefined) {
+            setEnableFlag(true);
+            refetchUnits();
+        } else {
+            setEnableFlag(false);
+        }
         refetch();
-    }, [query, status]);
+    }, [empresa, unidade, query, status]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -113,8 +126,8 @@ export default function Field() {
                         <TableHead>Ações</TableHead>
                     </TableRow>
                 </TableHeader>
-               
-        
+
+
                 {!isError &&
                     !isLoadingData &&
                     talhoes.map((talhao: Talhao) => {
@@ -127,6 +140,7 @@ export default function Field() {
             </Table>
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
+            {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir os talhões</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="field" error={error as AxiosError} />}
         </div>

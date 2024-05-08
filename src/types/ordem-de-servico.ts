@@ -6,11 +6,11 @@ interface OrdemServico {
     velocidade_minima?: number;
     velocidade_maxima?: number;
     rpm?: number;
-    id_gestor?: number;
-    id_talhao?: number;
-    id_unidade?: number;
-    id_empresa?: number;
-    id_maquina?: number;
+    gestor_id?: number;
+    talhao_id?: number;
+    unidade_id?: number;
+    empresa_id?: number;
+    maquina_id?: number;
     operadores_ids?: number[];
   }
   
