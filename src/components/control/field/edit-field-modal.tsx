@@ -136,7 +136,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Editar Talhão</DialogTitle>
                     <DialogDescription>Modifique as informações para alterar um Talhão.</DialogDescription>

@@ -137,7 +137,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar Máquina</DialogTitle>
                     <DialogDescription>Insira as informações para criar uma Máquina.</DialogDescription>
