@@ -44,7 +44,7 @@ export default function Companies() {
     const auth = useAuth();
     const user = auth.user?.usuario;
     const isGestor = user?.tipo === "G";
-    console.log("gestor" + isGestor);
+    const isAdmin = user?.tipo === "A";
     // Hook que pega os parametros da URL
     const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
     const [estado] = useQueryState("estado"); // estado é o nome do parametro que está na URL - Usado para o filtro de estado.
@@ -96,9 +96,9 @@ export default function Companies() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                 {!isGestor && <Filter filter={estadoFilter} paramType="estado" /> }
-                {!isGestor && <Filter filter={statusFilter} paramType="status" /> }
-                {!isGestor && <CreateCompanyModal>
+                 {isAdmin && <Filter filter={estadoFilter} paramType="estado" /> }
+                {isAdmin && <Filter filter={statusFilter} paramType="status" /> }
+                {isAdmin && <CreateCompanyModal>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
