@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     const isProtectedRoute = pathname.startsWith('/control');
     const isPublicRoute = publicRoutes.includes(pathname)
 
-    const cookie = cookies().get('user')?.value
+    const cookie = cookies().get('user_session')?.value
 
 
     if (rootPathname) {
