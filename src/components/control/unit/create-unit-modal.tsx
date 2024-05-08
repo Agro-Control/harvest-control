@@ -56,7 +56,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
 
     const form = useForm<Form>({

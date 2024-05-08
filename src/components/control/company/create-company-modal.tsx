@@ -56,7 +56,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
     const [open, setOpen] = useState(false);
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     // Hook que inicia a toast 
     const { toast } = useToast();

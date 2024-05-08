@@ -51,7 +51,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
         isLoading,
     } = useAuth();
 
-    const isGestor = user?.usuario.tipo === "G";
+    const isGestor = user?.tipo === "G";
 
     const form = useForm<z.infer<typeof editFieldSchema>>({
         resolver: zodResolver(editFieldSchema),
@@ -69,11 +69,11 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
     const watchIdEmpresa = watch("empresa_id");
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.usuario.grupo_id!) : null, null, null, null, "A");
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.usuario.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);
+    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);
 
 
     const [statusOptions] = useState<{ value: string }[]>([

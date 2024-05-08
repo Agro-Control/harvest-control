@@ -52,7 +52,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [statusOptions, setStatusOptions] = useState<{ value: string; }[]>([

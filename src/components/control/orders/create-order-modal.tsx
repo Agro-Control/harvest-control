@@ -68,7 +68,7 @@ const addTimeToDate = (date: Date): Date => {
 
 const CreateOrderModal = ({ children }: createOrderProps) => {
     const auth = useAuth();
-    const user = auth.user?.usuario!;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
@@ -204,7 +204,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             status: "A",
             empresa_id: isGestor ? user.empresa_id : parseInt(data.id_empresa!),
             talhao_id: parseInt(data.id_talhao!),
-            gestor_id: user.id,
+            gestor_id: user?.id,
             unidade_id: parseInt(data.id_unidade!),
             maquina_id: parseInt(data.id_maquina!),
             data_inicio: format(startDate, 'yyyy-MM-dd HH:mm:ss'),

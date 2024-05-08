@@ -51,7 +51,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
 

@@ -13,8 +13,8 @@ export default function Home() {
 
     
     const {user} = useAuth();
-    const companyId = user && user.usuario.empresa_id;
-    const userName = user && user.usuario.nome;
+    const companyId = user && user.empresa_id;
+    const userName = user && user.nome;
     const { data: company, refetch} = useGetCompany(companyId);
 
     useEffect(() => {

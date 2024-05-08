@@ -4,15 +4,15 @@ import EditProfileModal from "./edit-profile-modal";
 import logoRounded from "@/assets/logo-rounded.svg";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useTranslation} from "react-i18next";
-import User from "@/types/user";
+import { UserData } from "@/types/user";
 
 interface UserInformationCardProps {
-    user: User | null;
+    user: UserData | null;
 }
 
 const UserInformationCard = ({user}: UserInformationCardProps) => {
     const {t} = useTranslation();
-    const userData = user ? user.usuario : null;
+    const userData = user ? user : null;
     const phone = userData?.telefone?.replace(/\D/g, "");
     const formattedPhone = phone
         ? `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7, 11)}`

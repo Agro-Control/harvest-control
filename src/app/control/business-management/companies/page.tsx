@@ -42,7 +42,7 @@ const statusFilter: FilterInformation = {
 //TODO: solicitar pra trocar codigo pra nome no backend
 export default function Companies() {
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     const isAdmin = user?.tipo === "A";
     // Hook que pega os parametros da URL
