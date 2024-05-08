@@ -36,12 +36,27 @@ interface EditCompanyProps {
 
 const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
 
+    const formatPhone = (phone: string | undefined) => {
+        if (!phone) return 'Não informado';
+        const phoneStr = String(phone).replace(/\D/g, '');
+        return `(${phoneStr.slice(0, 2)}) ${phoneStr.slice(2, 7)}-${phoneStr.slice(7, 11)}`;
+    }
+    const formatCep = (cep: string | undefined) => {
+        if (!cep) return 'Não informado';
+        const cepStr = String(cep).replace(/\D/g, '');
+        return `${cepStr.slice(0, 5)}-${cepStr.slice(5, 8)}`;
+    }
+    const formatCnpj = (cnpj: string | undefined) => {
+        if (!cnpj) return 'Não informado';
+        const cnpjStr = String(cnpj).replace(/\D/g, '');
+        return `${cnpjStr.slice(0, 2)}.${cnpjStr.slice(2, 5)}.${cnpjStr.slice(5, 8)}/${cnpjStr.slice(8, 12)}-${cnpjStr.slice(12, 14)}`;
+    }
 
 
     return (
         <Dialog >
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[450px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Empresa</DialogTitle>
                     <DialogDescription>Você está visualizando as informações da Empresa.</DialogDescription>
@@ -52,17 +67,19 @@ const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
                         <Input Icon={Buildings} disabled placeholder="Nome" value={empresa.nome || "Não Informado"} />
                     </div>
 
-                    <Input
+                    <MaskedInput
                         disabled
                         Icon={IdentificationCard}
                         className="col-span-1 "
                         id="cnpj"
                         placeholder="CNPJ"
-                        value={empresa.cnpj || "Não Informado"}
+                        value={formatCnpj(empresa.cnpj)}
+                        maskInput={{ input: InputMask, mask: "__.___.___/____-__" }}
                     />
 
                     <MaskedInput
-                        value={empresa.telefone}
+                        disabled
+                        value={formatPhone(empresa.telefone)}
                         Icon={Phone}
                         placeholder="Telefone da Empresa"
                         maskInput={{
@@ -71,13 +88,17 @@ const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
                         }}
                     />
 
-                    <Input
+                    <MaskedInput
                         disabled
                         Icon={NavigationArrow}
                         className="col-span-1 "
                         id="CEP"
                         placeholder="CEP"
-                        value={empresa.cep || "Não Informado"}
+                        value={formatCep(empresa.cep)}
+                        maskInput={{
+                            input: InputMask,
+                            mask: "_____-___",
+                        }}
                     />
 
                     <Input

@@ -153,7 +153,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[450px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Editar Empresa</DialogTitle>
                     <DialogDescription>Insira as informações para alterar a empresa.</DialogDescription>
@@ -351,7 +351,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                                 form.setValue("status", value);
                                             }}
                                         >
-                                            <SelectTrigger className="h-10 w-[180px]">
+                                            <SelectTrigger className="h-10 w-full">
                                                 <SelectValue placeholder="Selecione o Status" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>

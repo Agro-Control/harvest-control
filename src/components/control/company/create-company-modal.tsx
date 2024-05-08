@@ -182,7 +182,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[450px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar Empresa</DialogTitle>
                     <DialogDescription>Insira as informações para criar uma empresa.</DialogDescription>
@@ -230,7 +230,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
                             control={form.control}
                             name="nome"
                             render={({ field }) => (
-                                <FormItem className="col-span-1">
+                                <FormItem className="col-span-2">
                                     <FormControl>
                                         <Input
                                             Icon={Buildings}
