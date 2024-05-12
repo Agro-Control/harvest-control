@@ -1,11 +1,11 @@
 import { Action } from "./actions";
 import { Dispatch } from "react";
-import User from "@/types/user";
+import { UserData } from "@/types/user";
 
 
 export const factory = (dispatch: Dispatch<Action>) => {
     return {
-        setUser: (payload: User | null) => {
+        setUser: (payload: UserData | null) => {
             dispatch({ type: "SET_USER", payload });
             dispatch({ type: "SET_LOADING", payload: false });
         },

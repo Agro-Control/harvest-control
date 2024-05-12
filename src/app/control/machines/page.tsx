@@ -39,7 +39,7 @@ const Machines = () => {
     const [empresa] = useQueryState("Empresas");
     const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
 
     const {

@@ -46,7 +46,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
         user,
         isLoading,
     } = useAuth();
-    const isGestor = user?.usuario.tipo === "G";
+    const isGestor = user?.tipo === "G";
 
     const [statusOptions] = useState<{ value: string }[]>([
         { value: 'A' },
@@ -74,14 +74,14 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
 
    /* const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? parseInt(user.usuario.empresa_id) : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);*/
+    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);*/
 
     const createMachineRequest = async (putData: Maquina | null) => {
         const { data } = await api.put("/maquinas", putData);
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createMachineRequest,
         onSuccess: () => {
             toast({
@@ -126,7 +126,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
             data_aquisicao: maquina.data_aquisicao, //format(data.data_aquisicao,'yyyy-MM-dd HH:mm:ss') ,
             status: data.status!,
             capacidade_operacional: parseInt(data.capacidade_operacional!),
-            unidade_id: isGestor ? parseInt(user.usuario.unidade_id) : parseInt(data.unidade_id),
+            unidade_id: isGestor ? parseInt(user?.unidade_id) : parseInt(data.unidade_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -137,7 +137,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar Máquina</DialogTitle>
                     <DialogDescription>Insira as informações para criar uma Máquina.</DialogDescription>

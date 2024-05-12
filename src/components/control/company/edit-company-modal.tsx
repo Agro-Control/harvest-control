@@ -51,7 +51,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
 
@@ -91,7 +91,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     };
 
     // Hook do react query para fazer a validação se foi sucesso ou se a requisição deu problema
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createCompanyRequest,
         onSuccess: () => {
             toast({
@@ -153,7 +153,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[450px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Editar Empresa</DialogTitle>
                     <DialogDescription>Insira as informações para alterar a empresa.</DialogDescription>
@@ -351,7 +351,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                                 form.setValue("status", value);
                                             }}
                                         >
-                                            <SelectTrigger className="h-10 w-[180px]">
+                                            <SelectTrigger className="h-10 w-full">
                                                 <SelectValue placeholder="Selecione o Status" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>

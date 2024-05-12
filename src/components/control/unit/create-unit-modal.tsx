@@ -56,7 +56,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
 
     const form = useForm<Form>({
@@ -105,7 +105,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createUnitRequest,
         onSuccess: () => {
             toast({
@@ -158,7 +158,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar Unidade</DialogTitle>
                     <DialogDescription>Insira as informações para criar uma Unidade.</DialogDescription>

@@ -1,16 +1,18 @@
 import {createContext, ReactNode, useEffect, useReducer, useRef} from "react";
+import useCookie from "@/utils/hooks/useCookies";
+import {UserData} from "@/types/user";
 import {factory} from "./factory";
 import {reducer} from "./reducer";
-import User from "@/types/user";
-import useCookie from "@/utils/hooks/useCookies";
+import {api} from "@/lib/api";
+import {jwtDecode, JwtPayload} from "jwt-decode";
 
 export type AuthState = {
-    user: User | null;
+    user: UserData | null;
     isLoading: boolean;
 };
 
 export type AuthActions = {
-    setUser: (user: User | null) => void;
+    setUser: (user: UserData | null) => void;
 };
 
 const initialState: AuthState = {
@@ -22,6 +24,11 @@ type AuthContextProviderProps = {
     children: ReactNode;
 };
 
+interface UserSessionJwt extends JwtPayload {
+    tipo: string;
+    id: number;
+}
+
 export const AuthContext = createContext<[AuthState, AuthActions] | null>(null);
 
 export function AuthContextProvider({children}: AuthContextProviderProps) {
@@ -30,25 +37,24 @@ export function AuthContextProvider({children}: AuthContextProviderProps) {
     const actions = useRef(factory(dispatch));
     const {setUser} = actions.current;
     const {user} = state;
+    const token = getCookie("user_session");
+
+    const userId = token && jwtDecode<UserSessionJwt>(token).id;
+
+    const getUserSession = async (id: number): Promise<UserData> => {
+        const {data} = await api.get(`/usersession/${id}`);
+        return data;
+    };
 
     useEffect(() => {
-        if (!user) {
-            const getFromCookie = async () => {
-                const existingUser = getCookie("user");
-                if (existingUser) {
-                    try {
-                        setUser(JSON.parse(existingUser));
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-            };
-            getFromCookie();
+        if (user) return;
+        if (userId) {
+            getUserSession(userId).then((userSession) => setUser(userSession));
         }
     }, []);
 
     useEffect(() => {
-        console.log(user);
+        console.log("Usuario Logado: ", user);
     }, [user]);
 
     return <AuthContext.Provider value={[state, actions.current]}>{children}</AuthContext.Provider>;

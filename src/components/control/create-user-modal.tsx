@@ -52,7 +52,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar usuário</DialogTitle>
                     <DialogDescription>Insira as informações do novo usuário.</DialogDescription>

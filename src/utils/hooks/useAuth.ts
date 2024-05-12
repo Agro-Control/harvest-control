@@ -1,7 +1,7 @@
 import { AuthContext } from "@/contexts/Auth";
 import useCookie from "./useCookies";
 import { useContext } from "react";
-import User from "@/types/user";
+import User, { UserData } from "@/types/user";
 
 
 export const useAuth = () => {
@@ -14,12 +14,13 @@ export const useAuth = () => {
     const { user, isLoading } = authData[0];
     
     const addUser = (user: User | null) => {
-        authData[1].setUser(user);
-        setCookie("user", JSON.stringify(user));
+        if(!user) return;
+        authData[1].setUser(user?.usuario);
+        setCookie("user_session", JSON.stringify(user?.token));
     }
     
     const removeUser = () => {
-        removeCookie("user");
+        removeCookie("user_session");
         authData[1].setUser(null);
         window.location.href = "/login";
     }

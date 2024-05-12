@@ -20,4 +20,5 @@ interface User {
     token: string;
 }
 
+
 export default User;

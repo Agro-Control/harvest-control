@@ -52,7 +52,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [statusOptions, setStatusOptions] = useState<{ value: string; }[]>([
@@ -96,7 +96,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: editUnitRequest,
         onSuccess: () => {
             toast({
@@ -149,7 +149,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Editar Unidade</DialogTitle>
                     <DialogDescription>Modifique as informações para alterar a Unidade.</DialogDescription>

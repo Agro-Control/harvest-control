@@ -56,7 +56,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
         isLoading: isLoadingAuth,
     } = useAuth();
 
-    const isGestor = user?.usuario.tipo === "G";
+    const isGestor = user?.tipo === "G";
 
     const form = useForm<z.infer<typeof editFieldSchema>>({
         resolver: zodResolver(editFieldSchema),
@@ -76,7 +76,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
     
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? parseInt(user.usuario.empresa_id) : (isNaN(parseInt(unidade!)) ? null : parseInt(unidade!)),  null, null);*/
+    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : (isNaN(parseInt(unidade!)) ? null : parseInt(unidade!)),  null, null);*/
 
 
 
@@ -85,7 +85,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: editFieldRequest,
         onSuccess: () => {
             toast({
@@ -136,7 +136,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Editar Talhão</DialogTitle>
                     <DialogDescription>Modifique as informações para alterar um Talhão.</DialogDescription>

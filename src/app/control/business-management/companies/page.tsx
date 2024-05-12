@@ -42,8 +42,8 @@ const statusFilter: FilterInformation = {
 //TODO: solicitar pra trocar codigo pra nome no backend
 export default function Companies() {
     const auth = useAuth();
-    const user = auth.user?.usuario;
-    const isAdm = user?.tipo === "A";
+    const user = auth.user;
+    const isAdmin = user?.tipo === "A";
     // Hook que pega os parametros da URL
     const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
     const [estado] = useQueryState("estado"); // estado é o nome do parametro que está na URL - Usado para o filtro de estado.
@@ -59,7 +59,7 @@ export default function Companies() {
         isLoading: isLoadingEmpresa,
         isRefetching: isRefetchingEmpresa,
         refetch: refetchEmpresa,
-    } = useGetCompany(!isAdm ? user?.empresa_id! : null);
+    } = useGetCompany(!isAdmin ? user?.empresa_id! : null);
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
@@ -68,7 +68,7 @@ export default function Companies() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isAdm ? true : false, isAdm ? parseInt(user?.grupo_id!) : null, estado, query, status);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, estado, query, status);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição
@@ -77,7 +77,7 @@ export default function Companies() {
 
     // Hook que refaz a requisição toda vez que os parametros da URL mudam - Quando troca filtro ou busca
     useEffect(() => {
-        if (isAdm) {
+        if (isAdmin) {
             refetch();
         } else {
             refetchEmpresa();
@@ -94,9 +94,9 @@ export default function Companies() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                 {isAdm && <Filter filter={estadoFilter} paramType="estado" /> }
-                {isAdm && <Filter filter={statusFilter} paramType="status" /> }
-                {isAdm && <CreateCompanyModal>
+                 {isAdmin && <Filter filter={estadoFilter} paramType="estado" /> }
+                {isAdmin && <Filter filter={statusFilter} paramType="status" /> }
+                {isAdmin && <CreateCompanyModal>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
@@ -121,11 +121,11 @@ export default function Companies() {
                 {/* Renderiza a lista de empresas SE não houver erro e nem estiver carregando  */}
                 <TableBody>
                     {!isLoadingEmpresaData &&
-                        !isErrorEmpresa && !isAdm &&
+                        !isErrorEmpresa && !isAdmin &&
                         <CompanyRow key={empresa.id} empresa={empresa} />
                     }
                     {!isError &&
-                        !isLoadingData && isAdm &&
+                        !isLoadingData && isAdmin &&
 
                         empresas.map((empresa: Empresa) => {
                             return (
@@ -138,7 +138,7 @@ export default function Companies() {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData || isLoadingEmpresa && <LoadingAnimation />}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
-            {isAdm && isError && !isLoadingData && <StatusCodeHandler requisitionType="company" error={error as AxiosError} />}
+            {isAdmin && isError && !isLoadingData && <StatusCodeHandler requisitionType="company" error={error as AxiosError} />}
         </div>
     );
 }

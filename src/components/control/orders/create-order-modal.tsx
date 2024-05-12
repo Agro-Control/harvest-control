@@ -5,7 +5,6 @@ import {
     Truck,
     MapPin,
     Gauge,
-    IdentificationBadge,
     Sun,
     SunHorizon,
     Moon
@@ -21,32 +20,27 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { editUnitSchema } from "@/utils/validations/editUnitSchema";
-import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { handleUnitCnpjData } from "@/utils/handleCnpjData";
-import { ReactNode, useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { InputMask } from "@react-input/mask";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useToast } from "@/components/ui/use-toast";
-import { api } from "@/lib/api";
-import { AxiosError } from "axios";
-import { MaskedInput } from "@/components/ui/masked-input";
-import { useTranslation } from "react-i18next";
-import OrdemServico from "@/types/ordem-de-servico";
 import { createOrderSchema } from "@/utils/validations/createOrderSchema";
-import { useGetUnits } from "@/utils/hooks/useGetUnits";
-import { useGetFields } from "@/utils/hooks/useGetFields";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { useGetOperators } from "@/utils/hooks/useGetOperators";
 import { useGetMachines } from "@/utils/hooks/useGetMachines";
-import { useAuth } from "@/utils/hooks/useAuth";
-import SubmitButton from "@/components/submit-button";
+import { useGetFields } from "@/utils/hooks/useGetFields";
 import { DatePicker } from "@/components/ui/date-picker";
+import { useGetUnits } from "@/utils/hooks/useGetUnits";
+import { ReactNode, useEffect, useState } from "react";
+import SubmitButton from "@/components/submit-button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/components/ui/use-toast";
+import OrdemServico from "@/types/ordem-de-servico";
+import { useAuth } from "@/utils/hooks/useAuth";
+import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { AxiosError } from "axios";
 import { format } from "date-fns";
+import { api } from "@/lib/api";
+import { z } from "zod";
 
 
 interface createOrderProps {
@@ -74,7 +68,7 @@ const addTimeToDate = (date: Date): Date => {
 
 const CreateOrderModal = ({ children }: createOrderProps) => {
     const auth = useAuth();
-    const user = auth.user?.usuario!;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
@@ -165,7 +159,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createOrderRequest,
         onSuccess: () => {
             toast({
@@ -210,7 +204,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             status: "A",
             empresa_id: isGestor ? user.empresa_id : parseInt(data.id_empresa!),
             talhao_id: parseInt(data.id_talhao!),
-            gestor_id: user.id,
+            gestor_id: user?.id,
             unidade_id: parseInt(data.id_unidade!),
             maquina_id: parseInt(data.id_maquina!),
             data_inicio: format(startDate, 'yyyy-MM-dd HH:mm:ss'),
@@ -231,7 +225,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar Ordem</DialogTitle>
                     <DialogDescription>Insira as informações para criar uma Ordem.</DialogDescription>

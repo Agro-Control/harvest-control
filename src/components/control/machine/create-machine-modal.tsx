@@ -47,7 +47,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
         user,
         isLoading,
     } = useAuth();
-    const isGestor = user?.usuario.tipo === "G";
+    const isGestor = user?.tipo === "G";
 
     const [statusOptions] = useState<{ value: string }[]>([
         { value: 'A' },
@@ -64,7 +64,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
             capacidade_operacional: "",
             empresa_id: "undefined",
             //   data_aquisicao: new Date(),
-            unidade_id: isGestor ? user.usuario.unidade_id : "",
+            unidade_id: isGestor ? user.unidade_id : "",
         },
     });
     const { getValues, setValue, watch } = form;
@@ -73,7 +73,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.usuario.grupo_id!) : null, null, null, null, "A");
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
 
     useEffect(() => {
         console.log(watchIdUnidade);
@@ -81,14 +81,14 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? user.usuario.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), null, null);
+    } = useGetUnits(true, isGestor ? user.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), null, null);
 
     const createMachineRequest = async (postData: Maquina | null) => {
         const { data } = await api.post("/maquinas", postData);
         return data;
     };
 
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createMachineRequest,
         onSuccess: () => {
             toast({
@@ -144,7 +144,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar Máquina</DialogTitle>
                     <DialogDescription>Insira as informações para criar uma Máquina.</DialogDescription>

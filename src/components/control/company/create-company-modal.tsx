@@ -24,6 +24,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createCompanySchema } from "@/utils/validations/createCompanySchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MaskedInput } from "@/components/ui/masked-input";
@@ -42,7 +43,6 @@ import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 import { z } from "zod";
 import { useAuth } from "@/utils/hooks/useAuth";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGetManagers } from "@/utils/hooks/useGetManagers";
 
 interface CreateCompanyProps {
@@ -56,7 +56,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
     const [open, setOpen] = useState(false);
     const auth = useAuth();
-    const user = auth.user?.usuario;
+    const user = auth.user;
     const isGestor = user?.tipo === "G";
     // Hook que inicia a toast 
     const { toast } = useToast();
@@ -126,7 +126,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     };
 
     // Hook do react query para fazer a validação se foi sucesso ou se a requisição deu problema
-    const { mutate, isPending, variables } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createCompanyRequest,
         onSuccess: () => {
             toast({
@@ -182,7 +182,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[450px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar Empresa</DialogTitle>
                     <DialogDescription>Insira as informações para criar uma empresa.</DialogDescription>
@@ -230,7 +230,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
                             control={form.control}
                             name="nome"
                             render={({ field }) => (
-                                <FormItem className="col-span-1">
+                                <FormItem className="col-span-2">
                                     <FormControl>
                                         <Input
                                             Icon={Buildings}

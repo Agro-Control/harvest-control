@@ -96,7 +96,7 @@ const EditUserModal = ({children, userInformation}: EditUserProps) => {
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Editar usuário</DialogTitle>
                     <DialogDescription>Insira as informações para alterar o usuário.</DialogDescription>
