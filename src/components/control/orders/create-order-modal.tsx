@@ -115,11 +115,11 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, "A");
 
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), "A", null);
+    } = useGetUnits(enableFlag, isGestor ? user.empresa_id : parseInt(watchIdEmpresa!), "A", null);
 
     const {
         data: { talhoes = [] } = {}
@@ -238,7 +238,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onHandleSubmit)} id="create-order-form" className="grid grid-cols-2 gap-4 py-4">
-                        <FormField
+                        {!isGestor && <FormField
                             control={form.control}
                             name="id_empresa"
                             render={({ field }) => (
@@ -264,7 +264,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />}
                         <FormField
                             control={form.control}
                             name="id_unidade"
@@ -479,7 +479,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                         <Input
                                             Icon={Gauge}
                                             id="velocidade_minima"
-                                            placeholder="Velociadade Mínima"
+                                            placeholder="Velocidade Mínima"
                                             {...field}
                                         />
                                     </FormControl>

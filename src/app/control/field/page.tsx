@@ -44,7 +44,7 @@ export default function Field() {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         isError: isCompanyError,
         refetch: refetchCompanies,
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
@@ -141,6 +141,7 @@ export default function Field() {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
             {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir os talhões</div>}
+            {isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir os talhões</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="field" error={error as AxiosError} />}
         </div>

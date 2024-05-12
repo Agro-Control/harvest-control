@@ -46,13 +46,13 @@ const Machines = () => {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         isError: isCompanyError,
         refetch: refetchCompanies,
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
         isLoading: isLoadingUnits, // Booleano que indica se está carregando
         refetch: refetchUnits, // Função que faz a requisição novamente
-    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id :  parseInt(empresa!), status, query);
+    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id :  parseInt(empresa!), null, null);
 
 
     const {
@@ -62,7 +62,7 @@ const Machines = () => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetMachines(true, parseInt(unidade!), status, query);
+    } = useGetMachines(enableFlag, parseInt(unidade!), status, query);
 
     const companyFilter: FilterInformation = {
         filterItem: [
@@ -90,10 +90,15 @@ const Machines = () => {
         if (empresa != null && empresa != "" && empresa != undefined) {
             setEnableFlag(true);
             refetchUnits();
+        } 
+        else if (unidade != null && unidade != "" && unidade != undefined){
+            setEnableFlag(true);
+            refetch();
         } else {
             setEnableFlag(false);
         }
-        refetch();
+    
+        
 
 
     }, [empresa, unidade, query, status]);
@@ -145,6 +150,7 @@ const Machines = () => {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoading && <LoadingAnimation />}
             {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir as máquinas</div>}
+            {isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir as máquinas</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoading && <StatusCodeHandler requisitionType="machine" error={error as AxiosError} />}
         </div>

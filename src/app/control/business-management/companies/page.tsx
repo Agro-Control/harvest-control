@@ -43,12 +43,10 @@ const statusFilter: FilterInformation = {
 export default function Companies() {
     const auth = useAuth();
     const user = auth.user?.usuario;
-    const isGestor = user?.tipo === "G";
-    console.log("gestor" + isGestor);
+    const isAdm = user?.tipo === "A";
     // Hook que pega os parametros da URL
     const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
     const [estado] = useQueryState("estado"); // estado é o nome do parametro que está na URL - Usado para o filtro de estado.
-    const [cidade] = useQueryState("cidade"); // cidade é o nome do parametro que está na URL - Não está sendo usado
     const [status] = useQueryState("status"); // status é o nome do parametro que está na URL - Usado para filtrar ativo e inativo.
 
 
@@ -61,7 +59,7 @@ export default function Companies() {
         isLoading: isLoadingEmpresa,
         isRefetching: isRefetchingEmpresa,
         refetch: refetchEmpresa,
-    } = useGetCompany(isGestor ? user?.empresa_id! : null);
+    } = useGetCompany(!isAdm ? user?.empresa_id! : null);
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
@@ -70,7 +68,7 @@ export default function Companies() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, cidade, estado, query, status);
+    } = useGetCompanies(isAdm ? true : false, isAdm ? parseInt(user?.grupo_id!) : null, estado, query, status);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição
@@ -79,12 +77,12 @@ export default function Companies() {
 
     // Hook que refaz a requisição toda vez que os parametros da URL mudam - Quando troca filtro ou busca
     useEffect(() => {
-        if (!isGestor) {
+        if (isAdm) {
             refetch();
         } else {
             refetchEmpresa();
         }
-    }, [empresa, query, estado, cidade, status]);
+    }, [empresa, query, estado, status]);
 
 
 
@@ -96,9 +94,9 @@ export default function Companies() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                 {!isGestor && <Filter filter={estadoFilter} paramType="estado" /> }
-                {!isGestor && <Filter filter={statusFilter} paramType="status" /> }
-                {!isGestor && <CreateCompanyModal>
+                 {isAdm && <Filter filter={estadoFilter} paramType="estado" /> }
+                {isAdm && <Filter filter={statusFilter} paramType="status" /> }
+                {isAdm && <CreateCompanyModal>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
@@ -123,11 +121,11 @@ export default function Companies() {
                 {/* Renderiza a lista de empresas SE não houver erro e nem estiver carregando  */}
                 <TableBody>
                     {!isLoadingEmpresaData &&
-                        !isErrorEmpresa && isGestor &&
+                        !isErrorEmpresa && !isAdm &&
                         <CompanyRow key={empresa.id} empresa={empresa} />
                     }
                     {!isError &&
-                        !isLoadingData && !isGestor &&
+                        !isLoadingData && isAdm &&
 
                         empresas.map((empresa: Empresa) => {
                             return (
@@ -140,7 +138,7 @@ export default function Companies() {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData || isLoadingEmpresa && <LoadingAnimation />}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
-            {!isGestor && isError && !isLoadingData && <StatusCodeHandler requisitionType="company" error={error as AxiosError} />}
+            {isAdm && isError && !isLoadingData && <StatusCodeHandler requisitionType="company" error={error as AxiosError} />}
         </div>
     );
 }

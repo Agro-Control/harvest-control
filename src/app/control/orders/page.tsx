@@ -46,7 +46,7 @@ export default function Orders() {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         isError: isCompanyError,
         refetch: refetchCompanies,
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null);
 
     const {
         data: { ordens_servico = [] } = {},
