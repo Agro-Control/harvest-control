@@ -94,8 +94,8 @@ export default function Companies() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                 {isAdmin && <Filter filter={estadoFilter} paramType="estado" /> }
-                {isAdmin && <Filter filter={statusFilter} paramType="status" /> }
+                {isAdmin && <Filter filter={estadoFilter} paramType="estado" />}
+                {isAdmin && <Filter filter={statusFilter} paramType="status" />}
                 {isAdmin && <CreateCompanyModal>
                     <Button
                         type="button"

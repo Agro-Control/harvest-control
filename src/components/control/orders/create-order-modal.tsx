@@ -41,6 +41,7 @@ import { AxiosError } from "axios";
 import { format } from "date-fns";
 import { api } from "@/lib/api";
 import { z } from "zod";
+import DateTimePicker from "react-datetime-picker";
 
 
 interface createOrderProps {
@@ -69,7 +70,7 @@ const addTimeToDate = (date: Date): Date => {
 const CreateOrderModal = ({ children }: createOrderProps) => {
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
     const { t } = useTranslation();
@@ -88,7 +89,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             id_unidade: "",
             id_gestor: "",
             id_maquina: "",
-            id_empresa: isGestor ? user.empresa_id.toString() : "",
+            id_empresa: !isAdmin ? user!.empresa_id.toString() : "",
             operador_manha: "",
             operador_tarde: "",
             operador_noturno: "",
@@ -109,11 +110,11 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, "A");
 
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(enableFlag, isGestor ? user.empresa_id : parseInt(watchIdEmpresa!), "A", null);
+    } = useGetUnits(enableFlag, !isAdmin ? user!.empresa_id : parseInt(watchIdEmpresa!), "A", null);
 
     const {
         data: { talhoes = [] } = {}
@@ -202,7 +203,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
 
         const formattedData = {
             status: "A",
-            empresa_id: isGestor ? user.empresa_id : parseInt(data.id_empresa!),
+            empresa_id: !isAdmin ? user!.empresa_id : parseInt(data.id_empresa!),
             talhao_id: parseInt(data.id_talhao!),
             gestor_id: user?.id,
             unidade_id: parseInt(data.id_unidade!),
@@ -232,7 +233,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onHandleSubmit)} id="create-order-form" className="grid grid-cols-2 gap-4 py-4">
-                        {!isGestor && <FormField
+                        {isAdmin && <FormField
                             control={form.control}
                             name="id_empresa"
                             render={({ field }) => (
@@ -319,7 +320,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <DatePicker placeHolder={"Data de Início"} {...field} />
+                                       <DateTimePicker yearPlaceholder="Data Início" {...field}/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -1,7 +1,7 @@
 "use client";
 
 import Sidebar from "@/components/nav/sidebar";
-import {useAuth} from "@/utils/hooks/useAuth";
+import { useAuth } from "@/utils/hooks/useAuth";
 import Loading from "../loading";
 
 export default function ControlLayout({
@@ -9,7 +9,7 @@ export default function ControlLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const {user, isLoading} = useAuth();
+    const { user, isLoading } = useAuth();
     const isUserNull = user === null;
     const isLoadingUser = isLoading || isUserNull;
     return isLoadingUser ? (

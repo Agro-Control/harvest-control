@@ -43,11 +43,9 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
     const { toast } = useToast();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
-    const {
-        user,
-        isLoading,
-    } = useAuth();
-    const isGestor = user?.tipo === "G";
+    const auth = useAuth();
+    const user = auth.user;
+    const isAdmin = user?.tipo === "A";
 
     const [statusOptions] = useState<{ value: string }[]>([
         { value: 'A' },
@@ -64,7 +62,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
             capacidade_operacional: "",
             empresa_id: "undefined",
             //   data_aquisicao: new Date(),
-            unidade_id: isGestor ? user.unidade_id : "",
+            unidade_id: !isAdmin ? user!.unidade_id : "",
         },
     });
     const { getValues, setValue, watch } = form;
@@ -73,7 +71,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, "A");
 
     useEffect(() => {
         console.log(watchIdUnidade);
@@ -81,7 +79,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? user.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), null, null);
+    } = useGetUnits(true, !isAdmin ? user!.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), null, null);
 
     const createMachineRequest = async (postData: Maquina | null) => {
         const { data } = await api.post("/maquinas", postData);
@@ -215,7 +213,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
                                 </FormItem>
                             )}
                         />
-                        {!isGestor && <FormField
+                        {isAdmin && <FormField
                             control={form.control}
                             name="empresa_id"
                             render={({ field }) => (

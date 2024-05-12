@@ -38,19 +38,19 @@ export default function Field() {
     const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         isError: isCompanyError,
         refetch: refetchCompanies,
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
         isLoading: isLoadingUnits, // Booleano que indica se está carregando
         refetch: refetchUnits, // Função que faz a requisição novamente
-    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id : parseInt(empresa!), null, null);
+    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : parseInt(empresa!), null, null);
 
 
 
@@ -105,7 +105,7 @@ export default function Field() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                {!isGestor && <Filter filter={companyFilter} paramType="Empresas" />}
+                {isAdmin && <Filter filter={companyFilter} paramType="Empresas" />}
                 <Filter filter={unitFilter} paramType="Unidades" />
                 <CreateFieldModal>
                     <Button
@@ -140,8 +140,8 @@ export default function Field() {
             </Table>
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
-            {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir os talhões</div>}
-            {isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir os talhões</div>}
+            {isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir os talhões</div>}
+            {!isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir os talhões</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="field" error={error as AxiosError} />}
         </div>

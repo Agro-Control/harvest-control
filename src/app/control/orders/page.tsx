@@ -39,14 +39,14 @@ export default function Orders() {
     const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
 
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         isError: isCompanyError,
         refetch: refetchCompanies,
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, null);
 
     const {
         data: { ordens_servico = [] } = {},
@@ -55,7 +55,7 @@ export default function Orders() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetOrders(isGestor ? user.empresa_id : parseInt(empresa!), status, query);
+    } = useGetOrders(!isAdmin ? user!.empresa_id : parseInt(empresa!), status, query);
 
     const companyFilter: FilterInformation = {
         filterItem: [
@@ -91,7 +91,7 @@ export default function Orders() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                {!isGestor && <Filter filter={companyFilter} paramType="Empresas" />}
+                {isAdmin && <Filter filter={companyFilter} paramType="Empresas" />}
                 <CreateOrderModal>
                     <Button
                         type="button"
@@ -127,7 +127,7 @@ export default function Orders() {
             </Table>
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
-            {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas para exibir as ordens</div>}
+            {isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas para exibir as ordens</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="order" error={error as AxiosError} />}
         </div>

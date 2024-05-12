@@ -40,19 +40,19 @@ const Machines = () => {
     const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         isError: isCompanyError,
         refetch: refetchCompanies,
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
         isLoading: isLoadingUnits, // Booleano que indica se está carregando
         refetch: refetchUnits, // Função que faz a requisição novamente
-    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id :  parseInt(empresa!), null, null);
+    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : parseInt(empresa!), null, null);
 
 
     const {
@@ -90,15 +90,15 @@ const Machines = () => {
         if (empresa != null && empresa != "" && empresa != undefined) {
             setEnableFlag(true);
             refetchUnits();
-        } 
-        else if (unidade != null && unidade != "" && unidade != undefined){
+        }
+        else if (unidade != null && unidade != "" && unidade != undefined) {
             setEnableFlag(true);
             refetch();
         } else {
             setEnableFlag(false);
         }
-    
-        
+
+
 
 
     }, [empresa, unidade, query, status]);
@@ -111,7 +111,7 @@ const Machines = () => {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o código para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                {!isGestor && <Filter filter={companyFilter} paramType="Empresas" />}
+                {isAdmin && <Filter filter={companyFilter} paramType="Empresas" />}
                 <Filter filter={unitFilter} paramType="Unidades" />
 
 
@@ -149,8 +149,8 @@ const Machines = () => {
             </Table>
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoading && <LoadingAnimation />}
-            {!isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir as máquinas</div>}
-            {isGestor && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir as máquinas</div>}
+            {isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir as máquinas</div>}
+            {!isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir as máquinas</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoading && <StatusCodeHandler requisitionType="machine" error={error as AxiosError} />}
         </div>

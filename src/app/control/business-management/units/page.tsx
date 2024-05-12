@@ -37,7 +37,7 @@ export default function Units() {
     const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user;
-    const isAdm = user?.tipo === "A";
+    const isAdmin = user?.tipo === "A";
 
 
     const {
@@ -45,7 +45,7 @@ export default function Units() {
         isError: isCompanyError,
         refetch: refetchEmpresa,
         // Objeto contendo a lista de empresas
-    } = useGetCompanies(isAdm ? true : false, isAdm ? parseInt(user?.grupo_id!) : null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
@@ -54,7 +54,7 @@ export default function Units() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetUnits(!isAdm ? true : enableFlag, !isAdm ? user?.empresa_id! : parseInt(empresa!), status, query);
+    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user?.empresa_id! : parseInt(empresa!), status, query);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição
@@ -92,7 +92,7 @@ export default function Units() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                {isAdm && <Filter filter={companyFilter} paramType="Empresas" />}
+                {isAdmin && <Filter filter={companyFilter} paramType="Empresas" />}
                 <CreateUnitModal>
                     <Button
                         type="button"
@@ -108,7 +108,7 @@ export default function Units() {
                     <TableRow>
                         <TableHead>Código Unidade</TableHead>
                         <TableHead>Nome</TableHead>
-                        {isAdm && <TableHead>Filiação</TableHead>}
+                        {isAdmin && <TableHead>Filiação</TableHead>}
                         <TableHead>Status</TableHead>
                         <TableHead>Ações</TableHead>
                     </TableRow>
@@ -120,7 +120,7 @@ export default function Units() {
                     unidades.map((unidade: Unidade) => {
                         return (
                             <TableBody>
-                                <UnitRow key={unidade.id} unidade={unidade} isAdm={isAdm} />
+                                <UnitRow key={unidade.id} unidade={unidade} isAdmin={isAdmin} />
                             </TableBody>
                         );
                     })}
@@ -128,7 +128,7 @@ export default function Units() {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
-            {isAdm && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas para exibir as unidades</div>}
+            {isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas para exibir as unidades</div>}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="unit" error={error as AxiosError} />}
         </div>
     );

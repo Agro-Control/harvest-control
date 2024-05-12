@@ -51,12 +51,9 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
     const queryClient = useQueryClient();
     const [unidade] = useQueryState("Unidades");
     const [empresa] = useQueryState("Empresas");
-    const {
-        user,
-        isLoading: isLoadingAuth,
-    } = useAuth();
-
-    const isGestor = user?.tipo === "G";
+    const auth = useAuth();
+    const user = auth.user;
+    const isAdmin = user?.tipo === "A";
 
     const form = useForm<z.infer<typeof editFieldSchema>>({
         resolver: zodResolver(editFieldSchema),
@@ -76,7 +73,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
     
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(true, isGestor ? parseInt(user.empresa_id) : (isNaN(parseInt(unidade!)) ? null : parseInt(unidade!)),  null, null);*/
+    } = useGetUnits(true, !isAdmin ? parseInt(user.empresa_id) : (isNaN(parseInt(unidade!)) ? null : parseInt(unidade!)),  null, null);*/
 
 
 

@@ -46,12 +46,9 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
     const { toast } = useToast();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
-    const {
-        user,
-        isLoading,
-    } = useAuth();
-
-    const isGestor = user?.tipo === "G";
+    const auth = useAuth();
+    const user = auth.user;
+    const isAdmin = user?.tipo === "A";
 
     const form = useForm<z.infer<typeof editFieldSchema>>({
         resolver: zodResolver(editFieldSchema),
@@ -69,11 +66,11 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
     const watchIdEmpresa = watch("empresa_id");
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, "A");
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(isGestor ? true : enableFlag, isGestor ? user.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);
+    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);
 
 
     const [statusOptions] = useState<{ value: string }[]>([
@@ -179,7 +176,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                                 </FormItem>
                             )}
                         />
-                        {!isGestor && <FormField
+                        {isAdmin && <FormField
                             control={form.control}
                             name="empresa_id"
                             render={({ field }) => (

@@ -28,6 +28,9 @@ import { InputMask } from "@react-input/mask";
 import Empresa from "@/types/empresa";
 import { ReactNode } from "react";
 import { MaskedInput } from "@/components/ui/masked-input";
+import formatCnpj from "@/utils/functions/formatCnpj";
+import formatPhone from "@/utils/functions/formatPhone";
+import formatCep from "@/utils/functions/formatCep";
 
 interface EditCompanyProps {
     empresa: Empresa;
@@ -36,21 +39,7 @@ interface EditCompanyProps {
 
 const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
 
-    const formatPhone = (phone: string | undefined) => {
-        if (!phone) return 'Não informado';
-        const phoneStr = String(phone).replace(/\D/g, '');
-        return `(${phoneStr.slice(0, 2)}) ${phoneStr.slice(2, 7)}-${phoneStr.slice(7, 11)}`;
-    }
-    const formatCep = (cep: string | undefined) => {
-        if (!cep) return 'Não informado';
-        const cepStr = String(cep).replace(/\D/g, '');
-        return `${cepStr.slice(0, 5)}-${cepStr.slice(5, 8)}`;
-    }
-    const formatCnpj = (cnpj: string | undefined) => {
-        if (!cnpj) return 'Não informado';
-        const cnpjStr = String(cnpj).replace(/\D/g, '');
-        return `${cnpjStr.slice(0, 2)}.${cnpjStr.slice(2, 5)}.${cnpjStr.slice(5, 8)}/${cnpjStr.slice(8, 12)}-${cnpjStr.slice(12, 14)}`;
-    }
+  
 
 
     return (
