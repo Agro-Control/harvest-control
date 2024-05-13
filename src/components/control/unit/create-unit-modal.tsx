@@ -57,7 +57,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
 
     const form = useForm<Form>({
         resolver: zodResolver(editUnitSchema),
@@ -71,8 +71,8 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             numero: "",
             complemento: "",
             status: "",
-            empresa_id: isGestor ? user.empresa_id.toString() : "",
-            gestor_id: isGestor ? user.id.toString() : "",
+            empresa_id: !isAdmin ? user!.empresa_id.toString() : "",
+            gestor_id: !isAdmin ? user!.id.toString() : "",
         }
     });
 
@@ -87,11 +87,11 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(!isGestor ? true : false,!isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, "A");
 
     const {
         data: { gestor: gestores = [] } = {}, // Objeto contendo a lista de gestores
-    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);
+    } = useGetManagers(isAdmin ? parseInt(user?.grupo_id!) : null, "A", null);
 
     useEffect(() => {
         if (empresas.length > 0) {
@@ -147,8 +147,8 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             //telefone: data.telefone.replace(/\D/g, ""),
             cep: data.cep.replace(/\D/g, ""),
             status: data.status,
-            empresa_id: isGestor ? user?.empresa_id : parseInt(data.empresa_id),
-            gestor_id: isGestor ? user?.id : parseInt(data.gestor_id),
+            empresa_id: !isAdmin ? user?.empresa_id : parseInt(data.empresa_id),
+            gestor_id: !isAdmin ? user?.id : parseInt(data.gestor_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -214,7 +214,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input
-                                            
+
                                             Icon={MapTrifold}
                                             id="estado"
                                             placeholder={t(field.name)}
@@ -286,20 +286,8 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                                 </FormItem>
                             )}
                         />
-                        {isGestor && <FormField
-                            control={form.control}
-                            name="empresa_id"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input disabled Icon={Buildings} id="empresa_id" placeholder={companyOptions[0].nome || "Nome da Empresa"} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />}
 
-                        {!isGestor && <FormField
+                        {isAdmin && <FormField
                             control={form.control}
                             name="empresa_id"
                             render={({ field }) => (
@@ -327,7 +315,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                                 </FormItem>
                             )}
                         />}
-                        {!isGestor && <FormField
+                        {isAdmin && <FormField
                             control={form.control}
                             name="gestor_id"
                             render={({ field }) => (

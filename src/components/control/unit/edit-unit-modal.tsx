@@ -53,7 +53,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [statusOptions, setStatusOptions] = useState<{ value: string; }[]>([
         { value: 'A' },
@@ -84,7 +84,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);*/
+    } = useGetManagers(isAdmin ? parseInt(user?.grupo_id!) : null, null, null);*/
 
     const { getValues, setValue, watch } = form;
     // Variavel usada para monitorar o campo do cnpj
@@ -136,8 +136,8 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
         const formattedData = {
             ...data,
             cep: data.cep.replace(/\D/g, ""),
-            empresa_id: isGestor ? user?.empresa_id : parseInt(data.empresa_id),
-            gestor_id: isGestor ? user?.id : (data.gestor_id ? parseInt(data.gestor_id) : parseInt(watchEmpresaId)) ,
+            empresa_id: !isAdmin ? user?.empresa_id : parseInt(data.empresa_id),
+            gestor_id: !isAdmin ? user?.id : (data.gestor_id ? parseInt(data.gestor_id) : parseInt(watchEmpresaId)) ,
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -273,20 +273,8 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                                 </FormItem>
                             )}
                         />
-                        {isGestor && <FormField
-                            control={form.control}
-                            name="empresa_id"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Input disabled Icon={Buildings} id="empresa_id" placeholder={companyOptions[0].nome || "Nome da Empresa"} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />}
 
-                        {/*!isGestor && <FormField
+                        {/*isAdmin && <FormField
                             control={form.control}
                             name="empresa_id"
                             render={({ field }) => (
@@ -314,7 +302,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                                 </FormItem>
                             )}
                         />}
-                        {!isGestor && <FormField
+                        {isAdmin && <FormField
                             control={form.control}
                             name="gestor_id"
                             render={({ field }) => (

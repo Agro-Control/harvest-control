@@ -7,7 +7,8 @@ import {
     Gauge,
     Sun,
     SunHorizon,
-    Moon
+    Moon,
+    Grains
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -320,7 +321,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                       <DateTimePicker yearPlaceholder="Data Início" {...field}/>
+                                       <DatePicker placeHolder={"Data Início"} {...field}/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -430,7 +431,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 form.setValue("id_talhao", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={MapPin} className="h-10 w-[180px] ">
+                                            <SelectTrigger Icon={Grains} className="h-10 w-[180px] ">
                                                 <SelectValue placeholder="Selecione o Talhão" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
