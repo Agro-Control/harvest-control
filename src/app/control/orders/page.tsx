@@ -5,6 +5,8 @@ import LoadingAnimation from "@/components/loading-animation";
 import FilterInformation from "@/types/filter-information";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
+import FilterInformationLabel from "@/types/filter-information-label";
+import FilterWithLabel from "@/components/control/filter-with-label";
 import { Button } from "@/components/ui/button";
 import { AxiosError } from "axios";
 import { useQueryState } from "nuqs";
@@ -57,12 +59,12 @@ export default function Orders() {
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetOrders(!isAdmin ? user!.empresa_id : parseInt(empresa!), status, query);
 
-    const companyFilter: FilterInformation = {
+    const companyFilter: FilterInformationLabel = {
         filterItem: [
-            { value: "all" },
+            { value: "all", label: "Todas"},
             ...empresas.map((empresa: Empresa) => ({
                 value: empresa.id?.toString()!,
-                label: empresa.nome,
+                label: empresa.nome!,
             })),
         ],
     };
@@ -91,7 +93,7 @@ export default function Orders() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                {isAdmin && <Filter filter={companyFilter} paramType="Empresas" />}
+                {isAdmin && <FilterWithLabel filter={companyFilter} paramType="Empresas" />}
                 <CreateOrderModal>
                     <Button
                         type="button"

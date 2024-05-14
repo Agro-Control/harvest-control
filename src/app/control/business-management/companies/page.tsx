@@ -6,6 +6,7 @@ import StatusCodeHandler from "@/components/status-code-handler";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import LoadingAnimation from "@/components/loading-animation";
 import FilterInformation from "@/types/filter-information";
+import FilterInformationLabel from "@/types/filter-information-label";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
 import { Button } from "@/components/ui/button";
@@ -15,16 +16,9 @@ import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useGetCompany } from "@/utils/hooks/useGetCompany";
+import { useGetState } from "@/utils/hooks/useGetStates";
 
-const estadoFilter: FilterInformation = {
-    filterItem: [
-        { value: "all" },
-        {
-            value: "PR",
-        },
-        { value: "SP" },
-    ],
-};
+
 const statusFilter: FilterInformation = {
     filterItem: [
         { value: "all" },
@@ -50,7 +44,9 @@ export default function Companies() {
     const [status] = useQueryState("status"); // status é o nome do parametro que está na URL - Usado para filtrar ativo e inativo.
 
 
-
+    const {
+        data: estados,
+    } = useGetState(isAdmin ? parseInt(user.grupo_id!) : null, null)
 
     const {
         data: empresa,
@@ -70,7 +66,13 @@ export default function Companies() {
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, estado, query, status);
 
-
+    const estadoFilter: FilterInformation = {
+        filterItem: [
+            { value: "all" },
+            ...(estados?.estados || []).map((estado) => ({ value: estado }))
+        ],
+    };
+ 
     // Variavel que indica se está carregando ou refazendo a requisição
     const isLoadingData = isLoading || isRefetching;
     const isLoadingEmpresaData = isLoadingEmpresa || isRefetchingEmpresa;

@@ -8,6 +8,8 @@ import FilterInformation from "@/types/filter-information";
 import { useGetFields } from "@/utils/hooks/useGetFields";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
+import FilterInformationLabel from "@/types/filter-information-label";
+import FilterWithLabel from "@/components/control/filter-with-label";
 import { Button } from "@/components/ui/button";
 import Talhao from "@/types/talhao";
 import { AxiosError } from "axios";
@@ -18,6 +20,7 @@ import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import Unidade from "@/types/unidade";
 import Empresa from "@/types/empresa";
+
 
 
 const statusFilter: FilterInformation = {
@@ -50,7 +53,7 @@ export default function Field() {
         data: { unidades = [] } = {},
         isLoading: isLoadingUnits, // Booleano que indica se está carregando
         refetch: refetchUnits, // Função que faz a requisição novamente
-    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : parseInt(empresa!), null, null);
+    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user?.empresa_id! : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), isAdmin ? parseInt(user.grupo_id) : null, null, null);
 
 
 
@@ -61,23 +64,24 @@ export default function Field() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetFields(true, parseInt(unidade!), status, query);
+    } = useGetFields(enableFlag, parseInt(unidade!), status, query);
 
-    const companyFilter: FilterInformation = {
+    const companyFilter: FilterInformationLabel = {
         filterItem: [
-            { value: "all" },
+            { value: "all", label: "Todas" },
             ...empresas.map((empresa: Empresa) => ({
                 value: empresa.id?.toString()!,
-                label: empresa.nome,
+                label: empresa.nome!,
             })),
         ],
     };
 
-    const unitFilter: FilterInformation = {
+    const unitFilter: FilterInformationLabel = {
         filterItem: [
-            { value: "all" },
+            { value: "all", label: "Todas" },
             ...unidades.map((unit: Unidade) => ({
-                value: unit.id?.toString()!
+                value: unit.id?.toString()!,
+                label: unit.nome!,
             })),
         ],
     };
@@ -91,10 +95,12 @@ export default function Field() {
         if (empresa != null && empresa != "" && empresa != undefined) {
             setEnableFlag(true);
             refetchUnits();
+        } else if (unidade != null && unidade != "" && unidade != undefined) {
+            setEnableFlag(true);
+            refetch();
         } else {
             setEnableFlag(false);
         }
-        refetch();
     }, [empresa, unidade, query, status]);
 
     return (
@@ -105,8 +111,8 @@ export default function Field() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                {isAdmin && <Filter filter={companyFilter} paramType="Empresas" />}
-                <Filter filter={unitFilter} paramType="Unidades" />
+                {isAdmin && <FilterWithLabel filter={companyFilter} paramType="Empresas" />}
+                <FilterWithLabel filter={unitFilter} paramType="Unidades" />
                 <CreateFieldModal>
                     <Button
                         type="button"
@@ -141,7 +147,7 @@ export default function Field() {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
             {isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir os talhões</div>}
-            {!isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir os talhões</div>}
+            {!isAdmin && !enableFlag &&  <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir os talhões</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="field" error={error as AxiosError} />}
         </div>

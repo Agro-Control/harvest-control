@@ -4,6 +4,7 @@ import FilterInformation from "@/types/filter-information";
 import SearchBar from "@/components/control/search-bar";
 import { Eye, Pencil, Plus } from "@phosphor-icons/react";
 import Filter from "@/components/control/filter";
+import FilterWithLabel from "@/components/control/filter-with-label";
 import { Button } from "@/components/ui/button";
 import { useQueryState } from "nuqs";
 import { useGetMachines } from "@/utils/hooks/useGetMachines";
@@ -19,6 +20,7 @@ import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import Unidade from "@/types/unidade";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import Empresa from "@/types/empresa";
+import FilterInformationLabel from "@/types/filter-information-label";
 
 const statusFilter: FilterInformation = {
     filterItem: [
@@ -52,7 +54,7 @@ const Machines = () => {
         data: { unidades = [] } = {},
         isLoading: isLoadingUnits, // Booleano que indica se está carregando
         refetch: refetchUnits, // Função que faz a requisição novamente
-    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : parseInt(empresa!), null, null);
+    } = useGetUnits(!isAdmin ? true : enableFlag,  !isAdmin ? user?.empresa_id! : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), isAdmin ? parseInt(user.grupo_id) : null, null, null);
 
 
     const {
@@ -64,22 +66,22 @@ const Machines = () => {
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetMachines(enableFlag, parseInt(unidade!), status, query);
 
-    const companyFilter: FilterInformation = {
+    const companyFilter: FilterInformationLabel = {
         filterItem: [
-            { value: "all" },
+            { value: "all", label: "Todas"},
             ...empresas.map((empresa: Empresa) => ({
                 value: empresa.id?.toString()!,
-                label: empresa.nome,
+                label: empresa.nome!,
             })),
         ],
     };
 
-    const unitFilter: FilterInformation = {
+    const unitFilter: FilterInformationLabel = {
         filterItem: [
-            { value: "all" },
+            { value: "all", label: "Todas"},
             ...unidades.map((unit: Unidade) => ({
                 value: unit.id?.toString()!,
-                label: unit.nome,
+                label: unit.nome!,
             })),
         ],
     };
@@ -111,8 +113,8 @@ const Machines = () => {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o código para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                {isAdmin && <Filter filter={companyFilter} paramType="Empresas" />}
-                <Filter filter={unitFilter} paramType="Unidades" />
+                {isAdmin && <FilterWithLabel filter={companyFilter} paramType="Empresas" />}
+                <FilterWithLabel filter={unitFilter} paramType="Unidades" />
 
 
                 <CreateMachineModal>

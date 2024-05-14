@@ -70,7 +70,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), "A", null);
+    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), isAdmin ? parseInt(user?.grupo_id!) : null, "A", null);
 
 
     const [statusOptions] = useState<{ value: string }[]>([

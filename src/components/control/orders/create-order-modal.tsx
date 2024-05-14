@@ -115,7 +115,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
 
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(enableFlag, !isAdmin ? user!.empresa_id : parseInt(watchIdEmpresa!), "A", null);
+    } = useGetUnits(enableFlag, !isAdmin ? user!.empresa_id : parseInt(watchIdEmpresa!), null, "A", null);
 
     const {
         data: { talhoes = [] } = {}
@@ -141,17 +141,12 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     useEffect(() => {
         if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined)
             setEnableFlag(true);
-        console.log("flag unidade " + derivedEnableFlag)
         if (watchIdUnit !== "" && watchIdUnit !== undefined)
             setDerivedEnableFlag(true);
-        console.log("pos flag unidade " + derivedEnableFlag)
-        console.log(watchIdUnit);
         if (!open) {
             setEnableFlag(false);
             setDerivedEnableFlag(false);
         }
-        console.log("inicio  " + watchDataIncio);
-        console.log("fim  " + watchDataFim);
     }, [empresas, unidades, watchDataIncio, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
 
 

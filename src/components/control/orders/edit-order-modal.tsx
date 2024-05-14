@@ -87,7 +87,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
             toast({
                 className: "border-green-500 bg-green-500",
                 title: t("success"),
-                description: t("postOrder-success"),
+                description: t("putOrder-success"),
             });
             queryClient.refetchQueries({ queryKey: ["orders"], type: "active", exact: true });
             setOpen(false);
