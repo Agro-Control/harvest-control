@@ -1,11 +1,11 @@
 "use client";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {EnvelopeSimple, CircleNotch} from "@phosphor-icons/react";
 import { loginSchema } from "@/utils/validations/loginSchema";
 import {PasswordInput} from "@/components/ui/password-input";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useToast} from "@/components/ui/use-toast";
+import {useMutation} from "@tanstack/react-query";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import {Button} from "@/components/ui/button";
@@ -33,7 +33,7 @@ const Login = () => {
     const form = useForm<Form>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            email: "",
+            login: "",
             senha: "",
         },
     });
@@ -92,7 +92,7 @@ const Login = () => {
                         <Image src={logo2} className="h-[64px] w-auto" alt="Agro Control" width={512} height={512} />
                         <FormField
                             control={form.control}
-                            name="email"
+                            name="login"
                             render={({field}) => (
                                 <FormItem>
                                     <FormControl>
