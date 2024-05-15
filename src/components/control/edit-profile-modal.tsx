@@ -1,4 +1,3 @@
-import {Button} from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -8,8 +7,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {PasswordInput} from "@/components/ui/password-input";
+import {EnvelopeSimple, User} from "@phosphor-icons/react";
+import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
 import {ReactNode} from "react";
 
 interface DialogDemoProps {
@@ -27,21 +28,23 @@ const EditProfileModal = ({children}: DialogDemoProps) => {
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <Input
+                         Icon={User}
                         id="name"
                         placeholder="Nome"
                         className="col-span-2"
                     />
                     <Input
+                     Icon={EnvelopeSimple}
                         id="email"
                         placeholder="Email"
                         className="col-span-2 "
                     />
-                    <Input
+                    <PasswordInput
                         id="password"
                         placeholder="Senha Atual"
                         className="col-span-1 "
                     />
-                    <Input
+                    <PasswordInput
                         id="new-password"
                         placeholder="Nova Senha"
                         className="col-span-1 "

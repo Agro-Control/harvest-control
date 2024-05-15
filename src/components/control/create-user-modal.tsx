@@ -84,7 +84,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                                                 form.setValue("role", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={UsersThree} className="h-10 w-[180px] ">
+                                            <SelectTrigger Icon={UsersThree} className="h-10 w-full ">
                                                 <SelectValue placeholder="Cargo" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -160,7 +160,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                                                 form.setValue("company", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Buildings} className="h-10 w-[180px] ">
+                                            <SelectTrigger Icon={Buildings} className="h-10 w-full ">
                                                 <SelectValue  placeholder="Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>

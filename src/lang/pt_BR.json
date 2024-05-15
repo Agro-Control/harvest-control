@@ -3,6 +3,7 @@
     "A": "Ativo",
     "I": "Inativo",
     "G": "Gerente",
+    "D": "Diretor",
     "E": "Em Andamento",
     "C": "Cancelada",
     "F": "Finalizada",
