@@ -7,7 +7,8 @@ import {
     Gauge,
     Sun,
     SunHorizon,
-    Moon
+    Moon,
+    Grains
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -41,6 +42,7 @@ import { AxiosError } from "axios";
 import { format } from "date-fns";
 import { api } from "@/lib/api";
 import { z } from "zod";
+import DateTimePicker from "react-datetime-picker";
 
 
 interface createOrderProps {
@@ -69,7 +71,7 @@ const addTimeToDate = (date: Date): Date => {
 const CreateOrderModal = ({ children }: createOrderProps) => {
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
     const { t } = useTranslation();
@@ -88,7 +90,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             id_unidade: "",
             id_gestor: "",
             id_maquina: "",
-            id_empresa: isGestor ? user.empresa_id.toString() : "",
+            id_empresa: !isAdmin ? user!.empresa_id.toString() : "",
             operador_manha: "",
             operador_tarde: "",
             operador_noturno: "",
@@ -109,11 +111,11 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(!isGestor ? true : false, !isGestor ? parseInt(user?.grupo_id!) : null, null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, "A");
 
     const {
         data: { unidades = [] } = {}
-    } = useGetUnits(enableFlag, parseInt(watchIdEmpresa!), "A", null);
+    } = useGetUnits(enableFlag, !isAdmin ? user!.empresa_id : parseInt(watchIdEmpresa!), null, "A", null);
 
     const {
         data: { talhoes = [] } = {}
@@ -139,17 +141,12 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     useEffect(() => {
         if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined)
             setEnableFlag(true);
-        console.log("flag unidade " + derivedEnableFlag)
         if (watchIdUnit !== "" && watchIdUnit !== undefined)
             setDerivedEnableFlag(true);
-        console.log("pos flag unidade " + derivedEnableFlag)
-        console.log(watchIdUnit);
         if (!open) {
             setEnableFlag(false);
             setDerivedEnableFlag(false);
         }
-        console.log("inicio  " + watchDataIncio);
-        console.log("fim  " + watchDataFim);
     }, [empresas, unidades, watchDataIncio, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
 
 
@@ -202,7 +199,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
 
         const formattedData = {
             status: "A",
-            empresa_id: isGestor ? user.empresa_id : parseInt(data.id_empresa!),
+            empresa_id: !isAdmin ? user!.empresa_id : parseInt(data.id_empresa!),
             talhao_id: parseInt(data.id_talhao!),
             gestor_id: user?.id,
             unidade_id: parseInt(data.id_unidade!),
@@ -232,7 +229,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onHandleSubmit)} id="create-order-form" className="grid grid-cols-2 gap-4 py-4">
-                        <FormField
+                        {isAdmin && <FormField
                             control={form.control}
                             name="id_empresa"
                             render={({ field }) => (
@@ -258,7 +255,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />}
                         <FormField
                             control={form.control}
                             name="id_unidade"
@@ -319,7 +316,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <DatePicker placeHolder={"Data de Início"} {...field} />
+                                       <DatePicker placeHolder={"Data Início"} {...field}/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -429,7 +426,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                                 form.setValue("id_talhao", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={MapPin} className="h-10 w-[180px] ">
+                                            <SelectTrigger Icon={Grains} className="h-10 w-[180px] ">
                                                 <SelectValue placeholder="Selecione o Talhão" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -473,7 +470,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                         <Input
                                             Icon={Gauge}
                                             id="velocidade_minima"
-                                            placeholder="Velociadade Mínima"
+                                            placeholder="Velocidade Mínima"
                                             {...field}
                                         />
                                     </FormControl>

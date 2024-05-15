@@ -52,7 +52,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
     const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
 
 
@@ -64,7 +64,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);
+    } = useGetManagers(isAdmin ? parseInt(user?.grupo_id!) : null, null, null);
 
     const form = useForm<Form>({
         resolver: zodResolver(editCompanySchema),
@@ -313,7 +313,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                 </FormItem>
                             )}
                         />
-                           {!isGestor && <FormField
+                           {isAdmin && <FormField
                             control={form.control}
                             name="gestor_id"
                             render={({ field }) => (

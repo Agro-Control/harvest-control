@@ -11,15 +11,15 @@ import { useEffect } from "react";
 
 export default function Home() {
 
-    
-    const {user} = useAuth();
+
+    const { user } = useAuth();
     const companyId = user && user.empresa_id;
     const userName = user && user.nome;
-    const { data: company, refetch} = useGetCompany(companyId);
+    const { data: company, refetch } = useGetCompany(companyId);
 
     useEffect(() => {
-        if(!user) return;
-        if(company) return;
+        if (!user) return;
+        if (company) return;
         refetch();
     }, [user])
 
@@ -27,7 +27,7 @@ export default function Home() {
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10  px-6 pt-10 text-green-950 ">
             <div className="flex w-full flex-row items-center gap-2">
                 <p className="font-poppins text-4xl font-medium">Olá! Bem vindo,</p>
-                 {user ? <p className="font-poppins text-4xl font-medium">{userName}👋</p> : <Skeleton className="h-10 w-[148px]" /> } 
+                {user ? <p className="font-poppins text-4xl font-medium">{userName}👋</p> : <Skeleton className="h-10 w-[148px]" />}
             </div>
 
             <div className="flex w-full flex-col items-start justify-start gap-1 ">
@@ -39,9 +39,9 @@ export default function Home() {
                     <FastAccessCard isLast title="Dashboards" image="dashboard" />
                 </div>
             </div>
-            <UserInformationCard user={user} /> 
-           <CompanyInformationCard company={company} />
-            <div> 
+            <UserInformationCard user={user} />
+            <CompanyInformationCard company={company} />
+            <div>
             </div>
         </div>
     );

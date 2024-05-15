@@ -57,7 +57,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     const [open, setOpen] = useState(false);
     const auth = useAuth();
     const user = auth.user;
-    const isGestor = user?.tipo === "G";
+    const isAdmin = user?.tipo === "A";
     // Hook que inicia a toast 
     const { toast } = useToast();
 
@@ -88,7 +88,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(!isGestor ? parseInt(user?.grupo_id!) : null, null, null);
+    } = useGetManagers(isAdmin ? parseInt(user?.grupo_id!) : null, null, null);
 
     // Desenstruturando funcões do hook form
     const { getValues, setValue, watch } = form;
@@ -366,7 +366,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
                                 </FormItem>
                             )}
                         />
-                       {!isGestor && <FormField
+                       {isAdmin && <FormField
                             control={form.control}
                             name="gestor_id"
                             render={({ field }) => (

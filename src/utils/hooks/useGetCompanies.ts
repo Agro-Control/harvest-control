@@ -4,7 +4,6 @@ import { api } from "@/lib/api";
 
 const getCompaniesRequest = async (
     grupo_id: number | null,
-    cidade: string | null,
     estado: string | null,
     codigo: string | null,
     status: string | null,
@@ -13,7 +12,6 @@ const getCompaniesRequest = async (
         params: {
             grupo_id: grupo_id,
             codigo: codigo,
-            cidade: cidade,
             estado: estado,
             status: status,
         },
@@ -24,7 +22,6 @@ const getCompaniesRequest = async (
 export const useGetCompanies = (
     enable_flag: boolean,
     grupo_id: number | null,
-    cidade: string | null,
     estado: string | null,
     codigo: string | null,
     status: string | null,
@@ -32,7 +29,7 @@ export const useGetCompanies = (
         return useQuery({
             enabled: !!enable_flag,
             queryKey: ["companies"],
-            queryFn: () => getCompaniesRequest(grupo_id, cidade, estado, codigo, status),
+            queryFn: () => getCompaniesRequest(grupo_id, estado, codigo, status),
         });
     
 };
