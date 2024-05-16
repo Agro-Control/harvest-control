@@ -37,7 +37,7 @@ const statusFilter: FilterInformation = {
 export default function Companies() {
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
     // Hook que pega os parametros da URL
     const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
     const [estado] = useQueryState("estado"); // estado é o nome do parametro que está na URL - Usado para o filtro de estado.

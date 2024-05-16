@@ -15,7 +15,7 @@ export default function Home() {
     const companyId = user && user.empresa_id;
     const groupId = user && user.grupo_id;
     const userName = user && user.nome;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
     const {data: company, refetch: refetchCompany} = useGetCompany(companyId);
     const {data: group, refetch: refetchGroup} = useGetGroup(parseInt(groupId!));
 

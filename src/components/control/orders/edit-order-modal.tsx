@@ -57,7 +57,7 @@ type Form = z.infer<typeof createOrderSchema>;
 const EditOrderModal = ({ children, ordem }: editOrderProps) => {
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
     const { t } = useTranslation();

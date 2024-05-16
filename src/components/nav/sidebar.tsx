@@ -83,7 +83,7 @@ const Sidebar = () => {
             <SidebarHeader />
             <div className="flex w-full flex-col gap-3 px-2  ">
                 {NavButtons.map((button) => {
-                    return button.havePerm && <NavButton Icon={button.icon} title={button.title} path={button.path} />;
+                    return button.havePerm && <NavButton key={button.title} Icon={button.icon} title={button.title} path={button.path} />;
                 })}
             </div>
             <div className="mt-auto flex h-[14vh] w-full flex-col justify-end gap-3 self-end bg-transparent px-2">

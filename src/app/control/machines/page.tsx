@@ -42,7 +42,7 @@ const Machines = () => {
     const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas

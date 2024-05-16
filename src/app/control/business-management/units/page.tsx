@@ -39,7 +39,7 @@ export default function Units() {
     const [enableFlag, setEnableFlag] = useState(false);
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
 
 
     const {

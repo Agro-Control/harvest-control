@@ -71,7 +71,7 @@ const addTimeToDate = (date: Date): Date => {
 const CreateOrderModal = ({ children }: createOrderProps) => {
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
     const { t } = useTranslation();

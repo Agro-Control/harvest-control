@@ -57,7 +57,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
 
     const form = useForm<Form>({
         resolver: zodResolver(editUnitSchema),

@@ -52,7 +52,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
     const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
 
 

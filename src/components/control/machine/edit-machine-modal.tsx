@@ -44,7 +44,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
 
     const [statusOptions] = useState<{ value: string }[]>([
         { value: 'A' },

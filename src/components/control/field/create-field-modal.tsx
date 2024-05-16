@@ -48,7 +48,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
-    const isAdmin = user?.tipo === "A";
+    const isAdmin = user?.tipo === "D";
 
     const form = useForm<z.infer<typeof editFieldSchema>>({
         resolver: zodResolver(editFieldSchema),
