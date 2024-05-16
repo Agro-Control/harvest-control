@@ -1,6 +1,7 @@
 import {usePathname} from "next/navigation";
 import {Icon} from "@phosphor-icons/react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 interface NavButtonProps {
     title: string;
@@ -9,6 +10,8 @@ interface NavButtonProps {
 }
 
 const NavButton = ({Icon, title, path}: NavButtonProps) => {
+    const {t} = useTranslation();
+
     const pathname = usePathname();
     const isActive = pathname === path;
 
@@ -22,7 +25,7 @@ const NavButton = ({Icon, title, path}: NavButtonProps) => {
         }`}  >
         <div className={`${activeStyle}`}>
             <Icon className="h-6 w-6" weight="fill" color="#052e14" />
-            <p className="text-md font-jakarta font-medium  text-green-950 ">{title}</p>
+            <p className="text-md font-jakarta font-medium  text-green-950 ">{t(title)}</p>
         </div>
         </Link>
     );

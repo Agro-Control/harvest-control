@@ -85,6 +85,13 @@
     "postUnit-error-500": "Algo deu errado!",
     "postUnit-description-error-500": "Erro interno, contate o administrador.",
     "postMachine-error-500": "Algo deu errado!",
-    "postMachine-description-error-500": "Erro interno, contate o administrador."
-   
+    "postMachine-description-error-500": "Erro interno, contate o administrador.",
+    "control-panel": "Painel de controle",
+    "dashboard": "Dashboard",
+    "service-order": "Ordens de serviço",
+    "report": "Relatórios",
+    "user-management": "Gestão de usuarios",
+    "machines": "Máquinas",
+    "fields": "Talhões",
+    "company-management": "Gestão de empresas"
 }
