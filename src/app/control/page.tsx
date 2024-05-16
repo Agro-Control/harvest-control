@@ -17,7 +17,7 @@ export default function Home() {
     const userName = user && user.nome;
     const isAdmin = user?.tipo === "D";
     const {data: company, refetch: refetchCompany} = useGetCompany(companyId);
-    const {data: group, refetch: refetchGroup} = useGetGroup(parseInt(groupId!));
+    const {data: group, refetch: refetchGroup} = useGetGroup(groupId);
 
     useEffect(() => {
         if (!user) return;

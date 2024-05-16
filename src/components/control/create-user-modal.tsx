@@ -88,8 +88,8 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                                                 <SelectValue placeholder="Cargo" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="manager">Gestor</SelectItem>
-                                                <SelectItem value="operator">Operador</SelectItem>
+                                                <SelectItem value="G">Gestor</SelectItem>
+                                                <SelectItem value="O">Operador</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </FormControl>

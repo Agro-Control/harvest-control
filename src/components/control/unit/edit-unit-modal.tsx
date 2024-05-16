@@ -84,7 +84,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(isAdmin ? parseInt(user?.grupo_id!) : null, null, null);*/
+    } = useGetManagers(isAdmin ? user?.grupo_id : null, null, null);*/
 
     const { getValues, setValue, watch } = form;
     // Variavel usada para monitorar o campo do cnpj

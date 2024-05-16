@@ -48,13 +48,13 @@ const Machines = () => {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         isError: isCompanyError,
         refetch: refetchCompanies,
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
         isLoading: isLoadingUnits, // Booleano que indica se está carregando
         refetch: refetchUnits, // Função que faz a requisição novamente
-    } = useGetUnits(!isAdmin ? true : enableFlag,  !isAdmin ? user?.empresa_id! : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), isAdmin ? parseInt(user.grupo_id) : null, null, null);
+    } = useGetUnits(!isAdmin ? true : enableFlag,  !isAdmin ? user?.empresa_id! : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), isAdmin ? user.grupo_id : null, null, null);
 
 
     const {

@@ -64,7 +64,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(isAdmin ? parseInt(user?.grupo_id!) : null, null, null);
+    } = useGetManagers(isAdmin ? user?.grupo_id : null, null, null);
 
     const form = useForm<Form>({
         resolver: zodResolver(editCompanySchema),

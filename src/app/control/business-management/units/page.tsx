@@ -47,7 +47,7 @@ export default function Units() {
         isError: isCompanyError,
         refetch: refetchEmpresa,
         // Objeto contendo a lista de empresas
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, null);
 
     const {
         data: { unidades = [] } = {},
@@ -56,7 +56,7 @@ export default function Units() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user?.empresa_id! : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), isAdmin ? parseInt(user.grupo_id) : null, status, query);
+    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user?.empresa_id! : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), isAdmin ? user.grupo_id : null, status, query);
 
 
     // Variavel que indica se está carregando ou refazendo a requisição

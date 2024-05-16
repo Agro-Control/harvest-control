@@ -42,7 +42,6 @@ import { AxiosError } from "axios";
 import { format } from "date-fns";
 import { api } from "@/lib/api";
 import { z } from "zod";
-import DateTimePicker from "react-datetime-picker";
 
 
 interface createOrderProps {
@@ -111,7 +110,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ?user?.grupo_id : null, null, null, "A");
 
     const {
         data: { unidades = [] } = {}

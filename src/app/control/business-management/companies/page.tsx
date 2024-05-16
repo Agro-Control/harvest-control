@@ -46,7 +46,7 @@ export default function Companies() {
 
     const {
         data: estados,
-    } = useGetState(isAdmin ? parseInt(user.grupo_id!) : null, null)
+    } = useGetState(isAdmin ? user.grupo_id : null, null)
 
     const {
         data: empresa,
@@ -64,7 +64,7 @@ export default function Companies() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, estado, query, status);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, estado, query, status);
 
     const estadoFilter: FilterInformation = {
         filterItem: [

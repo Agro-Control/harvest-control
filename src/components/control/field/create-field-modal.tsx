@@ -66,11 +66,11 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
     const watchIdEmpresa = watch("empresa_id");
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? parseInt(user?.grupo_id!) : null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A");
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
-    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), isAdmin ? parseInt(user?.grupo_id!) : null, "A", null);
+    } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user!.empresa_id : (isNaN(parseInt(watchIdEmpresa!)) ? null : parseInt(watchIdEmpresa!)), isAdmin ? user?.grupo_id : null, "A", null);
 
 
     const [statusOptions] = useState<{ value: string }[]>([
