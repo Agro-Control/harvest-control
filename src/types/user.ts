@@ -12,7 +12,7 @@ export interface UserData {
     matricula: string | null;
     turno: string | null;
     tipo: string;
-    grupo_id: string;
+    grupo_id: number;
 }
 
 interface User {

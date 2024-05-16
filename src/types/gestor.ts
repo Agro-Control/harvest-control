@@ -11,5 +11,5 @@ export interface Gestor {
     matricula: string | null;
     turno: string | null;
     tipo: string | null;
-    grupo_id: string | null;
+    grupo_id: number;
 }
