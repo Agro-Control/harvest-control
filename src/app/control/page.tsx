@@ -5,10 +5,10 @@ import GroupInformationCard from "@/components/control/group-information-card";
 import UserInformationCard from "@/components/control/user-information-card";
 import FastAccessCard from "@/components/control/fast-access-card";
 import {useGetCompany} from "@/utils/hooks/useGetCompany";
+import {useGetGroup} from "@/utils/hooks/useGetGroup";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useAuth} from "@/utils/hooks/useAuth";
 import {useEffect} from "react";
-import {useGetGroup} from "@/utils/hooks/useGetGroup";
 
 export default function Home() {
     const {user} = useAuth();
@@ -45,8 +45,8 @@ export default function Home() {
                 <p className=" font-poppins text-sm">Acesso Rápido:</p>
 
                 <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <FastAccessCard title="Máquinas" image="machines" />
-                    <FastAccessCard title="Operadores" image="users" />
+                    <FastAccessCard title={isAdmin ? "Grupo Empresarial" :"Máquinas"} image={isAdmin ? "group" :"machines" }/>
+                    <FastAccessCard title={isAdmin ? "Usuários" : "Operadores"} image="users" />
                     <FastAccessCard isLast title="Dashboards" image="dashboard" />
                 </div>
             </div>

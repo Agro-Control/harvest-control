@@ -5,7 +5,7 @@ export interface UserData {
     cpf: string;
     telefone: string;
     status: string;
-    data_contratação: string;
+    data_contratacao: string;
     gestor_id: string;
     unidade_id: string;
     empresa_id: number;
