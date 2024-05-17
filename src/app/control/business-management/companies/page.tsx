@@ -5,18 +5,17 @@ import CompanyRow from "@/components/control/company/company-row";
 import StatusCodeHandler from "@/components/status-code-handler";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import LoadingAnimation from "@/components/loading-animation";
+import { useGetCompany } from "@/utils/hooks/useGetCompany";
 import FilterInformation from "@/types/filter-information";
-import FilterInformationLabel from "@/types/filter-information-label";
+import { useGetState } from "@/utils/hooks/useGetStates";
 import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/utils/hooks/useAuth";
 import Empresa from "@/types/empresa";
 import { useQueryState } from "nuqs";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
-import { useAuth } from "@/utils/hooks/useAuth";
-import { useGetCompany } from "@/utils/hooks/useGetCompany";
-import { useGetState } from "@/utils/hooks/useGetStates";
 
 
 const statusFilter: FilterInformation = {

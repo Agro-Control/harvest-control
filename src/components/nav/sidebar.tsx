@@ -44,7 +44,7 @@ const Sidebar = () => {
             icon: FileText,
             title: "service-order",
             path: "/control/orders",
-            havePerm: isAdmin || isGerente,
+            havePerm: isGerente,
         },
         {
             icon: FilePdf,
@@ -62,13 +62,13 @@ const Sidebar = () => {
             icon: Truck,
             title: "machines",
             path: "/control/machines",
-            havePerm: isAdmin || isGerente,
+            havePerm: isGerente,
         },
         {
             icon: MapPin,
             title: "fields",
             path: "/control/field",
-            havePerm: isAdmin || isGerente,
+            havePerm: isGerente,
         },
         {
             icon: Buildings,

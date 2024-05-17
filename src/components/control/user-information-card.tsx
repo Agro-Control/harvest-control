@@ -23,9 +23,9 @@ const UserInformationCard = ({user}: UserInformationCardProps) => {
             <div className="flex w-full flex-row items-center justify-start gap-2">
                 <img src={logoRounded.src} className="h-[24px] w-[24px]" />
                 <p className="font-medium">Informações do usuário</p>
-                <EditProfileModal>
+                {/* <EditProfileModal>
                     <Pencil className="h-4 w-4 cursor-pointer " weight="fill" color="#000" />
-                </EditProfileModal>
+                </EditProfileModal> */}
             </div>
             <div className="flex h-[2px]  w-full flex-none bg-divider" />
 
