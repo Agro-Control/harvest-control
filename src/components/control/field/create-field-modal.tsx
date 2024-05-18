@@ -3,7 +3,8 @@ import {
     Buildings,
     CompassTool,
     Factory,
-    HashStraight
+    HashStraight,
+    Tag
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -187,7 +188,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                                                 form.setValue("empresa_id", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Factory}>
+                                            <SelectTrigger Icon={Buildings}>
                                                 <SelectValue placeholder="Selecione a Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -241,7 +242,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                                                 form.setValue("status", value);
                                             }}
                                         >
-                                            <SelectTrigger className="h-10 w-[180px]">
+                                            <SelectTrigger Icon={Tag} className="h-10 w-[180px]">
                                                 <SelectValue placeholder="Selecione o Status" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>

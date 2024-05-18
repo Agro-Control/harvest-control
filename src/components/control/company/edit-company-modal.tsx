@@ -57,14 +57,14 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
 
 
     
-    const {
-        data: {gestor : gestores = []} = {}, // Objeto contendo a lista de gestores
+  /*  const {
+        data: {usuarios : gestores = []} = {}, // Objeto contendo a lista de gestores
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(isAdmin ? user?.grupo_id : null, null, null);
+    } = useGetManagers(isAdmin ? user?.grupo_id : null, null, null, "G");*/
 
     const form = useForm<Form>({
         resolver: zodResolver(editCompanySchema),
@@ -313,7 +313,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                 </FormItem>
                             )}
                         />
-                           {isAdmin && <FormField
+                           {/*isAdmin && <FormField
                             control={form.control}
                             name="gestor_id"
                             render={({ field }) => (
@@ -339,7 +339,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />}
+                        />*/}
                         <FormField
                             control={form.control}
                             name="status"

@@ -1,6 +1,6 @@
 import { Gestor } from "./gestor";
 
 interface GetGestor {
-    gestor: Gestor[];
+    usuarios: Gestor[];
 }
 export default GetGestor;

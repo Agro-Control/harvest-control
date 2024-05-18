@@ -181,7 +181,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
                             )}
                         />
 
-                        <FormField
+                       {/*} <FormField
                             control={form.control}
                             name="capacidade_operacional"
                             render={({ field }) => (
@@ -192,7 +192,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />*/}
 
                         {/*isAdmin && <FormField
                             control={form.control}

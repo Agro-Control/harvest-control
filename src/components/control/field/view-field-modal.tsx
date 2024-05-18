@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Talhao from "@/types/talhao";
 import { useGetUnit } from "@/utils/hooks/useGetUnit";
+import { Buildings, CompassTool, HashStraight, Tag } from "@phosphor-icons/react";
 
 
 
@@ -56,10 +57,10 @@ const ViewFieldModal = ({ children, field }: EditFieldProps) => {
                 </DialogHeader>
 
                 <div className="grid grid-cols-2 gap-4 py-4">
-                    <Input disabled className=" col-span-2" id="codigo" placeholder="Codigo" value={field.codigo} />
-                    <Input disabled className="col-span-1 " id="tamanho" placeholder="Tamanho" value={field.tamanho + " ha"} />
-                    <Input disabled className="col-span-1 " id="Empresa" placeholder="Empresa" value={!isLoading && unidade?.nome}/>
-                    <Input disabled className="col-span-1 " id="status" placeholder="Status" value={field.status === 'A' ? 'Ativo' : 'Inativo'} />
+                    <Input Icon={HashStraight}  disabled className=" col-span-2" id="codigo" placeholder="Codigo" value={field.codigo} />
+                    <Input Icon={CompassTool}  disabled className="col-span-1 " id="tamanho" placeholder="Tamanho" value={field.tamanho + " ha"} />
+                    <Input Icon={Tag} disabled className="col-span-1 " id="status" placeholder="Status" value={field.status === 'A' ? 'Ativo' : 'Inativo'} />
+                    <Input Icon={Buildings} disabled className="col-span-1 " id="Empresa" placeholder="Empresa" value={!isLoading && unidade?.nome}/>
                 </div>
 
                 <DialogFooter>

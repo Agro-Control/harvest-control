@@ -3,6 +3,8 @@ import {
     Buildings,
     CompassTool,
     Factory,
+    HashStraight,
+    Tag,
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -151,7 +153,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input id="codigo" placeholder="Código" {...field} />
+                                        <Input Icon={HashStraight}  id="codigo" placeholder="Código" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -164,7 +166,34 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input id="tamanho" placeholder="Tamanho" {...field} />
+                                        <Input Icon={CompassTool} id="tamanho" placeholder="Tamanho" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormControl>
+                                        <Select 
+                                            onValueChange={(value) => {
+                                                form.setValue("status", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={Tag} className="h-10 w-[180px]">
+                                                <SelectValue placeholder="Selecione o Status" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {statusOptions.map((option) => (
+                                                    <SelectItem key={option.value} value={option.value}>
+                                                        {t(option.value)}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -197,33 +226,6 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
                                 </FormItem>
                             )}
                         /> */}
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("status", value);
-                                            }}
-                                        >
-                                            <SelectTrigger className="h-10 w-[180px]">
-                                                <SelectValue placeholder="Selecione o Status" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {statusOptions.map((option) => (
-                                                    <SelectItem key={option.value} value={option.value}>
-                                                        {t(option.value)}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                     </form>
                 </Form>
                 <DialogFooter>
