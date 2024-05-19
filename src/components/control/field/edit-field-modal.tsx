@@ -183,7 +183,7 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
                                                 form.setValue("status", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Tag} className="h-10 w-[180px]">
+                                            <SelectTrigger Icon={Tag} className="h-10">
                                                 <SelectValue placeholder="Selecione o Status" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>

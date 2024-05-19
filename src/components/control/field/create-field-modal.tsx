@@ -181,7 +181,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                             control={form.control}
                             name="empresa_id"
                             render={({ field }) => (
-                                <FormItem className="col-span-2">
+                                <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
@@ -208,7 +208,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                             control={form.control}
                             name="unidade_id"
                             render={({ field }) => (
-                                <FormItem className="col-span-2">
+                                <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {

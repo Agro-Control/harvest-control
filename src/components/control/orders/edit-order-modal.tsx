@@ -7,7 +7,8 @@ import {
     Gauge,
     Sun,
     SunHorizon,
-    Moon
+    Moon,
+    Hash
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -139,11 +140,12 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
-                    <DialogTitle className="font-poppins text-green-950">Criar Ordem</DialogTitle>
-                    <DialogDescription>Insira as informações para criar uma Ordem.</DialogDescription>
+                    <DialogTitle className="font-poppins text-green-950">Atualizar Ordem</DialogTitle>
+                    <DialogDescription>Insira as informações para atualziar uma Ordem.</DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onHandleSubmit)} id="edit-order-form" className="grid grid-cols-2 gap-4 py-4">
+                        <Input disabled Icon={Hash} className=" col-span-2" id="id" placeholder="Código da Ordem" value={ordem.id! || "Não informado"} />
                         <FormField
                             control={form.control}
                             name="velocidade_maxima"
@@ -207,8 +209,8 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
                                                 form.setValue("status", value);
                                             }}
                                         >
-                                            <SelectTrigger className="h-10 w-[180px]">
-                                                <SelectValue placeholder="Selecione o Status" {...field} />
+                                            <SelectTrigger className="h-10">
+                                                <SelectValue placeholder={t(ordem.status)} {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {statusOptions.map((option) => (

@@ -1,3 +1,5 @@
+import Operador from "./operador";
+
 interface OrdemServico {
     id?: number;
     data_inicio?: string;
@@ -12,6 +14,8 @@ interface OrdemServico {
     empresa_id?: number;
     maquina_id?: number;
     operadores_ids?: number[];
+    operadores?: Operador[] | null;
+    nome_maquina?: string | null;
   }
   
   export default OrdemServico;

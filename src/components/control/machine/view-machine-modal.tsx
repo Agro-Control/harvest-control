@@ -59,7 +59,7 @@ const ViewMachineModal = ({ children, machine }: EditMachineProps) => {
 
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <Input disabled Icon={Truck} className=" col-span-2" id="nome" placeholder="Codigo" value={machine.nome! || "Não informado"} />
-                    <Input disabled Icon={GearSix} className="col-span-2 " id="modelo" placeholder="Modelo" value={machine.modelo! + " ha" || "Não informado"} />
+                    <Input disabled Icon={GearSix} className="col-span-2 " id="modelo" placeholder="Modelo" value={machine.modelo! || "Não informado"} />
                     <Input disabled Icon={Wrench} className="col-span-2 " id="fabricante" placeholder="Fabricante" value={machine.fabricante || "Não informado"} />
                     <Input disabled Icon={GasPump} className="col-span-1 " id="capacidade_opercional" placeholder="Capacidade Operacional" value={machine.capacidade_operacional || "Não informado"} />
                     <Input disabled Icon={Calendar} className="col-span-1 " id="data_aquisicao" placeholder="Data Aquisição" value={formatDate(machine.data_aquisicao!) || "Não informado"} />
@@ -73,7 +73,7 @@ const ViewMachineModal = ({ children, machine }: EditMachineProps) => {
                         type="submit"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
-                        Confirmar
+                        Voltar
                     </Button>
                 </DialogFooter>
             </DialogContent>

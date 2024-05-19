@@ -69,7 +69,7 @@ const ViewFieldModal = ({ children, field }: EditFieldProps) => {
                         type="submit"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
-                        Confirmar
+                        Voltar
                     </Button>
                 </DialogFooter>
             </DialogContent>
