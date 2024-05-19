@@ -37,6 +37,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
 import { useGetManagers } from "@/utils/hooks/useGetManagers";
+import formatCep from "@/utils/functions/formatCep";
 
 
 interface EditUnitProps {
@@ -137,7 +138,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
             ...data,
             cep: data.cep.replace(/\D/g, ""),
             empresa_id: !isAdmin ? user?.empresa_id : parseInt(data.empresa_id),
-            gestor_id: !isAdmin ? user?.id : (data.gestor_id ? parseInt(data.gestor_id) : parseInt(watchEmpresaId)) ,
+            gestor_id: !isAdmin ? user?.id : parseInt(data.gestor_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);

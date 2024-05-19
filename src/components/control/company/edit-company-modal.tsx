@@ -73,7 +73,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
             nome: company.nome,
             cnpj: company.cnpj,
             telefone: company.telefone,
-            CEP: company.cep,
+            cep: company.cep,
             estado: company.estado,
             cidade: company.cidade,
             bairro: company.bairro,
@@ -135,7 +135,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
             ...data,
             cnpj: data.cnpj.replace(/\D/g, ""),
             telefone: data.telefone.replace(/\D/g, ""),
-            cep: data.CEP.replace(/\D/g, ""),
+            cep: data.cep.replace(/\D/g, ""),
             status: data.status,
             data_criacao: company.data_criacao,
             gestor_id: data.gestor_id != null ? parseInt(data.gestor_id) : null,
@@ -223,7 +223,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
 
                         <FormField
                             control={form.control}
-                            name="CEP"
+                            name="cep"
                             render={({ field }) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>

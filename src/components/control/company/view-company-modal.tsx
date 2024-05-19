@@ -144,14 +144,14 @@ const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
                         value={empresa.complemento || "Não Informado"}
                     />
 
-                    <Input
+                   {/* <Input
                         Icon={UserPlus}
                         disabled
                         className="col-span-1 "
                         id="gestor_id"
                         placeholder="Gestor"
                         value={empresa.gestor_id || "Não Informado"}
-                    />
+                    />*/}
 
 
                 </div>
@@ -162,7 +162,7 @@ const ViewCompanyModal = ({ children, empresa }: EditCompanyProps) => {
                             type="button"
                             className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                         >
-                            Confirmar
+                            Voltar
                         </Button>
                     </DialogClose>
                 </DialogFooter>

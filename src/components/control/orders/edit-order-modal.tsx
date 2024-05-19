@@ -210,7 +210,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
                                             }}
                                         >
                                             <SelectTrigger className="h-10">
-                                                <SelectValue placeholder={t(ordem.status)} {...field} />
+                                                <SelectValue placeholder={t(ordem.status!)} {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {statusOptions.map((option) => (

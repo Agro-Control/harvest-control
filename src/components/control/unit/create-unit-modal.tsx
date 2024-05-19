@@ -91,7 +91,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
 
     const {
         data: { usuarios: gestores = [] } = {}, // Objeto contendo a lista de gestores
-    } = useGetManagers(isAdmin ? user?.grupo_id : null, "A", null, "G");
+    } = useGetManagers(isAdmin ? user?.grupo_id : null, parseInt(watchEmpresaId), "A", null, "G");
 
     useEffect(() => {
         if (empresas.length > 0) {
@@ -298,7 +298,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                                                 form.setValue("empresa_id", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Buildings} className="h-10 w-[180px] ">
+                                            <SelectTrigger Icon={Buildings} className="h-10">
                                                 <SelectValue placeholder="Selecione a Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
