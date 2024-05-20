@@ -137,8 +137,8 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
-                    <DialogTitle className="font-poppins text-green-950">Criar Máquina</DialogTitle>
-                    <DialogDescription>Insira as informações para criar uma Máquina.</DialogDescription>
+                    <DialogTitle className="font-poppins text-green-950">Editar Máquina</DialogTitle>
+                    <DialogDescription>Insira as informações para editar uma Máquina.</DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
@@ -147,7 +147,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
                             control={form.control}
                             name="nome"
                             render={({ field }) => (
-                                <FormItem className="col-span-1">
+                                <FormItem className="col-span-2">
                                     <FormControl>
                                         <Input Icon={Truck} id="nome" placeholder="Nome" {...field} />
                                     </FormControl>
@@ -181,7 +181,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
                             )}
                         />
 
-                        <FormField
+                       {/* <FormField
                             control={form.control}
                             name="capacidade_operacional"
                             render={({ field }) => (
@@ -192,7 +192,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />*/}
 
                         {/*isAdmin && <FormField
                             control={form.control}
@@ -233,7 +233,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
                                                 form.setValue("status", value);
                                             }}
                                         >
-                                            <SelectTrigger className="h-10 w-[180px]">
+                                            <SelectTrigger className="h-10">
                                                 <SelectValue placeholder="Selecione o Status" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>

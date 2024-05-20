@@ -3,7 +3,8 @@ import {
     Buildings,
     CompassTool,
     Factory,
-    HashStraight
+    HashStraight,
+    Tag
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -180,14 +181,14 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                             control={form.control}
                             name="empresa_id"
                             render={({ field }) => (
-                                <FormItem className="col-span-2">
+                                <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
                                                 form.setValue("empresa_id", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Factory}>
+                                            <SelectTrigger Icon={Buildings}>
                                                 <SelectValue placeholder="Selecione a Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -207,7 +208,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                             control={form.control}
                             name="unidade_id"
                             render={({ field }) => (
-                                <FormItem className="col-span-2">
+                                <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
@@ -230,33 +231,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("status", value);
-                                            }}
-                                        >
-                                            <SelectTrigger className="h-10 w-[180px]">
-                                                <SelectValue placeholder="Selecione o Status" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {statusOptions.map((option) => (
-                                                    <SelectItem key={option.value} value={option.value}>
-                                                        {t(option.value)}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        
                     </form>
                 </Form>
                 <DialogFooter>

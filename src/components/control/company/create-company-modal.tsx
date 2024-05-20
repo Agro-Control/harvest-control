@@ -81,14 +81,14 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
         },
     });
 
-  const {
-        data: {gestor : gestores = []} = {}, // Objeto contendo a lista de gestores
+  /*const {
+        data: {usuarios: gestores = []} = {}, // Objeto contendo a lista de gestores
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(isAdmin ? user?.grupo_id : null, null, null);
+    } = useGetManagers(isAdmin ? user?.grupo_id : null, null, null, "G");*/
 
     // Desenstruturando funcões do hook form
     const { getValues, setValue, watch } = form;
@@ -366,7 +366,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
                                 </FormItem>
                             )}
                         />
-                       {isAdmin && <FormField
+                       {/*isAdmin && <FormField
                             control={form.control}
                             name="gestor_id"
                             render={({ field }) => (
@@ -392,7 +392,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />}
+                        />*/}
                     </form>
                 </Form>
                 <DialogFooter>

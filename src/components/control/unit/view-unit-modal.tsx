@@ -13,6 +13,7 @@ import {Input} from "@/components/ui/input";
 import {ReactNode, useState} from "react";
 import Unidade from "@/types/unidade";
 import { useGetCompany } from "@/utils/hooks/useGetCompany";
+import formatCep from "@/utils/functions/formatCep";
 
 
 
@@ -51,7 +52,7 @@ const ViewUnitModal = ({children, unit}: EditUnitProps) => {
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <Input disabled className=" col-span-2" id="nome" placeholder="Nome" value={unit.nome} />
 
-                    <Input disabled className="col-span-1 " id="CEP" placeholder="CEP" value={unit.cep} />
+                    <Input disabled className="col-span-1 " id="CEP" placeholder="CEP" value={formatCep(unit.cep)} />
 
                     <Input disabled className="col-span-1 " id="estado" placeholder="Estado" value={unit.estado}  />
 
@@ -76,7 +77,7 @@ const ViewUnitModal = ({children, unit}: EditUnitProps) => {
                         type="submit"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
-                        Confirmar
+                        Voltar
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -154,7 +154,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
                             control={form.control}
                             name="nome"
                             render={({ field }) => (
-                                <FormItem className="col-span-1">
+                                <FormItem className="col-span-2">
                                     <FormControl>
                                         <Input Icon={Truck} id="nome" placeholder="Nome" {...field} />
                                     </FormControl>
@@ -201,7 +201,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
                             )}
                         /> */}
 
-                        <FormField
+                        {/*<FormField
                             control={form.control}
                             name="capacidade_operacional"
                             render={({ field }) => (
@@ -212,7 +212,8 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />*/}
+
                         {isAdmin && <FormField
                             control={form.control}
                             name="empresa_id"

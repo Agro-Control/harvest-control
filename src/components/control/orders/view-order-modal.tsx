@@ -54,6 +54,9 @@ const ViewOrderModal = ({ children, ordem }: ViewOrderProps) => {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const formatDate = useFormattedDate();
+    const morningOperator = ordem.operadores!.find(operator => operator.turno === 'M');
+    const afternoonOperator = ordem.operadores!.find(operator => operator.turno === 'T');
+    const nightOperator = ordem.operadores!.find(operator => operator.turno === 'N');
 
     const {
         data: unidade,
@@ -99,6 +102,9 @@ const ViewOrderModal = ({ children, ordem }: ViewOrderProps) => {
                     <Input disabled Icon={CalendarBlank} className="col-span-1 " id="data_inicio" placeholder="Data Inicio" value={formatDate(ordem.data_inicio!) || "Não informado"} />
                     <Input disabled Icon={Calendar} className="col-span-1 " id="data_aquisicao" placeholder="Data Fim" value={formatDate(ordem.data_fim!) || "Não informado"} />
                     <Input disabled Icon={Tag} className="col-span-1 " id="status" placeholder="Status" value= {t(ordem.status!)} />
+                    {morningOperator && <Input disabled Icon={SunHorizon} className="col-span-1 " id="operador_manha" placeholder="Operador Manhã" value= {morningOperator.nome!} />}
+                    {afternoonOperator && <Input disabled Icon={Sun} className="col-span-1 " id="operador_tarde" placeholder="Operador Tarde" value= {afternoonOperator.nome!} />}
+                    {nightOperator && <Input disabled Icon={Moon} className="col-span-1 " id="operador_noite" placeholder="Operador Noturno" value= {nightOperator.nome!} />}
                     
                 </div>
 
@@ -108,7 +114,7 @@ const ViewOrderModal = ({ children, ordem }: ViewOrderProps) => {
                         type="submit"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                     >
-                        Confirmar
+                        Voltar
                     </Button>
                 </DialogFooter>
             </DialogContent>

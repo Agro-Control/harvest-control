@@ -14,7 +14,7 @@ const FieldRow = ({ talhao }: FieldRowProps) => {
     return (
         <TableRow key={talhao.id}>
             <TableCell className="font-medium">{talhao.codigo}</TableCell>
-            <TableCell className="font-medium">{talhao.tamanho}</TableCell>
+            <TableCell className="font-medium">{talhao.tamanho + " ha"}</TableCell>
             <TableCell className="">{t(talhao.status)}</TableCell>
             <TableCell className="w-28">
                 <div className="-ml-1 flex w-full flex-row items-center gap-3">

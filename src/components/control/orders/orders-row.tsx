@@ -17,7 +17,7 @@ const OrdersRow = ({ ordem }: OrderRowProps) => {
     return (
         <TableRow key={ordem.id}>
             <TableCell className="font-medium">{ordem.id}</TableCell>
-            <TableCell className="font-medium">{ordem.maquina_id}</TableCell>
+            <TableCell className="font-medium">{ordem.nome_maquina}</TableCell>
             <TableCell className="">{formatDate(ordem.data_inicio!)}</TableCell>
             <TableCell className="">{formatDate(ordem.data_fim!)}</TableCell>
             <TableCell className="">{t(ordem.status!)}</TableCell>
