@@ -1,30 +1,31 @@
 "use client";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {EnvelopeSimple, CircleNotch} from "@phosphor-icons/react";
-import { loginSchema } from "@/utils/validations/loginSchema";
+import {loginSchema} from "@/utils/validations/loginSchema";
 import {PasswordInput} from "@/components/ui/password-input";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useToast} from "@/components/ui/use-toast";
 import {useMutation} from "@tanstack/react-query";
-import { useAuth } from "@/utils/hooks/useAuth";
-import { useTranslation } from "react-i18next";
+import {useAuth} from "@/utils/hooks/useAuth";
+import {useTranslation} from "react-i18next";
+import {UserSessionJwt} from "@/contexts/Auth";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import logo2 from "@/assets/logo-row.svg";
 import {useForm} from "react-hook-form";
-import { AxiosError } from "axios";
-import { api } from "@/lib/api";
+import {jwtDecode} from "jwt-decode";
+import {AxiosError} from "axios";
 import User from "@/types/user";
+import {api} from "@/lib/api";
 import Image from "next/image";
 import {z} from "zod";
+import Token from "@/types/token";
 
-type Form = z.infer<typeof loginSchema>
+type Form = z.infer<typeof loginSchema>;
 
 const Login = () => {
-
-    const {addUser } = useAuth();
-
+    const {addUser} = useAuth();
 
     const {toast} = useToast();
 
@@ -41,19 +42,31 @@ const Login = () => {
     const {push} = useRouter();
 
     const getUserRequest = async (postData: Form) => {
-        const { data } = await api.post<User>("/login", postData);
-        return data;
+            const {data: tokenResponse} = await api.post<Token>("/login", postData);
+            const userId = jwtDecode<UserSessionJwt>(tokenResponse.token).id;
+            const {data: userData} = await api.get(`/usersession/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${tokenResponse.token}`,
+                },
+            });
+            const data: User = {
+                token: tokenResponse.token,
+                usuario: userData,
+            };
+
+            return data;
+      
     };
 
     const {mutate, isPending} = useMutation({
         mutationFn: getUserRequest,
         onSuccess: (data) => {
-                addUser(data);
-                    push("/control");
+            addUser(data);
+            push("/control");
         },
         onError: (error: AxiosError) => {
-            const { response } = error;
-            if(!response) {
+            const {response} = error;
+            if (!response) {
                 toast({
                     duration: 1000,
                     variant: "destructive",
@@ -63,7 +76,7 @@ const Login = () => {
                 return;
             }
 
-            const { status } = response;
+            const {status} = response;
             const titleCode = `postLogin-error-${status}`;
             const descriptionCode = `postLogin-description-error-${status}`;
 
@@ -76,13 +89,9 @@ const Login = () => {
         },
     });
 
-
-
-    
     const onHandleSubmit = (data: Form) => {
         mutate(data);
     };
-
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-center overflow-hidden text-green-950 ">
@@ -123,7 +132,7 @@ const Login = () => {
                             type="submit"
                             className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
                         >
-                             { isPending ?  <CircleNotch className="h-5 w-5 animate-spin" /> :  "Entrar"}
+                            {isPending ? <CircleNotch className="h-5 w-5 animate-spin" /> : "Entrar"}
                         </Button>
                     </form>
                 </Form>
