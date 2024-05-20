@@ -24,7 +24,7 @@ type AuthContextProviderProps = {
     children: ReactNode;
 };
 
-interface UserSessionJwt extends JwtPayload {
+export interface UserSessionJwt extends JwtPayload {
     tipo: string;
     id: number;
 }

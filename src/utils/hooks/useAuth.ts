@@ -16,7 +16,7 @@ export const useAuth = () => {
     const addUser = (user: User | null) => {
         if(!user) return;
         authData[1].setUser(user?.usuario);
-        setCookie("user_session", JSON.stringify(user?.token));
+        setCookie("user_session", user?.token);
     }
     
     const removeUser = () => {
