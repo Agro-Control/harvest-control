@@ -5,11 +5,11 @@ import GetOperador from "@/types/get-operador";
 const getOperatorsRequest = async (unidade_id: number | null, turno: string | null, codigo: string | null, status: string | null, disponibilidade_ordem: boolean | null) => {
     const { data } = await api.get<GetOperador>("/operadores", {
         params: {
-            unidade_id: unidade_id,
-            turno: turno,
-            codigo: codigo,
-            status: status,
-            disponibilidade_ordem: disponibilidade_ordem
+            unidade_id,
+            turno,
+            codigo,
+            status,
+            disponibilidade_ordem
         },
     });
     return data;
@@ -17,7 +17,7 @@ const getOperatorsRequest = async (unidade_id: number | null, turno: string | nu
 
 export const useGetOperators = (enableFlag: boolean, unidade_id: number | null, turno: string | null, status: string | null, codigo: string | null, disponibilidade_ordem : boolean | null) => {
     return useQuery({
-        queryKey: ["operators", unidade_id, turno, codigo, status, disponibilidade_ordem],
+        queryKey: ["operators"],
         queryFn: () => getOperatorsRequest(unidade_id, turno, codigo, status, disponibilidade_ordem),
         enabled: enableFlag,
         retry: (failureCount, error) => {
