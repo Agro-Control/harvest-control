@@ -24,7 +24,6 @@ import FilterWithLabel from "@/components/control/filter-with-label";
 
 const statusFilter: FilterInformation = {
     filterItem: [
-        { value: "all" },
         { value: "A" },
         {
             value: "I",

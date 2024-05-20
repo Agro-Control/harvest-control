@@ -23,14 +23,8 @@ const statusFilter: FilterInformation = {
         },
     ],
 };
-const profileFilter: FilterInformation = {
-    filterItem: [
-        {
-            value: "manager",
-        },
-        {value: "operator"},
-    ],
-};
+
+
 
 export default function Users() {
     const {user} = useAuth();
@@ -57,13 +51,11 @@ export default function Users() {
         isLoading,
         refetch: refetchManager,
         isRefetching,
-    } = useGetManagers(null, null, status, query, null);
+    } = useGetManagers(grupo_id, null, null, status, query);
 
     const isLoadingData = isLoading || isRefetching  || isLoadingOperators || isRefetchingOperators;
     const isErrorData = isError || isOperatorsError;
     const errorData = error || operatorsError;
-
-
 
     useEffect(() => {
         if (!user) return;
@@ -83,7 +75,10 @@ export default function Users() {
         if (isAdmin) {
             refetchManager();
         }
-    }, [status]);
+        if (isGestor) {
+            refetchOperators();
+        }
+    }, [status, query]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -93,7 +88,6 @@ export default function Users() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                <Filter filter={profileFilter} paramType="profile" />
                 <CreateUserModal>
                     <Button
                         type="button"
@@ -121,8 +115,8 @@ export default function Users() {
                     (isAdmin ? <UsersList usuarios={gestor} /> : <UsersList usuarios={operador} />)}
             </Table>
             {isLoadingData && <LoadingAnimation />}
-            {isAdmin && isErrorData && !isLoadingData && (
-                <StatusCodeHandler requisitionType="users" error={errorData as AxiosError} />
+            {isErrorData && !isLoadingData && (
+                <StatusCodeHandler requisitionType={isAdmin ? "manager" : "operator"} error={errorData as AxiosError} />
             )}
         </div>
     );

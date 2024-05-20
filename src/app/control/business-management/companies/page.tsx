@@ -20,7 +20,6 @@ import { useEffect } from "react";
 
 const statusFilter: FilterInformation = {
     filterItem: [
-        { value: "all" },
         {
             value: "A",
         },
@@ -67,7 +66,6 @@ export default function Companies() {
 
     const estadoFilter: FilterInformation = {
         filterItem: [
-            { value: "all" },
             ...(estados?.estados || []).map((estado) => ({ value: estado }))
         ],
     };

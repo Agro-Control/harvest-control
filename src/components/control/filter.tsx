@@ -25,6 +25,9 @@ const Filter = ({filter, paramType}: FilterProps) => {
                 <SelectValue placeholder={t(paramType)} />
             </SelectTrigger>
             <SelectContent>
+            <SelectItem  value="all">
+                            {t("all")}
+                        </SelectItem>
                 {items.map((item) => {
                     return (
                         <SelectItem key={item.value} value={item.value}>

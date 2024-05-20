@@ -25,7 +25,6 @@ import Empresa from "@/types/empresa";
 
 const statusFilter: FilterInformation = {
     filterItem: [
-        { value: "all" },
         { value: "A" },
         {
             value: "I",

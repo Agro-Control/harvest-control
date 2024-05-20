@@ -24,7 +24,6 @@ import Unidade from "@/types/unidade";
 
 const statusFilter: FilterInformation = {
     filterItem: [
-        { value: "all" },
         { value: "A" },
         { value: "E" },
         { value: "C" },
