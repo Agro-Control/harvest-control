@@ -1,9 +1,10 @@
 "use client";
 import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateUserModal from "@/components/control/create-user-modal";
-import {useGetUsersByGroup} from "@/utils/hooks/useGetUsersByGroup";
 import StatusCodeHandler from "@/components/status-code-handler";
+import { useGetOperators } from "@/utils/hooks/useGetOperators";
 import LoadingAnimation from "@/components/loading-animation";
+import { useGetManagers } from "@/utils/hooks/useGetManagers";
 import UsersList from "@/components/control/users/user-list";
 import FilterInformation from "@/types/filter-information";
 import SearchBar from "@/components/control/search-bar";
@@ -34,34 +35,53 @@ const profileFilter: FilterInformation = {
 export default function Users() {
     const {user} = useAuth();
     const isAdmin = user?.tipo === "D";
+    const isGestor = user?.tipo === "G";
     const grupo_id = user && user?.grupo_id;
 
     const [query] = useQueryState("query");
     const [status] = useQueryState("status");
 
     const {
-        data: {usuarios = []} = {},
+        data: {operador = []} = {},
+        error: operatorsError,
+        isError: isOperatorsError,
+        isLoading: isLoadingOperators,
+        refetch: refetchOperators,
+        isRefetching: isRefetchingOperators,
+    } = useGetOperators(false, null, null, status, query, null);
+
+    const {
+        data: {gestor = []} = {},
         error,
         isError,
         isLoading,
-        refetch: refetchUsersByGroup,
+        refetch: refetchManager,
         isRefetching,
-    } = useGetUsersByGroup(grupo_id, null, null, status, null);
+    } = useGetManagers(null, null, status, query, null);
 
-    const isLoadingData = isLoading || isRefetching;
+    const isLoadingData = isLoading || isRefetching  || isLoadingOperators || isRefetchingOperators;
+    const isErrorData = isError || isOperatorsError;
+    const errorData = error || operatorsError;
+
+
 
     useEffect(() => {
         if (!user) return;
         if (isAdmin) {
-            if (usuarios.length > 0) return;
-            refetchUsersByGroup();
+            if (gestor.length > 0) return;
+            refetchManager();
+            return;
+        }
+        if (isGestor) {
+            if (operador.length > 0) return;
+            refetchOperators();
             return;
         }
     }, []);
 
     useEffect(() => {
         if (isAdmin) {
-            refetchUsersByGroup();
+            refetchManager();
         }
     }, [status]);
 
@@ -92,16 +112,17 @@ export default function Users() {
                         <TableHead>Perfil</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Contratação</TableHead>
+                        <TableHead>Turno</TableHead>
                         <TableHead>Ações</TableHead>
                     </TableRow>
                 </TableHeader>
-                {!isError &&
+                {!isErrorData &&
                     !isLoadingData &&
-                    (isAdmin ? <UsersList usuarios={usuarios} /> : <UsersList usuarios={usuarios} />)}
+                    (isAdmin ? <UsersList usuarios={gestor} /> : <UsersList usuarios={operador} />)}
             </Table>
             {isLoadingData && <LoadingAnimation />}
-            {isAdmin && isError && !isLoadingData && (
-                <StatusCodeHandler requisitionType="users" error={error as AxiosError} />
+            {isAdmin && isErrorData && !isLoadingData && (
+                <StatusCodeHandler requisitionType="users" error={errorData as AxiosError} />
             )}
         </div>
     );

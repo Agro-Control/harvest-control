@@ -50,7 +50,7 @@ const Sidebar = () => {
             icon: FilePdf,
             title: "report",
             path: "/control/report",
-            havePerm: isAdmin || isGerente,
+            havePerm: isGerente,
         },
         {
             icon: UsersThree,

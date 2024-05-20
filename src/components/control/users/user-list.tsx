@@ -1,12 +1,13 @@
 
 import {TableBody, TableCell, TableRow} from "@/components/ui/table";
 import {useTranslation} from "react-i18next";
-import { UserData } from "@/types/user";
 import {format} from "date-fns";
+import { Gestor } from '@/types/gestor';
+import Operador from "@/types/operador";
 
 
 interface UsersListProps {
-    usuarios: UserData[];
+    usuarios: Operador[] | Gestor[];
 }
 
 const UsersList = ({usuarios}: UsersListProps) => {
@@ -22,6 +23,7 @@ const UsersList = ({usuarios}: UsersListProps) => {
                     <TableCell className="">{t(user.tipo)}</TableCell>
                     <TableCell className="">{t(user.status)}</TableCell>
                     <TableCell className="">{format(user.data_contratacao, "dd/MM/yyyy")}</TableCell>
+                    <TableCell className="">{t(user.turno) || "Não Possuí"}</TableCell>
                     <TableCell className="w-28">
                         {/* <div className="-ml-1 flex w-full flex-row items-center gap-3">
                             <EditUserModal userInformation={user}>
