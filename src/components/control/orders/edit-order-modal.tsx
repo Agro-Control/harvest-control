@@ -42,7 +42,6 @@ import { AxiosError } from "axios";
 import { format } from "date-fns";
 import { api } from "@/lib/api";
 import { z } from "zod";
-import DateTimePicker from "react-datetime-picker";
 import Orders from "@/app/control/orders/page";
 import { editOrderSchema } from "@/utils/validations/editOrderSchema";
 

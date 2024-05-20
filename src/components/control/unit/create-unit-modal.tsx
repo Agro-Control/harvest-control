@@ -90,7 +90,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A");
 
     const {
-        data: { usuarios: gestores = [] } = {}, // Objeto contendo a lista de gestores
+        data: { gestor: gestores = [] } = {}, // Objeto contendo a lista de gestores
     } = useGetManagers(isAdmin ? user?.grupo_id : null, parseInt(watchEmpresaId), "A", null, "G");
 
     useEffect(() => {
