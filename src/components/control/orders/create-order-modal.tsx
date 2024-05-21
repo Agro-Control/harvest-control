@@ -117,23 +117,28 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
     } = useGetUnits(enableFlag, !isAdmin ? user!.empresa_id : parseInt(watchIdEmpresa!), null, "A", null);
 
     const {
-        data: { talhoes = [] } = {}
+        data: { talhoes = [] } = {},
+        refetch: refetchU,
     } = useGetFields(derivedEnableFlag, parseInt(watchIdUnit!), "A", null);
 
     const {
-        data: { maquinas = [] } = {}
+        data: { maquinas = [] } = {},
+        refetch: refetchM,
     } = useGetMachines(derivedEnableFlag, parseInt(watchIdUnit!), "A", null);
 
     const {
-        data: { operador: operadores_manha = [] } = {}
+        data: { operador: operadores_manha = [] } = {},
+        refetch: refetchOPM,
     } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "M", "A", null, true);
 
     const {
-        data: { operador: operadores_tarde = [] } = {}
+        data: { operador: operadores_tarde = [] } = {},
+        refetch: refetchOPT,
     } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "T", "A", null, true);
 
     const {
-        data: { operador: operadores_noite = [] } = {}
+        data: { operador: operadores_noite = [] } = {},
+        refetch: refetchOPN,
     } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "N", "A", null, true);
 
 
@@ -142,11 +147,14 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             setEnableFlag(true);
         if (watchIdUnit !== "" && watchIdUnit !== undefined)
             setDerivedEnableFlag(true);
+            refetchOPM;
+            refetchOPT;
+            refetchOPN;
         if (!open) {
             setEnableFlag(false);
             setDerivedEnableFlag(false);
         }
-    }, [empresas, unidades, watchDataIncio, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
+    }, [empresas, unidades, operadores_manha, operadores_noite, operadores_tarde, watchDataIncio, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
 
 
 
@@ -208,7 +216,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             velocidade_minima: parseFloat(data.velocidade_minima),
             velocidade_maxima: parseFloat(data.velocidade_maxima),
             rpm: parseInt(data.rpm),
-            operadores_ids: [parseInt(data.operador_manha!),
+            operadores: [parseInt(data.operador_manha!),
             parseInt(data.operador_tarde!),
             parseInt(data.operador_noturno!)
             ]

@@ -126,7 +126,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
             velocidade_minima: parseFloat(data.velocidade_minima),
             velocidade_maxima: parseFloat(data.velocidade_maxima),
             rpm: parseInt(data.rpm),
-            operadores_ids: ordem.operadores_ids,
+            operadores: ordem.operadores,
 
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
