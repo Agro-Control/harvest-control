@@ -11,6 +11,7 @@
     "N": "Noite",
     "M": "Manhã",
     "T": "Tarde",
+    "R": "Manutenção",
     "SP": "São Paulo",
     "RJ": "Rio de Janeiro",
     "MG": "Minas Gerais",
@@ -69,6 +70,7 @@
 
     "network-error": "Erro de conexão",
     "network-error-description": "Houve um problema de conexão com o servidor, tente novamente.",
+    "report-error-404": "Não encontramos nenhum evento para a busca do código de sua Ordem.",
     "company-error-404": "Não encontramos nenhuma empresa para sua busca.",
     "manager-error-404": "Não encontramos nenhum gerente para sua busca.",
     "operator-error-404": "Não encontramos nenhum operador para sua busca.",

@@ -16,6 +16,9 @@ import Empresa from "@/types/empresa";
 import { useQueryState } from "nuqs";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
+import { useGetEvents } from "@/utils/hooks/useGetEvents";
+import Evento from "@/types/evento";
+import ReportRow from "@/components/control/report/report-row";
 
 
 export default function Reports() {
@@ -25,13 +28,16 @@ export default function Reports() {
     // Hook que pega os parametros da URL
     const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
 
+    const {
+        data: eventos,
+        error,
+        isError,
+        isLoading,
+        refetch,
+        isRefetching,
+    } = useGetEvents(query!);
 
-
-    // Hook que refaz a requisição toda vez que os parametros da URL mudam - Quando troca filtro ou busca
-    useEffect(() => {
-        if (isAdmin) {
-            refetch();
-    }, [query]);
+    const isLoadingData = isLoading || isRefetching;
 
 
 
@@ -43,49 +49,36 @@ export default function Reports() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
-                {isAdmin && <CreateCompanyModal>
-                    <Button
-                        type="button"
-                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                    >
-                        Criar
-                    </Button>
-                </CreateCompanyModal>}
             </div>
 
             <Table  >
                 <TableHeader>
                     <TableRow>
-                        <TableHead>CNPJ</TableHead>
+                        <TableHead>ID</TableHead>
                         <TableHead>Nome</TableHead>
-                        <TableHead>Cidade</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Ações</TableHead>
+                        <TableHead>Data Inicio</TableHead>
+                        <TableHead>Data Fim</TableHead>
+                        <TableHead>Duração</TableHead>
                     </TableRow>
                 </TableHeader>
 
                 {/* Renderiza a lista de empresas SE não houver erro e nem estiver carregando  */}
                 <TableBody>
-                    {!isLoadingEmpresaData &&
-                        !isErrorEmpresa && !isAdmin &&
-                        <CompanyRow key={empresa.id} empresa={empresa} />
-                    }
                     {!isError &&
                         !isLoadingData && isAdmin &&
 
-                        empresas.map((empresa: Empresa) => {
+                        eventos.map((evento: Evento) => {
                             return (
-                                <CompanyRow key={empresa.id} empresa={empresa} />
+                                <ReportRow key={evento.id} evento={evento} />
                             );
                         })
                     }
                 </TableBody>
             </Table>
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
-            {isLoadingData || isLoadingEmpresa && <LoadingAnimation />}
+            {isLoadingData && <LoadingAnimation />}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
-            {isAdmin && isError && !isLoadingData && <StatusCodeHandler requisitionType="company" error={error as AxiosError} />}
+            {isError && !isLoadingData && <StatusCodeHandler requisitionType="report" error={error as AxiosError} />}
         </div>
     );
 }

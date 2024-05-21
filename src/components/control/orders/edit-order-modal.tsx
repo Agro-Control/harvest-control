@@ -127,7 +127,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
             velocidade_maxima: parseFloat(data.velocidade_maxima),
             rpm: parseInt(data.rpm),
             operadores_ids: ordem.operadores_ids,
-        
+
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -197,7 +197,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
                                 </FormItem>
                             )}
                         />
-                                                <FormField
+                        <FormField
                             control={form.control}
                             name="status"
                             render={({ field }) => (

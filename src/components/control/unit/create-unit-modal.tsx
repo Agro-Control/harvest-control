@@ -1,7 +1,6 @@
 "use client";
 import {
     Buildings,
-    UserPlus,
     MapPin,
     MapTrifold,
     NavigationArrow,
@@ -24,10 +23,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { editUnitSchema } from "@/utils/validations/editUnitSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { handleUnitCnpjData } from "@/utils/handleCnpjData";
 import { ReactNode, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InputMask } from "@react-input/mask";
 import { useForm } from "react-hook-form";
@@ -40,7 +37,6 @@ import { MaskedInput } from "@/components/ui/masked-input";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/utils/hooks/useAuth";
 import SubmitButton from "@/components/submit-button";
-import { useGetManagers } from "@/utils/hooks/useGetManagers";
 
 
 interface createUnitProps {

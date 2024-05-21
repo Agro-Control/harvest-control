@@ -1,7 +1,5 @@
 "use client";
 import {
-    Buildings,
-    UserPlus,
     MapPin,
     MapTrifold,
     NavigationArrow,
@@ -22,7 +20,6 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { editUnitSchema } from "@/utils/validations/editUnitSchema";
-import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { ReactNode, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
@@ -36,8 +33,7 @@ import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
-import { useGetManagers } from "@/utils/hooks/useGetManagers";
-import formatCep from "@/utils/functions/formatCep";
+
 
 
 interface EditUnitProps {
@@ -55,7 +51,6 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
-    const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [statusOptions, setStatusOptions] = useState<{ value: string; }[]>([
         { value: 'A' },
         { value: 'I' }
