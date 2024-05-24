@@ -17,9 +17,7 @@ import OrdersRow from "@/components/control/orders/orders-row";
 import CreateOrderModal from "@/components/control/orders/create-order-modal";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import Empresa from "@/types/empresa";
-import Unidade from "@/types/unidade";
 
 
 const statusFilter: FilterInformation = {

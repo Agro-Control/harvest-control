@@ -1,7 +1,6 @@
 "use client";
 import {
     Buildings,
-    UserPlus,
     MapPin,
     MapTrifold,
     NavigationArrow,
@@ -24,10 +23,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { editUnitSchema } from "@/utils/validations/editUnitSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { handleUnitCnpjData } from "@/utils/handleCnpjData";
 import { ReactNode, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InputMask } from "@react-input/mask";
 import { useForm } from "react-hook-form";
@@ -40,7 +37,6 @@ import { MaskedInput } from "@/components/ui/masked-input";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/utils/hooks/useAuth";
 import SubmitButton from "@/components/submit-button";
-import { useGetManagers } from "@/utils/hooks/useGetManagers";
 
 
 interface createUnitProps {
@@ -70,9 +66,8 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             logradouro: "",
             numero: "",
             complemento: "",
-            status: "",
+            status: "A",
             empresa_id: !isAdmin ? user!.empresa_id.toString() : "",
-            gestor_id: !isAdmin ? user!.id.toString() : "",
         }
     });
 
@@ -89,9 +84,6 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A");
 
-    const {
-        data: { gestor: gestores = [] } = {}, // Objeto contendo a lista de gestores
-    } = useGetManagers(isAdmin ? user?.grupo_id : null, parseInt(watchEmpresaId), "A", null, "G");
 
     useEffect(() => {
         if (empresas.length > 0) {
@@ -142,13 +134,14 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     });
 
     const onHandleSubmit = (data: Form) => {
+        const empresaSelecionada = empresas.find(empresa => empresa.id === parseInt(data.empresa_id));
         const formattedData = {
             ...data,
             //telefone: data.telefone.replace(/\D/g, ""),
             cep: data.cep.replace(/\D/g, ""),
-            status: data.status,
+            status: "A",
             empresa_id: !isAdmin ? user?.empresa_id : parseInt(data.empresa_id),
-            gestor_id: !isAdmin ? user?.id : parseInt(data.gestor_id),
+            gestor_id: !isAdmin ? user?.id : empresaSelecionada?.gestor_id! 
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -310,33 +303,6 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                                             </SelectContent>
                                         </Select>
 
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />}
-                        {isAdmin && <FormField
-                            control={form.control}
-                            name="gestor_id"
-                            render={({ field }) => (
-                                <FormItem className="col-span-2">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("gestor_id", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={UserPlus}>
-                                                <SelectValue placeholder="Selecione o Gestor" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {gestores.map((gestor) => (
-                                                    <SelectItem key={gestor.id} value={gestor.id.toString() || ""}>
-                                                        {gestor.nome}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

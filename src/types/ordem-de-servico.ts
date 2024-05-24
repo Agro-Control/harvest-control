@@ -13,8 +13,7 @@ interface OrdemServico {
     unidade_id?: number;
     empresa_id?: number;
     maquina_id?: number;
-    operadores_ids?: number[];
-    operadores?: Operador[] | null;
+    operadores?: number[] | Operador[] | null;
     nome_maquina?: string | null;
   }
   

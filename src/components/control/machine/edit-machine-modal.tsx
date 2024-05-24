@@ -48,7 +48,8 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
 
     const [statusOptions] = useState<{ value: string }[]>([
         { value: 'A' },
-        { value: 'I' }
+        { value: 'I' },
+        { value: 'R'}
     ]);
 
     const form = useForm<z.infer<typeof createMachineSchema>>({
