@@ -15,7 +15,7 @@ const SearchBar = ({text}: SearchBarProps) => {
     useDebounce(
         () => {
             if (query === "") setQueryParam("");
-            if (searchLengthRule) return;
+            // if (searchLengthRule) return;
             if (query) setQueryParam(query);
         },
         1500,

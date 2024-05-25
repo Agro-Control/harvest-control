@@ -43,17 +43,17 @@ export const createOrderSchema = z.object({
         message: "A data de término deve ser maior em um dia do que a data de início",
     }),
     status: optionalStringField(255),
-    operador_manha: requiredStringField(1, 255, "Selecione um Operador").refine((value) => {
+    operador_manha: requiredStringField(1, 255, "Selecione um Operador").nullable().refine((value) => {
         return value !== null && value !== undefined;
     }, {
         message: "Por favor, selecione uma Operador do turno da manhã",
     }),
-    operador_tarde: requiredStringField(1, 255, "Selecione um Operador").refine((value) => {
+    operador_tarde: requiredStringField(1, 255, "Selecione um Operador").nullable().refine((value) => {
         return value !== null && value !== undefined;
     }, {
         message: "Por favor, selecione uma Operador do turno da tarde",
     }),
-    operador_noturno: requiredStringField(1, 255, "Selecione um Operador").refine((value) => {
+    operador_noturno: requiredStringField(1, 255, "Selecione um Operador").nullable().refine((value) => {
         return value !== null && value !== undefined;
     }, {
         message: "Por favor, selecione uma Operador do turno da noite",

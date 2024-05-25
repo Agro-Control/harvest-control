@@ -1,15 +1,5 @@
 "use client";
-import {
-    Buildings,
-    Factory,
-    Truck,
-    MapPin,
-    Gauge,
-    Sun,
-    SunHorizon,
-    Moon,
-    Grains
-} from "@phosphor-icons/react";
+import {Buildings, Factory, Truck, MapPin, Gauge, Sun, SunHorizon, Moon, Grains} from "@phosphor-icons/react";
 import {
     Dialog,
     DialogContent,
@@ -19,30 +9,29 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { createOrderSchema } from "@/utils/validations/createOrderSchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { useGetOperators } from "@/utils/hooks/useGetOperators";
-import { useGetMachines } from "@/utils/hooks/useGetMachines";
-import { useGetFields } from "@/utils/hooks/useGetFields";
-import { DatePicker } from "@/components/ui/date-picker";
-import { useGetUnits } from "@/utils/hooks/useGetUnits";
-import { ReactNode, useEffect, useState } from "react";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
+import {createOrderSchema} from "@/utils/validations/createOrderSchema";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
+import {useGetOperators} from "@/utils/hooks/useGetOperators";
+import {useGetMachines} from "@/utils/hooks/useGetMachines";
+import {useGetFields} from "@/utils/hooks/useGetFields";
+import {DatePicker} from "@/components/ui/date-picker";
+import {useGetUnits} from "@/utils/hooks/useGetUnits";
+import {ReactNode, useEffect, useState} from "react";
 import SubmitButton from "@/components/submit-button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/components/ui/use-toast";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useToast} from "@/components/ui/use-toast";
 import OrdemServico from "@/types/ordem-de-servico";
-import { useAuth } from "@/utils/hooks/useAuth";
-import { useTranslation } from "react-i18next";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { AxiosError } from "axios";
-import { format } from "date-fns";
-import { api } from "@/lib/api";
-import { z } from "zod";
-
+import {useAuth} from "@/utils/hooks/useAuth";
+import {useTranslation} from "react-i18next";
+import {Input} from "@/components/ui/input";
+import {useForm} from "react-hook-form";
+import {AxiosError} from "axios";
+import {format} from "date-fns";
+import {api} from "@/lib/api";
+import {z} from "zod";
 
 interface createOrderProps {
     children: ReactNode;
@@ -67,13 +56,13 @@ const addTimeToDate = (date: Date): Date => {
     return newDate;
 };
 
-const CreateOrderModal = ({ children }: createOrderProps) => {
+const CreateOrderModal = ({children}: createOrderProps) => {
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
     const [open, setOpen] = useState(false);
-    const { toast } = useToast();
-    const { t } = useTranslation();
+    const {toast} = useToast();
+    const {t} = useTranslation();
     const queryClient = useQueryClient();
     const [enableFlag, setEnableFlag] = useState<boolean>(false);
     const [derivedEnableFlag, setDerivedEnableFlag] = useState<boolean>(false);
@@ -93,77 +82,102 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             operador_manha: "",
             operador_tarde: "",
             operador_noturno: "",
-        }
+        },
     });
 
-    const { getValues, setValue, watch } = form;
+    const {getValues, setValue, watch} = form;
     const watchIdEmpresa = watch("id_empresa");
     const watchIdUnit = watch("id_unidade");
     const watchDataIncio = watch("data_inicio");
     const watchDataFim = watch("data_fim");
 
-
     const {
-        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
+        data: {empresas = []} = {}, // Objeto contendo a lista de empresas
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ?user?.grupo_id : null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A");
 
-    const {
-        data: { unidades = [] } = {}
-    } = useGetUnits(enableFlag, !isAdmin ? user!.empresa_id : parseInt(watchIdEmpresa!), null, "A", null);
+    const {data: {unidades = []} = {}} = useGetUnits(
+        enableFlag,
+        !isAdmin ? user!.empresa_id : parseInt(watchIdEmpresa!),
+        null,
+        "A",
+        null,
+    );
 
-    const {
-        data: { talhoes = [] } = {},
-        refetch: refetchU,
-    } = useGetFields(derivedEnableFlag, parseInt(watchIdUnit!), "A", null);
+    const {data: {talhoes = []} = {}, refetch: refetchU} = useGetFields(
+        derivedEnableFlag,
+        parseInt(watchIdUnit!),
+        "A",
+        null,
+    );
 
-    const {
-        data: { maquinas = [] } = {},
-        refetch: refetchM,
-    } = useGetMachines(derivedEnableFlag, parseInt(watchIdUnit!), "A", null);
+    const {data: {maquinas = []} = {}, refetch: refetchM} = useGetMachines(
+        derivedEnableFlag,
+        parseInt(watchIdUnit!),
+        "A",
+        null,
+    );
 
-    const {
-        data: { operador: operadores_manha = [] } = {},
-        refetch: refetchOPM,
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "M", "A", null, true);
+    const {data: {operador: operadores_manha = []} = {}, refetch: refetchOPM} = useGetOperators(
+        derivedEnableFlag,
+        parseInt(watchIdUnit!),
+        "M",
+        "A",
+        null,
+        true,
+    );
 
-    const {
-        data: { operador: operadores_tarde = [] } = {},
-        refetch: refetchOPT,
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "T", "A", null, true);
+    const {data: {operador: operadores_tarde = []} = {}, refetch: refetchOPT} = useGetOperators(
+        derivedEnableFlag,
+        parseInt(watchIdUnit!),
+        "T",
+        "A",
+        null,
+        true,
+    );
 
-    const {
-        data: { operador: operadores_noite = [] } = {},
-        refetch: refetchOPN,
-    } = useGetOperators(derivedEnableFlag, parseInt(watchIdUnit!), "N", "A", null, true);
-
+    const {data: {operador: operadores_noite = []} = {}, refetch: refetchOPN} = useGetOperators(
+        derivedEnableFlag,
+        parseInt(watchIdUnit!),
+        "N",
+        "A",
+        null,
+        true,
+    );
 
     useEffect(() => {
-        if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined)
-            setEnableFlag(true);
-        if (watchIdUnit !== "" && watchIdUnit !== undefined)
-            setDerivedEnableFlag(true);
-            refetchOPM;
-            refetchOPT;
-            refetchOPN;
+        if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined) setEnableFlag(true);
+        if (watchIdUnit !== "" && watchIdUnit !== undefined) setDerivedEnableFlag(true);
+        refetchOPM;
+        refetchOPT;
+        refetchOPN;
         if (!open) {
             setEnableFlag(false);
             setDerivedEnableFlag(false);
         }
-    }, [empresas, unidades, operadores_manha, operadores_noite, operadores_tarde, watchDataIncio, watchIdEmpresa, watchIdUnit, enableFlag, derivedEnableFlag]);
-
-
+    }, [
+        empresas,
+        unidades,
+        operadores_manha,
+        operadores_noite,
+        operadores_tarde,
+        watchDataIncio,
+        watchIdEmpresa,
+        watchIdUnit,
+        enableFlag,
+        derivedEnableFlag,
+    ]);
 
     const createOrderRequest = async (postData: OrdemServico | null) => {
-        const { data } = await api.post("/ordens", postData);
+        const {data} = await api.post("/ordens", postData);
         return data;
     };
 
-    const { mutate, isPending } = useMutation({
+    const {mutate, isPending} = useMutation({
         mutationFn: createOrderRequest,
         onSuccess: () => {
             toast({
@@ -171,14 +185,14 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                 title: t("success"),
                 description: t("postOrder-success"),
             });
-            queryClient.refetchQueries({ queryKey: ["orders"], type: "active", exact: true });
+            queryClient.refetchQueries({queryKey: ["orders"], type: "active", exact: true});
             setEnableFlag(false);
             setDerivedEnableFlag(false);
             setOpen(false);
             form.reset();
         },
         onError: (error: AxiosError) => {
-            const { response } = error;
+            const {response} = error;
             if (!response) {
                 toast({
                     variant: "destructive",
@@ -188,7 +202,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                 return;
             }
 
-            const { status } = response;
+            const {status} = response;
             const titleCode = `postOrder-error-${status}`;
             const descriptionCode = `postOrder-description-error-${status}`;
 
@@ -211,15 +225,16 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
             gestor_id: user?.id,
             unidade_id: parseInt(data.id_unidade!),
             maquina_id: parseInt(data.id_maquina!),
-            data_inicio: format(startDate, 'yyyy-MM-dd HH:mm:ss'),
-            data_fim: format(endDate, 'yyyy-MM-dd HH:mm:ss'),
+            data_inicio: format(startDate, "yyyy-MM-dd HH:mm:ss"),
+            data_fim: format(endDate, "yyyy-MM-dd HH:mm:ss"),
             velocidade_minima: parseFloat(data.velocidade_minima),
             velocidade_maxima: parseFloat(data.velocidade_maxima),
             rpm: parseInt(data.rpm),
-            operadores: [parseInt(data.operador_manha!),
-            parseInt(data.operador_tarde!),
-            parseInt(data.operador_noturno!)
-            ]
+            operadores: [
+                parseInt(data.operador_manha!),
+                parseInt(data.operador_tarde!),
+                parseInt(data.operador_noturno!),
+            ],
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -235,38 +250,44 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                     <DialogDescription>Insira as informações para criar uma Ordem.</DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="create-order-form" className="grid grid-cols-2 gap-4 py-4">
-                        {isAdmin && <FormField
-                            control={form.control}
-                            name="id_empresa"
-                            render={({ field }) => (
-                                <FormItem className="col-span-2">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("id_empresa", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={Buildings} className="h-10">
-                                                <SelectValue placeholder="Selecione a Empresa" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {empresas.map((company: any) => (
-                                                    <SelectItem key={company.id} value={company.id!.toString()}>
-                                                        {company.nome}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />}
+                    <form
+                        onSubmit={form.handleSubmit(onHandleSubmit)}
+                        id="create-order-form"
+                        className="grid grid-cols-2 gap-4 py-4"
+                    >
+                        {isAdmin && (
+                            <FormField
+                                control={form.control}
+                                name="id_empresa"
+                                render={({field}) => (
+                                    <FormItem className="col-span-2">
+                                        <FormControl>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue("id_empresa", value);
+                                                }}
+                                            >
+                                                <SelectTrigger Icon={Buildings} className="h-10">
+                                                    <SelectValue placeholder="Selecione a Empresa" {...field} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {empresas.map((company: any) => (
+                                                        <SelectItem key={company.id} value={company.id!.toString()}>
+                                                            {company.nome}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                         <FormField
                             control={form.control}
                             name="id_unidade"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
@@ -293,7 +314,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="id_maquina"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
@@ -320,10 +341,10 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="data_inicio"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                       <DatePicker placeHolder={"Data Início"} {...field}/>
+                                        <DatePicker placeHolder={"Data Início"} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -332,7 +353,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="data_fim"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <DatePicker placeHolder={"Data de Finalização"} {...field} />
@@ -344,7 +365,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_manha"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
@@ -353,9 +374,13 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                             }}
                                         >
                                             <SelectTrigger Icon={SunHorizon} className="h-10 ">
-                                                <SelectValue placeholder="Selecione o Operador do Turno da Manhã" {...field} />
+                                                <SelectValue
+                                                    placeholder="Selecione o Operador do Turno da Manhã"
+                                                    {...field}
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
+                                                <SelectItem value={"nenhum"}>Nenhum</SelectItem>
                                                 {operadores_manha.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
@@ -371,7 +396,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_tarde"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
@@ -380,9 +405,13 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                             }}
                                         >
                                             <SelectTrigger Icon={Sun} className="h-10">
-                                                <SelectValue placeholder="Selecione o Operador do Turno da Tarde" {...field} />
+                                                <SelectValue
+                                                    placeholder="Selecione o Operador do Turno da Tarde"
+                                                    {...field}
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
+                                                <SelectItem value={"nenhum"}>Nenhum</SelectItem>
                                                 {operadores_tarde.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
@@ -398,7 +427,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_noturno"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
@@ -407,9 +436,13 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                                             }}
                                         >
                                             <SelectTrigger Icon={Moon} className="h-10">
-                                                <SelectValue placeholder="Selecione o Operador do Turno da Noite" {...field} />
+                                                <SelectValue
+                                                    placeholder="Selecione o Operador do Turno da Noite"
+                                                    {...field}
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
+                                                <SelectItem value={"nenhum"}>Nenhum</SelectItem>
                                                 {operadores_noite.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
@@ -425,7 +458,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="id_talhao"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
@@ -453,7 +486,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="velocidade_maxima"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input
@@ -471,7 +504,7 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="velocidade_minima"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input
@@ -488,30 +521,22 @@ const CreateOrderModal = ({ children }: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="rpm"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <Input
-                                            Icon={Gauge}
-                                            id="rpm"
-                                            placeholder="RPM"
-                                            {...field}
-                                        />
+                                        <Input Icon={Gauge} id="rpm" placeholder="RPM" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-
-
                     </form>
                 </Form>
                 <DialogFooter>
                     <SubmitButton isLoading={isPending} form="create-order-form" />
                 </DialogFooter>
-            </DialogContent >
-        </Dialog >
+            </DialogContent>
+        </Dialog>
     );
 };
 export default CreateOrderModal;
-
