@@ -1,25 +1,15 @@
 "use client";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import CreateCompanyModal from "@/components/control/company/create-company-modal";
-import CompanyRow from "@/components/control/company/company-row";
 import StatusCodeHandler from "@/components/status-code-handler";
-import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import LoadingAnimation from "@/components/loading-animation";
-import { useGetCompany } from "@/utils/hooks/useGetCompany";
-import FilterInformation from "@/types/filter-information";
-import { useGetState } from "@/utils/hooks/useGetStates";
-import SearchBar from "@/components/control/search-bar";
-import Filter from "@/components/control/filter";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/utils/hooks/useAuth";
-import Empresa from "@/types/empresa";
 import { useQueryState } from "nuqs";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useGetEvents } from "@/utils/hooks/useGetEvents";
 import Evento from "@/types/evento";
 import ReportRow from "@/components/control/report/report-row";
-
+import ReportCard from "@/components/control/report/report-card";
 
 export default function Reports() {
     const auth = useAuth();
@@ -51,13 +41,10 @@ export default function Reports() {
     return (
 
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
-            <div className="flex w-full flex-row ">
+            <div className="flex w-full flex-row justify-between items-start ">
                 <p className="font-poppins text-4xl font-medium">Relatórios</p>
+                    <ReportCard />
             </div>
-            <div className="flex w-full flex-row items-start justify-start gap-4 ">
-                <SearchBar text="Digite o código da ordem para pesquisar os eventos vinculados..." />
-            </div>
-
             <Table  >
                 <TableHeader>
                     <TableRow>
@@ -78,13 +65,14 @@ export default function Reports() {
                             );
                         })
                     }
-                    {!isError && !isLoadingData && query && eventos.length === 0 && <div className="flex w-full items-center justify-center font-medium">Ordem encontrada mas sem nenhum evento capturado</div>}
+                    {!isError && !isLoadingData && eventos && eventos.length === 0 && <div className="flex w-full items-center justify-center font-medium">Ordem encontrada mas sem nenhum evento capturado</div>}
                 </TableBody>
             </Table>
          
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
+           {!eventos && !isLoadingData && <div className="flex w-full items-center justify-center font-medium">Pesquise uma ordem para mostrar os eventos</div>}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="report" error={error as AxiosError} />}
         </div>
     );

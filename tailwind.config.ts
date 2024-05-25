@@ -20,6 +20,7 @@ const config = {
                 company: "url('../assets/company-card.png')",
                 unity: "url('../assets/unity-card.png')",
                 group: "url('../assets/group-card.png')",
+                report: "url('../assets/report-card.png')",
             },
             fontFamily: {
                 poppins: "var(--font-poppins)",
