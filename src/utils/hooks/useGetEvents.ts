@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
+import GetEventos from "@/types/get-eventos";
+
 const getEventsRequest = async (id_ordem: number | null) => {
-    const { data } = await api.get(`/eventos/${id_ordem}`)
+    const { data } = await api.get<GetEventos>(`/eventos/${id_ordem}`)
     return data;
 };
 
