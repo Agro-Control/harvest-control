@@ -42,7 +42,7 @@ export default function Reports() {
 
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
             <div className="flex w-full flex-row justify-between items-start ">
-                <p className="font-poppins text-4xl font-medium">Relatórios</p>
+                <p className="font-poppins text-4xl font-medium">Relatório de Eventos</p>
                     <ReportCard />
             </div>
             <Table  >
@@ -65,14 +65,14 @@ export default function Reports() {
                             );
                         })
                     }
-                    {!isError && !isLoadingData && eventos && eventos.length === 0 && <div className="flex w-full items-center justify-center font-medium">Ordem encontrada mas sem nenhum evento capturado</div>}
+                    {/* {!isError && !isLoadingData && eventos && eventos.length === 0 && <div className="flex w-full items-center justify-center font-medium">Ordem encontrada mas sem nenhum evento capturado</div>} */}
                 </TableBody>
             </Table>
          
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
-           {!eventos && !isLoadingData && <div className="flex w-full items-center justify-center font-medium">Pesquise uma ordem para mostrar os eventos</div>}
+           {eventos.length === 0 && !isLoadingData && <div className="flex w-full items-center justify-center font-medium">Pesquise uma ordem para mostrar os eventos</div>}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="report" error={error as AxiosError} />}
         </div>
     );
