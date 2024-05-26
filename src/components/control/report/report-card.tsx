@@ -10,7 +10,7 @@ const ReportCard = () => {
                 <div className="flex flex-col w-full items-start justify-start gap-2" >
                     <p className="text-white text-sm">Busque pela Ordem de Serviço</p>
                     <div className="flex w-[50%]">
-                    <SearchBar text="Digite a ordem..." />
+                    <SearchBar isReport text="Digite a ordem..." />
                          </div>
                     </div>
         </div>

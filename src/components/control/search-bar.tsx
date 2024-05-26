@@ -6,9 +6,10 @@ import {useState} from "react";
 
 interface SearchBarProps {
     text: string;
+    isReport?: boolean;
 }
 
-const SearchBar = ({text}: SearchBarProps) => {
+const SearchBar = ({text, isReport = false}: SearchBarProps) => {
     const setQueryParam = useQueryState("query")[1];
     const [query, setQuery] = useState<string | undefined>();
     const searchLengthRule = query && query.length > 0 && query.length < 3;
@@ -16,7 +17,7 @@ const SearchBar = ({text}: SearchBarProps) => {
         () => {
             if (query === "") setQueryParam("");
 
-            // if (searchLengthRule) return;
+            if (searchLengthRule && !isReport) return;
 
             if (query) setQueryParam(query);
         },
