@@ -18,7 +18,7 @@ export default function Reports() {
     const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
 
     const {
-        data: eventos,
+        data: { eventos = [] } = {},
         error,
         isError,
         isLoading,
