@@ -95,7 +95,7 @@ const Login = () => {
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-center overflow-hidden text-green-950 ">
-            <div className="flex w-[20vw] flex-col items-center justify-center  ">
+            <div className="flex w-[80vw] md:w-[50vw] lg:w-[40vw] xl:w-[20vw]  flex-col items-center justify-center  ">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onHandleSubmit)} className="flex w-full flex-col gap-6">
                         <Image src={logo2} className="h-[64px] w-auto" alt="Agro Control" width={512} height={512} />

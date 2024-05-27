@@ -1,6 +1,6 @@
 "use client";
 
-import { NavButton, NavButtonProps } from "./navigate-button";
+import {NavButton, NavButtonProps} from "./navigate-button";
 import {
     ChartPieSlice,
     WindowsLogo,
@@ -13,21 +13,15 @@ import {
     SignOut,
     Icon as IconType,
 } from "@phosphor-icons/react";
-  
+
 import {useAuth} from "@/utils/hooks/useAuth";
 
-
-  
-  const MobileMenu = () => {
-   
-    
-
+const MobileMenu = () => {
     const {removeUser, user} = useAuth();
     const isAdmin = user && user.tipo === "D";
     const isGerente = user && user.tipo === "G";
 
-
-    const NavButtons:  NavButtonProps[]  = [
+    const NavButtons: NavButtonProps[] = [
         {
             icon: WindowsLogo,
             title: "control-panel",
@@ -79,24 +73,18 @@ import {useAuth} from "@/utils/hooks/useAuth";
     ];
 
     return (
-      <div
-        className="flex w-full flex-col items-start justify-start gap-5"
-      >
-            <span className="pl-4 text-xs font-bold uppercase text-green-950">
-              menu geral
-            </span>
+        <div className="flex w-full flex-col items-start justify-start gap-5">
+            <span className="pl-4 text-xs font-bold uppercase text-green-950">menu geral</span>
             <div className="flex w-full flex-col items-start">
-              {NavButtons.map((item) => (
-                <NavButton key={item.path} {...item} />
-              ))}
+                {NavButtons.map((item) => (
+                    <NavButton key={item.path} {...item} />
+                ))}
             </div>
-        <span className="pl-4 text-xs font-bold uppercase text-green-950 pt-4">
-          configurações
-        </span>
-        <div className="flex w-full flex-col items-start">
-        <button
-            // href={path}
-            className="
+            <span className="pl-4 pt-4 text-xs font-bold uppercase text-green-950">configurações</span>
+            <div className="flex w-full flex-col items-start">
+                <button
+                    onClick={() => removeUser()}
+                    className="
         focus:ring-complementary/80
         group
         flex
@@ -114,10 +102,10 @@ import {useAuth} from "@/utils/hooks/useAuth";
         focus:ring-offset-background
         xl:h-10
     "
-        >
-            <SignOut
-            weight="fill"
-            className="
+                >
+                    <SignOut
+                        weight="fill"
+                        className="
                   h-6
                   w-6
                      text-green-950
@@ -125,9 +113,9 @@ import {useAuth} from "@/utils/hooks/useAuth";
                       duration-200
                       group-hover:text-green-600
                 "
-            />
-            <span
-                className="
+                    />
+                    <span
+                        className="
                       text-base
                       font-medium
                       text-green-950
@@ -135,12 +123,12 @@ import {useAuth} from "@/utils/hooks/useAuth";
                       duration-200
                       group-hover:text-green-600
                   "
-            >
-                Sair
-            </span>
-        </button>
+                    >
+                        Sair
+                    </span>
+                </button>
+            </div>
         </div>
-      </div>
     );
-  };
-  export default MobileMenu;
+};
+export default MobileMenu;
