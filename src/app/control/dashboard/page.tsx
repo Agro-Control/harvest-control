@@ -1,4 +1,6 @@
 import ActiveUsersCard from "@/components/control/dashboard/active-users-card";
+import ActiveOrdersCard from "@/components/control/dashboard/active-orders-card";
+import OperativeMachinesCard from "@/components/control/dashboard/operative-machines-card";
 
 export default function Dashboard() {
     return (
@@ -8,8 +10,8 @@ export default function Dashboard() {
             </div>
             <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <ActiveUsersCard />
-                <ActiveUsersCard />
-                <ActiveUsersCard />
+                <OperativeMachinesCard />
+                <ActiveOrdersCard />
             </div>
         </div>
     );
