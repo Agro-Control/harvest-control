@@ -4,6 +4,7 @@ import {useMediaQuery} from "@/utils/hooks/useMediaQuery";
 import Sidebar from "@/components/nav/sidebar";
 import {useAuth} from "@/utils/hooks/useAuth";
 import Loading from "../loading";
+import MobileNav from "@/components/nav/mobile-nav";
 
 export default function ControlLayout({
     children,
@@ -17,9 +18,10 @@ export default function ControlLayout({
     return isLoadingUser ? (
         <Loading />
     ) : (
-        <div className="flex w-full flex-row items-center">
+        <div className={`flex w-full ${isDesktop ? "flex-row gap-0" : "gap-1 flex-col"} items-center`}>
             {isDesktop && <Sidebar />}
-            <div className={`${ isDesktop ? "ml-[308px]" : "ml-0"} flex h-full w-full flex-col overflow-y-auto overflow-x-hidden`}>{children}</div>
+            {!isDesktop && <MobileNav />}
+            <div className={`${ isDesktop ? "ml-[308px]" : " ml-0"} flex h-full w-full flex-col overflow-y-auto overflow-x-hidden`}>{children}</div>
         </div>
     );
 }
