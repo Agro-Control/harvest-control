@@ -18,7 +18,7 @@ interface DoubleDataCardProps {
 const DoubleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, firstDataValue, SecondDataIcon, secondDataTitle, secondDataValue, isLoading}: DoubleDataCardProps) => {
 
     return (
-        <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4 lg:col-span-1 lg:max-h-[130px]">
+        <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4 lg:col-span-1 lg:min-h-[130px]">
             <div className="flex w-full flex-row gap-4">
                 <div
                     className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg
@@ -31,7 +31,7 @@ const DoubleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
                     <Icon className="h-5 w-5 text-green-950 " />
                 </div>
 
-                <div className="flex  flex-row md:flex-col">
+                <div className="flex  flex-row gap-1 md:gap-0 md:flex-col ">
                     <p
                         className="
                     line-clamp-1
@@ -58,7 +58,7 @@ const DoubleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
                     </p>
                 </div>
             </div>
-            <div className="flex w-full flex-col items-center justify-between gap-2 lg:flex-row lg:gap-0">
+            <div className="flex w-full flex-col items-center justify-between gap-2 2xl:flex-row lg:gap-2">
                 <div
                     className="text-black flex h-9
         w-full
@@ -72,7 +72,7 @@ const DoubleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
         px-3
         text-base
         font-normal
-        xl:w-auto
+        2xl:w-auto
 "
                 >
                     <FirstDataIcon className="h-5 w-5 text-green-950 " />
@@ -101,12 +101,12 @@ const DoubleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
         px-3
         text-base
         font-normal
-        xl:w-auto
+        2xl:w-auto
 "
                 >
                     <SecondDataIcon className="h-5 w-5 text-green-900 " />
                     <div className="flex flex-row gap-1">
-                        <p> {secondDataTitle}</p>
+                        <p > {secondDataTitle}</p>
                         {isLoading ? (
                             <CircleNotch className="h-4 w-4 animate-spin text-green-900" />
                         ) : (

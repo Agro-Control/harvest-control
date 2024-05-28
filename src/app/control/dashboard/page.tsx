@@ -8,7 +8,7 @@ export default function Dashboard() {
             <div className="flex w-full flex-row ">
                 <p className="font-poppins text-4xl font-medium">Dashboard</p>
             </div>
-            <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid w-full gap-6 md:grid-cols-2  xl:grid-cols-3">
                 <ActiveUsersCard />
                 <OperativeMachinesCard />
                 <ActiveOrdersCard />
