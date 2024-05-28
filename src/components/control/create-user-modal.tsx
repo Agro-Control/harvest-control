@@ -9,48 +9,134 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {Buildings, UsersThree, User, EnvelopeSimple, IdentificationCard, Phone, NavigationArrow, MapTrifold, MapPin, Factory,House, Hash } from "@phosphor-icons/react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {createUserSchema} from "@/utils/validations/createUserSchema";
-import {PasswordInput} from "@/components/ui/password-input";
-import {Buildings, UsersThree} from "@phosphor-icons/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {zodResolver} from "@hookform/resolvers/zod";
+import { useAuth } from "@/utils/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import { useToast } from "../ui/use-toast";
+import {ReactNode, useState} from "react";
 import {useForm} from "react-hook-form";
-import {ReactNode} from "react";
+import Operador from "@/types/operador";
+import { Gestor } from "@/types/gestor";
+import { AxiosError } from "axios";
+import api from "@/lib/api";
 import {z} from "zod";
 
 interface CreateUserModalProps {
     children: ReactNode;
 }
 
+type Form = z.infer<typeof createUserSchema>;
+
+
 const CreateUserModal = ({children}: CreateUserModalProps) => {
-    const form = useForm<z.infer<typeof createUserSchema>>({
+    const [open, setOpen] = useState(false);
+    const { toast } = useToast();
+    const { t } = useTranslation();
+    const queryClient = useQueryClient();
+    const auth = useAuth();
+    const user = auth.user;
+    const isAdmin = user?.tipo === "D";
+    const company_id = user?.empresa_id;
+    const group_id = user?.grupo_id;
+    const unidade_id = user?.unidade_id;
+    const gestor_id = isAdmin ? null : user?.id;
+    const whichRoleCreate = isAdmin ? "Gestor" : "Operador";
+
+    const form = useForm<Form>({
         resolver: zodResolver(createUserSchema),
         defaultValues: {
-            name: "",
+            nome: "",
             email: "",
-            role: "",
-            password: "",
-            identifier: "",
-            phone: "",
-            address: "",
-            state: "",
-            city: "",
-            neighborhood: "",
-            street: "",
-            number: "",
-            company: "",
+            tipo: whichRoleCreate,
+            cpf: "",
+            telefone: "",
+            turno: "",
         },
     });
 
-    function onSubmit(data: z.infer<typeof createUserSchema>) {
-        console.log(data);
-    }
+    const createUserRequest = async (postData: Operador | Gestor | null) => {
+        const url = isAdmin ? "/gestores" : "/operadores";
+        const { data } = await api.post(url, postData);
+        return data;
+    };
+
+    const { mutate, isPending } = useMutation({
+        mutationFn: createUserRequest,
+        onSuccess: () => {
+            toast({
+                className: "border-green-500 bg-green-500",
+                title: t("success"),
+                description: t(`post${whichRoleCreate}-success`),
+            });
+
+           const queryKey = isAdmin ? "managers" : "operatros";
+            queryClient.refetchQueries({ queryKey: [queryKey], type: "active", exact: true });
+            setOpen(false);
+            form.reset();
+        },
+        onError: (error: AxiosError) => {
+            const { response } = error;
+            if (!response) {
+                toast({
+                    variant: "destructive",
+                    title: t("network-error"),
+                    description: t("network-error-description"),
+                });
+                return;
+            }
+
+            const { status } = response;
+            const titleCode = `post${whichRoleCreate}-error-${status}`;
+            const descriptionCode = `post${whichRoleCreate}-description-error-${status}`;
+
+            toast({
+                variant: "destructive",
+                title: t(titleCode),
+                description: t(descriptionCode),
+            });
+        },
+    });
+
+
+    const onHandleSubmit = (data: Form) => {
+       if(isAdmin){
+        return;
+       }
+       
+        const formattedData = {
+            ...data,
+            tipo: data.tipo.substring(0,1),
+            status: "A",
+            data_contratacao: new Date().toISOString,
+            gestor_id: gestor_id,
+            empresa_id: rempresa_id,
+            unidade_id: unidade_id,
+            grupo_id: grupo_id
+        }
+            console.log(formattedData);
+
+
+
+        // const formattedData = {
+        //     ...data,
+           
+        //     status: "A",
+        //     gestor_id: data.gestor_id != null ? parseInt(data.gestor_id) : null,
+        //     grupo_id: user?.grupo_id,
+        // };
+        // mutate(formattedData);
+    };
+
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
@@ -59,39 +145,41 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} id="user-form" className="grid grid-cols-2 gap-4 py-4">
+                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="user-form" className="grid grid-cols-2 gap-4 py-4">
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="nome"
                             render={({field}) => (
-                                <FormItem className="col-span-1 ">
+                                <FormItem className="col-span-2 ">
                                     <FormControl>
-                                        <Input className="" id="name" placeholder="Nome" {...field} />
+                                        <Input Icon={User} className="" id="name" placeholder="Nome" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
-                        <FormField
+<FormField
                             control={form.control}
-                            name="role"
+                            name="tipo"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("role", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={UsersThree} className="h-10 w-full ">
-                                                <SelectValue placeholder="Cargo" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="G">Gestor</SelectItem>
-                                                <SelectItem value="O">Operador</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <Input disabled Icon={UsersThree} className="" id="role" placeholder="Cargo" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+
+<FormField
+                            control={form.control}
+                            name="cpf"
+                            render={({field}) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Input Icon={IdentificationCard} id="identifier" placeholder="CPF" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -104,46 +192,19 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input id="email" placeholder="Email" {...field} />
+                                        <Input Icon={EnvelopeSimple} id="email" placeholder="Email" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-
                         <FormField
                             control={form.control}
-                            name="password"
-                            render={({field}) => (
-                                <FormItem className="col-span-1">
-                                    <FormControl>
-                                        <PasswordInput {...field} placeholder="Senha" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="identifier"
+                            name="telefone"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="identifier" placeholder="CPF" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input id="phone" placeholder="Telefone" {...field} />
+                                        <Input Icon={Phone} id="phone" placeholder="Telefone" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -151,21 +212,21 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="company"
+                            name="empresa_id"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
-                                                form.setValue("company", value);
+                                                form.setValue("empresa_id", value);
                                             }}
                                         >
                                             <SelectTrigger Icon={Buildings} className="h-10 w-full ">
                                                 <SelectValue  placeholder="Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="company1">Empresa 1</SelectItem>
-                                                <SelectItem value="company2">Empresa 2</SelectItem>
+                                                <SelectItem value="1">Empresa 1</SelectItem>
+                                                <SelectItem value="2">Empresa 2</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
@@ -175,72 +236,24 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="address"
+                            name="turno"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input id="address" placeholder="CEP" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="state"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input id="state" placeholder="Estado" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="city"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input id="city" placeholder="Cidade" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="neighborhood"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input id="neighborhood" placeholder="Bairro" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="street"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input id="street" placeholder="Rua" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="number"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input id="number" placeholder="Número" {...field} />
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("turno", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={Buildings} className="h-10 w-full ">
+                                                <SelectValue  placeholder="Turno" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="M">Manhã</SelectItem>
+                                                <SelectItem value="T">Tarde</SelectItem>
+                                                <SelectItem value="N">Noite</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

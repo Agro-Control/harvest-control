@@ -27,11 +27,13 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createCompanySchema } from "@/utils/validations/createCompanySchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGetManagers } from "@/utils/hooks/useGetManagers";
 import { MaskedInput } from "@/components/ui/masked-input";
 import { handleCnpjData } from "@/utils/handleCnpjData";
 import SubmitButton from "@/components/submit-button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/utils/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
@@ -42,8 +44,6 @@ import Empresa from "@/types/empresa";
 import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 import { z } from "zod";
-import { useAuth } from "@/utils/hooks/useAuth";
-import { useGetManagers } from "@/utils/hooks/useGetManagers";
 
 interface CreateCompanyProps {
     children: ReactNode;
@@ -58,6 +58,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
+    
     // Hook que inicia a toast 
     const { toast } = useToast();
 
