@@ -75,7 +75,7 @@ const SingleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
 "
                 >
                     <FirstDataIcon className="h-5 w-5 text-green-950 " />
-                    <div className="flex flex-row gap-1">
+                    <div className="flex flex-row gap-1 items-center ">
                         <p> {firstDataTitle}</p>
                         {isLoading ? (
                             <CircleNotch className="h-4 w-4 animate-spin text-green-900" />
