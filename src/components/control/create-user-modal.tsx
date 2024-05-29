@@ -9,22 +9,25 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Buildings, UsersThree, User, EnvelopeSimple, IdentificationCard, Phone, NavigationArrow, MapTrifold, MapPin, Factory,House, Hash } from "@phosphor-icons/react";
+import {UsersThree, User, EnvelopeSimple, IdentificationCard, Phone, SunHorizon, Factory} from "@phosphor-icons/react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {createUserSchema} from "@/utils/validations/createUserSchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {MaskedInput} from "@/components/ui/masked-input";
+import {useGetUnits} from "@/utils/hooks/useGetUnits";
 import {zodResolver} from "@hookform/resolvers/zod";
-import { useAuth } from "@/utils/hooks/useAuth";
-import { useTranslation } from "react-i18next";
+import {useAuth} from "@/utils/hooks/useAuth";
+import {useTranslation} from "react-i18next";
+import {InputMask} from "@react-input/mask";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import { useToast } from "../ui/use-toast";
+import {useToast} from "../ui/use-toast";
 import {ReactNode, useState} from "react";
 import {useForm} from "react-hook-form";
 import Operador from "@/types/operador";
-import { Gestor } from "@/types/gestor";
-import { AxiosError } from "axios";
+import {Gestor} from "@/types/gestor";
+import {AxiosError} from "axios";
 import api from "@/lib/api";
 import {z} from "zod";
 
@@ -33,21 +36,21 @@ interface CreateUserModalProps {
 }
 
 type Form = z.infer<typeof createUserSchema>;
-
+type PostData = Omit<Operador, "id" | "matricula">;
 
 const CreateUserModal = ({children}: CreateUserModalProps) => {
     const [open, setOpen] = useState(false);
-    const { toast } = useToast();
-    const { t } = useTranslation();
+    const {toast} = useToast();
+    const {t} = useTranslation();
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
-    const company_id = user?.empresa_id;
-    const group_id = user?.grupo_id;
-    const unidade_id = user?.unidade_id;
-    const gestor_id = isAdmin ? null : user?.id;
+    const empresa_id =  user && user?.empresa_id;
+    const grupo_id = user && user?.grupo_id;
+    const gestor_id =  user && user?.id;
     const whichRoleCreate = isAdmin ? "Gestor" : "Operador";
+    const {data: {unidades = []} = {}} = useGetUnits(!isAdmin, empresa_id, null, "A", null);
 
     const form = useForm<Form>({
         resolver: zodResolver(createUserSchema),
@@ -58,16 +61,17 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
             cpf: "",
             telefone: "",
             turno: "",
+            unidade_id: "",
         },
     });
 
-    const createUserRequest = async (postData: Operador | Gestor | null) => {
+    const createUserRequest = async (postData: PostData | null) => {
         const url = isAdmin ? "/gestores" : "/operadores";
-        const { data } = await api.post(url, postData);
+        const {data} = await api.post(url, postData);
         return data;
     };
 
-    const { mutate, isPending } = useMutation({
+    const {mutate, isPending} = useMutation({
         mutationFn: createUserRequest,
         onSuccess: () => {
             toast({
@@ -76,13 +80,13 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                 description: t(`post${whichRoleCreate}-success`),
             });
 
-           const queryKey = isAdmin ? "managers" : "operatros";
-            queryClient.refetchQueries({ queryKey: [queryKey], type: "active", exact: true });
+            const queryKey = isAdmin ? "managers" : "operators";
+            queryClient.refetchQueries({queryKey: [queryKey], type: "active", exact: false});
             setOpen(false);
             form.reset();
         },
         onError: (error: AxiosError) => {
-            const { response } = error;
+            const {response} = error;
             if (!response) {
                 toast({
                     variant: "destructive",
@@ -92,7 +96,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                 return;
             }
 
-            const { status } = response;
+            const {status} = response;
             const titleCode = `post${whichRoleCreate}-error-${status}`;
             const descriptionCode = `post${whichRoleCreate}-description-error-${status}`;
 
@@ -104,36 +108,22 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
         },
     });
 
-
     const onHandleSubmit = (data: Form) => {
-       if(isAdmin){
-        return;
-       }
-       
+        if (isAdmin) {
+            return;
+        }
+
         const formattedData = {
             ...data,
-            tipo: data.tipo.substring(0,1),
+            tipo: data.tipo.substring(0, 1),
             status: "A",
-            data_contratacao: new Date().toISOString,
-            gestor_id: gestor_id,
-            empresa_id: rempresa_id,
-            unidade_id: unidade_id,
-            grupo_id: grupo_id
-        }
-            console.log(formattedData);
-
-
-
-        // const formattedData = {
-        //     ...data,
-           
-        //     status: "A",
-        //     gestor_id: data.gestor_id != null ? parseInt(data.gestor_id) : null,
-        //     grupo_id: user?.grupo_id,
-        // };
-        // mutate(formattedData);
+            data_contratacao: new Date().toISOString(),
+            gestor_id:  gestor_id != null ? gestor_id.toString() : null,
+            empresa_id: empresa_id,
+            grupo_id: grupo_id,
+        };
+        mutate(formattedData);
     };
-
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -145,7 +135,11 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onHandleSubmit)} id="user-form" className="grid grid-cols-2 gap-4 py-4">
+                    <form
+                        onSubmit={form.handleSubmit(onHandleSubmit)}
+                        id="user-form"
+                        className="grid grid-cols-2 gap-4 py-4"
+                    >
                         <FormField
                             control={form.control}
                             name="nome"
@@ -159,27 +153,68 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                             )}
                         />
 
-<FormField
+                        <FormField
                             control={form.control}
                             name="tipo"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input disabled Icon={UsersThree} className="" id="role" placeholder="Cargo" {...field} />
+                                        <Input
+                                            disabled
+                                            Icon={UsersThree}
+                                            className=""
+                                            id="role"
+                                            placeholder="Cargo"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
+                        <FormField
+                            control={form.control}
+                            name="turno"
+                            render={({field}) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("turno", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={SunHorizon} className="h-10 w-full ">
+                                                <SelectValue placeholder="Turno" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="M">Manhã</SelectItem>
+                                                <SelectItem value="T">Tarde</SelectItem>
+                                                <SelectItem value="N">Noite</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-<FormField
+                        <FormField
                             control={form.control}
                             name="cpf"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input Icon={IdentificationCard} id="identifier" placeholder="CPF" {...field} />
+                                        <MaskedInput
+                                            maskInput={{
+                                                input: InputMask,
+                                                mask: "___.___.___-__",
+                                            }}
+                                            Icon={IdentificationCard}
+                                            id="identifier"
+                                            placeholder="CPF"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -190,7 +225,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                             control={form.control}
                             name="email"
                             render={({field}) => (
-                                <FormItem className="col-span-2">
+                                <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input Icon={EnvelopeSimple} id="email" placeholder="Email" {...field} />
                                     </FormControl>
@@ -204,7 +239,16 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input Icon={Phone} id="phone" placeholder="Telefone" {...field} />
+                                        <MaskedInput
+                                            maskInput={{
+                                                input: InputMask,
+                                                mask: "(__) _____-____",
+                                            }}
+                                            Icon={Phone}
+                                            id="phone"
+                                            placeholder="Telefone"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -212,46 +256,24 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="empresa_id"
+                            name="unidade_id"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
-                                                form.setValue("empresa_id", value);
+                                                form.setValue("unidade_id", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Buildings} className="h-10 w-full ">
-                                                <SelectValue  placeholder="Empresa" {...field} />
+                                            <SelectTrigger Icon={Factory} className="h-10 w-full ">
+                                                <SelectValue placeholder="Unidade" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="1">Empresa 1</SelectItem>
-                                                <SelectItem value="2">Empresa 2</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="turno"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("turno", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={Buildings} className="h-10 w-full ">
-                                                <SelectValue  placeholder="Turno" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="M">Manhã</SelectItem>
-                                                <SelectItem value="T">Tarde</SelectItem>
-                                                <SelectItem value="N">Noite</SelectItem>
+                                                {unidades.map((unit) => (
+                                                    <SelectItem key={unit.id} value={unit.id!.toString()}>
+                                                        {unit.nome}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>

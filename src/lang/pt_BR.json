@@ -60,6 +60,8 @@
     "postCompany-success": "Empresa cadastrada com sucesso",
     "putCompany-success": "Empresa atualizada com sucesso",
     "postField-success": "Talhão cadastrado com sucesso",
+    "postOperador-success": "Operador cadastrado com sucesso",
+    "postGestor-success": "Gestor cadastrado com sucesso",
     "putField-success": "Talhão atualizado com sucesso",
     "postUnit-success": "Unidade cadastrada com sucesso",
     "putUnit-success": "Unidade atualizada com sucesso",
@@ -100,7 +102,13 @@
     "postField-description-error-500": "Erro interno, contate o administrador.",
     "postUnit-error-500": "Algo deu errado!",
     "postUnit-description-error-500": "Erro interno, contate o administrador.",
+    "postMachine-description-error-500": "Erro interno, contate o administrador.",
     "postMachine-error-500": "Algo deu errado!",
-    "postMachine-description-error-500": "Erro interno, contate o administrador."
+    "postOperador-description-error-500": "Erro interno, contate o administrador.",
+    "postOperador-error-500": "Algo deu errado!",
+    "postOperador-description-error-422": "Algumas informações estão incorretas, verifique e tente novamente.",
+    "postOperador-error-422": "Informações incorretas",
+    "postOperador-description-error-401": "Sua sessão expirou, por favor entre novamente no sistema",
+    "postOperador-error-401": "Sessão expirada"
    
 }
