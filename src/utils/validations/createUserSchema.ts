@@ -1,6 +1,5 @@
 import {z} from "zod";
-import { requiredStringField, optionalStringField } from "./reusableSchemes";
-
+import {requiredStringField, optionalStringField} from "./reusableSchemes";
 
 const emailRegex = /^(?![-.])[\w.-]+@(?![-.])[\w.-]+\.[a-zA-Z]{2,}$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&*?@])[\d!#$%&*?@A-Za-z]{8,30}$/;
@@ -21,7 +20,7 @@ export const createUserSchema = z.object({
 
     telefone: requiredStringField(1, 255, "O telefone não pode estar vazio"),
 
-    empresa_id: requiredStringField(1, 255, "A empresa não pode estar vazia"),
-    
+    unidade_id: requiredStringField(1, 255, "A unidade não pode estar vazia"),
+
     turno: requiredStringField(1, 255, "Selecione um turno"),
 });

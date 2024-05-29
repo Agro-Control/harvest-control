@@ -6,7 +6,7 @@ interface Operador {
     telefone: string | null;
     status: string;
     data_contratacao: string;
-    gestor_id: string;
+    gestor_id: string | null;
     unidade_id: string;
     empresa_id: number | null;
     matricula: string | null;
