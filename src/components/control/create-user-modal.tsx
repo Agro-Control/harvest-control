@@ -66,8 +66,7 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
             cpf: "",
             telefone: "",
             turno: "",
-            unidade_id: "",
-            empresa_id: "",
+            place_id: "",
         },
     });
 
@@ -116,11 +115,11 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
     });
 
     const onHandleSubmit = (data: Form) => {
-        if (isAdmin) {
-           
+        const { place_id, ...cleanedData } = data;
+        if (isAdmin) {   
             const formattedData = {
-                ...data,
-                empresa_id: Number(data.empresa_id),
+                ...cleanedData,
+                empresa_id: Number(data.place_id),
                 cpf: data.cpf.replace(/\D/g, ""),
                 telefone: data.telefone.replace(/\D/g, ""),
                 tipo: data.tipo.substring(0, 1),
@@ -135,7 +134,8 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
         }
 
         const formattedData = {
-            ...data,
+            ...cleanedData,
+            unidade_id: data.place_id,
             cpf: data.cpf.replace(/\D/g, ""),
             telefone: data.telefone.replace(/\D/g, ""),
             tipo: data.tipo.substring(0, 1),
@@ -280,13 +280,13 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
                         />
                       {!isAdmin ? (<FormField
                             control={form.control}
-                            name="unidade_id"
+                            name="place_id"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
-                                                form.setValue("unidade_id", value);
+                                                form.setValue("place_id", value);
                                             }}
                                         >
                                             <SelectTrigger Icon={Factory} className="h-10 w-full ">
@@ -308,13 +308,13 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
                             : (
                                 <FormField
                             control={form.control}
-                            name="empresa_id"
+                            name="place_id"
                             render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Select
                                             onValueChange={(value) => {
-                                                form.setValue("empresa_id", value);
+                                                form.setValue("place_id", value);
                                             }}
                                         >
                                             <SelectTrigger Icon={Factory} className="h-10 w-full ">
