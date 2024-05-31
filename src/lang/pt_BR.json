@@ -61,6 +61,8 @@
     "putCompany-success": "Empresa atualizada com sucesso",
     "postField-success": "Talhão cadastrado com sucesso",
     "postOperador-success": "Operador cadastrado com sucesso",
+    "putOperador-success": "Operador atualizado com sucesso",
+    "putGestor-success": "Gestor atualizado com sucesso",
     "postGestor-success": "Gestor cadastrado com sucesso",
     "putField-success": "Talhão atualizado com sucesso",
     "postUnit-success": "Unidade cadastrada com sucesso",

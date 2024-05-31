@@ -6,9 +6,9 @@ export interface Gestor {
     telefone: string;
     status: string;
     data_contratacao: string;
-    gestor_id: string;
-    unidade_id: string;
-    empresa_id: number;
+    gestor_id: string | null;
+    unidade_id: string | null;
+    empresa_id: number | null;
     matricula: string | null;
     turno: string;
     tipo: string;

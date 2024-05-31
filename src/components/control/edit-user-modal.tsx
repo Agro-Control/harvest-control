@@ -39,11 +39,13 @@ type Form = z.infer<typeof editUserSchema>;
 interface EditUserProps {
     userInformation: Operador | Gestor;
     children: ReactNode;
+    refetchOperators?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOperador, Error>>;
+    refetchManager?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetGestor, Error>>;
 }
 
 
 
-const EditUserModal = ({children, userInformation}: EditUserProps) => {
+const EditUserModal = ({children, userInformation, refetchOperators, refetchManager}: EditUserProps) => {
     const [open, setOpen] = useState(false);
     const {toast} = useToast();
     const auth = useAuth();
@@ -59,7 +61,7 @@ const EditUserModal = ({children, userInformation}: EditUserProps) => {
             email: userInformation.email || "",
             cpf: formatCpf(userInformation.cpf),
             telefone: formatPhone(userInformation.telefone) || "",
-            turno: userInformation.turno,
+            turno: userInformation.turno || "",
             status: userInformation.status,
         },
     });
@@ -67,7 +69,6 @@ const EditUserModal = ({children, userInformation}: EditUserProps) => {
     const editUserRequest = async (putData: Operador | Gestor | null) => {
         const url = isAdmin ? "/gestores" : "/operadores";
         const { data } = await api.put(url, putData);
-        console.log(data)
         return data;
     };
 
@@ -80,7 +81,7 @@ const EditUserModal = ({children, userInformation}: EditUserProps) => {
                 title: t("success"),
                 description: t(`put${whichRoleCreate}-success`),
             });
-            // isAdmin ? refetchManager?.() : refetchOperators?.();
+            isAdmin ? refetchManager?.() : refetchOperators?.();
             setOpen(false);
             form.reset();
         },
@@ -114,7 +115,10 @@ const EditUserModal = ({children, userInformation}: EditUserProps) => {
     function onSubmit(data: Form) {
         const formattedData = {
             ...userInformation,
-            ...data,
+            nome: data.nome,
+            email: data.email,
+            turno: data.turno || "",
+            status: data.status,
             cpf: data.cpf.replace(/\D/g, ""),
             telefone: data.telefone.replace(/\D/g, ""),
         }
@@ -158,7 +162,7 @@ const EditUserModal = ({children, userInformation}: EditUserProps) => {
                             )}
                         />
 
-                        <FormField
+                      { !isAdmin &&  <FormField
                             control={form.control}
                             name="turno"
                             render={({field}) => (
@@ -182,7 +186,7 @@ const EditUserModal = ({children, userInformation}: EditUserProps) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />}
                         <FormField
                             control={form.control}
                             name="status"

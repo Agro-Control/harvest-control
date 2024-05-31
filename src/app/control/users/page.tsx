@@ -112,7 +112,7 @@ export default function Users() {
                 </TableHeader>
                 {!isErrorData &&
                     !isLoadingData &&
-                    (isAdmin ? <UsersList usuarios={gestor} /> : <UsersList usuarios={operador} />)}
+                    (isAdmin ? <UsersList usuarios={gestor} refetchManager={refetchManager} /> : <UsersList usuarios={operador} refetchOperators={refetchOperators} />)}
             </Table>
             {isLoadingData && <LoadingAnimation />}
             {isErrorData && !isLoadingData && (

@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {requiredStringField} from "./reusableSchemes";
+import {requiredStringField, optionalStringField} from "./reusableSchemes";
 
 const emailRegex = /^(?![-.])[\w.-]+@(?![-.])[\w.-]+\.[a-zA-Z]{2,}$/;
 
@@ -13,6 +13,6 @@ export const editUserSchema = z.object({
     ),
     cpf: requiredStringField(1, 255, "O CPF não pode estar vazio"),
     telefone: requiredStringField(1, 255, "O telefone não pode estar vazio"),
-    turno: requiredStringField(1, 255, "Selecione um turno"),
+    turno: optionalStringField(1),
     status: requiredStringField(1,1, "Selecione o status"),
 });
