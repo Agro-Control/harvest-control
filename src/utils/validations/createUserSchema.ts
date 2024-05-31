@@ -2,7 +2,6 @@ import {z} from "zod";
 import {requiredStringField} from "./reusableSchemes";
 
 const emailRegex = /^(?![-.])[\w.-]+@(?![-.])[\w.-]+\.[a-zA-Z]{2,}$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&*?@])[\d!#$%&*?@A-Za-z]{8,30}$/;
 
 export const createUserSchema = z.object({
     nome: requiredStringField(1, 255, "O nome não pode estar vazio"),
