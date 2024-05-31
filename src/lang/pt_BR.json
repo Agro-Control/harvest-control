@@ -133,6 +133,17 @@
     "putGestor-description-error-401": "Sua sessão expirou, por favor entre novamente no sistema",
     "putGestor-error-401": "Sessão expirada",
     "putGestor-error-404": "Não encontrado",
-    "putGestor-description-error-404": "Parece que não encontramos o gestor para atualizar"
-   
+    "putGestor-description-error-404": "Parece que não encontramos o gestor para atualizar",
+    "Ativa": "Ordens Ativas",
+    "operacao": "Operação",
+    "transbordo": "Transbordo",
+    "deslocamento": "Deslocamento",
+    "manutencao": "Manutenção",
+    "clima": "Clima",
+    "abastecimento": "Abastecimento",
+    "inicio_ordem_servico": "Inicio de Ordem",
+    "troca_turno": "Troca de Turno",
+    "fim_ordem": "Fim de Ordem",
+    "total_de_ordens": "Total de Ordens",
+    "aguardando_transbordo": "Aguardando Transbordo"
 }

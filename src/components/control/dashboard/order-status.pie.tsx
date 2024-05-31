@@ -1,17 +1,23 @@
-import {Icon as IconType, CircleNotch} from "@phosphor-icons/react";
-import React from "react";
+"use client";
 
-interface OrderStatusPieProps {
-    Icon: IconType;
-    title: string;
-    subtitle: string;
-    FirstDataIcon: IconType;
-    firstDataTitle: string;
-    firstDataValue: number | null;
-    isLoading: boolean;
-}
+import {Files} from "@phosphor-icons/react";
+import { useGetOrderStatus } from "@/utils/hooks/useGetOrderStatus";
+import React from "react";
+import PieGraph, { Data } from "./responsive-pie";
+import { useTranslation } from "react-i18next";
 
 const OrderStatusPie = () => {
+    const {data} = useGetOrderStatus(1);
+    const {t} = useTranslation();
+
+    const greenShades = ["#15803c", "#166533"];
+    const formattedData: Data[] = data ? Object.entries(data).map(([key, value], index) => ({
+        id: t(key),
+        label: t(key),
+        value: Number(value) || 0,
+        color: "#15803c",
+    })) : [];
+
     return (
         <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4  lg:min-h-[480px] xl:col-span-1">
             <div className="flex w-full flex-row gap-4">
@@ -23,7 +29,7 @@ const OrderStatusPie = () => {
             bg-green-400/50
             "
                 >
-                    {/* <Icon className="h-5 w-5 text-green-950 " /> */}
+                    <Files className="h-5 w-5 text-green-950 " />
                 </div>
 
                 <div className="flex  flex-row md:flex-col">
@@ -37,7 +43,7 @@ const OrderStatusPie = () => {
 
                 "
                     >
-                        123
+                        Ordens de serviço
                     </p>
                     <p
                         className="
@@ -49,7 +55,7 @@ const OrderStatusPie = () => {
 
                     "
                     >
-                        123
+                       Status
                     </p>
                 </div>
             </div>
@@ -66,7 +72,15 @@ const OrderStatusPie = () => {
                     px-3
                     text-base
                     font-normal"
-            ></div>
+            >
+
+
+
+<PieGraph data={formattedData} />
+
+
+
+            </div>
         </div>
     );
 };
