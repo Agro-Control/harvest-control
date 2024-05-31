@@ -24,20 +24,20 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { editCompanySchema } from "@/utils/validations/editCompanySchema";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGetManagers } from "@/utils/hooks/useGetManagers";
 import { zodResolver } from "@hookform/resolvers/zod";
+import SubmitButton from "@/components/submit-button";
+import { toast } from "@/components/ui/use-toast";
+import { useAuth } from "@/utils/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import Empresa from "@/types/empresa";
-import { z } from "zod";
-import { toast } from "@/components/ui/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 import { AxiosError } from "axios";
-import SubmitButton from "@/components/submit-button";
-import { useAuth } from "@/utils/hooks/useAuth";
-import { useGetManagers } from "@/utils/hooks/useGetManagers";
+import { api } from "@/lib/api";
+import { z } from "zod";
 
 interface EditCompanyProps {
     company: Empresa;

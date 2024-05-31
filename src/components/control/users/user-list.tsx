@@ -29,12 +29,12 @@ const UsersList = ({usuarios}: UsersListProps) => {
                     <TableCell className="">{t(user.turno) || "Não Possuí"}</TableCell>
                     <TableCell className="w-28">
                         <div className="-ml-1 flex w-full flex-row items-center gap-3">
-                            {/* <EditUserModal userInformation={user}>
+                            <EditUserModal userInformation={user}>
                                 <Pencil
                                     className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
                                     weight="fill"
                                 />
-                            </EditUserModal> */}
+                            </EditUserModal>
                             <ViewUserModal userInformation={user}>
                                 <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
                             </ViewUserModal>
