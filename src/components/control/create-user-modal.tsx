@@ -10,10 +10,11 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import {UsersThree, User, EnvelopeSimple, IdentificationCard, Phone, SunHorizon, Factory} from "@phosphor-icons/react";
+import {QueryObserverResult, RefetchOptions, useMutation, useQueryClient} from "@tanstack/react-query";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {createUserSchema} from "@/utils/validations/createUserSchema";
-import {QueryObserverResult, RefetchOptions, useMutation, useQueryClient} from "@tanstack/react-query";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import {MaskedInput} from "@/components/ui/masked-input";
 import {useGetUnits} from "@/utils/hooks/useGetUnits";
 import SubmitButton from "@/components/submit-button";
@@ -23,6 +24,7 @@ import {useAuth} from "@/utils/hooks/useAuth";
 import {useTranslation} from "react-i18next";
 import {InputMask} from "@react-input/mask";
 import {Input} from "@/components/ui/input";
+import GetGestor from "@/types/get-gestor";
 import {ReactNode, useState} from "react";
 import {useToast} from "../ui/use-toast";
 import {useForm} from "react-hook-form";
@@ -33,17 +35,17 @@ import {z} from "zod";
 
 interface CreateUserModalProps {
     children: ReactNode;
-    refetchOperators: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOperador, Error>>;
+    refetchOperators?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOperador, Error>>;
+    refetchManager?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetGestor, Error>>;
 }
 
 type Form = z.infer<typeof createUserSchema>;
 type PostData = Omit<Operador, "id" | "matricula">;
 
-const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => {
+const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUserModalProps) => {
     const [open, setOpen] = useState(false);
     const {toast} = useToast();
     const {t} = useTranslation();
-    const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
@@ -52,6 +54,8 @@ const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => 
     const gestor_id = user && user?.id;
     const whichRoleCreate = isAdmin ? "Gestor" : "Operador";
     const {data: {unidades = []} = {}} = useGetUnits(!isAdmin, empresa_id, null, "A", null);
+
+    const {data: {empresas = []} = {}} = useGetCompanies(isAdmin, grupo_id, null, null, "A");
 
     const form = useForm<Form>({
         resolver: zodResolver(createUserSchema),
@@ -63,6 +67,7 @@ const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => 
             telefone: "",
             turno: "",
             unidade_id: "",
+            empresa_id: "",
         },
     });
 
@@ -76,11 +81,12 @@ const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => 
         mutationFn: createUserRequest,
         onSuccess: () => {
             toast({
+                duration: 1000,
                 className: "border-green-500 bg-green-500",
                 title: t("success"),
                 description: t(`post${whichRoleCreate}-success`),
             });
-            refetchOperators();
+            isAdmin ? refetchManager?.() : refetchOperators?.();
             setOpen(false);
             form.reset();
         },
@@ -114,13 +120,14 @@ const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => 
            
             const formattedData = {
                 ...data,
+                empresa_id: Number(data.empresa_id),
                 cpf: data.cpf.replace(/\D/g, ""),
                 telefone: data.telefone.replace(/\D/g, ""),
                 tipo: data.tipo.substring(0, 1),
                 status: "A",
                 data_contratacao: new Date().toISOString(),
-                gestor_id: gestor_id != null ? gestor_id.toString() : null,
-                empresa_id: empresa_id,
+                gestor_id: null,
+                unidade_id: null,
                 grupo_id: grupo_id,
             };
             mutate(formattedData);
@@ -140,6 +147,7 @@ const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => 
         };
         mutate(formattedData);
     };
+   
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -270,7 +278,7 @@ const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => 
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                      {!isAdmin ? (<FormField
                             control={form.control}
                             name="unidade_id"
                             render={({field}) => (
@@ -296,7 +304,37 @@ const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => 
                                     <FormMessage />
                                 </FormItem>
                             )}
+                        />)
+                            : (
+                                <FormField
+                            control={form.control}
+                            name="empresa_id"
+                            render={({field}) => (
+                                <FormItem className="col-span-1 ">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("empresa_id", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={Factory} className="h-10 w-full ">
+                                                <SelectValue placeholder="Empresa" {...field} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {empresas.map((company) => (
+                                                    <SelectItem key={company.id} value={company.id!.toString()}>
+                                                        {company.nome}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
+                            )
+                    }
                     </form>
                 </Form>
                 <DialogFooter>

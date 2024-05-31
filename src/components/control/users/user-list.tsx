@@ -15,9 +15,9 @@ const UsersList = ({usuarios}: UsersListProps) => {
 
     return (
         <TableBody>
-        {usuarios.map((user) => {
+        {usuarios.map((user, index) => {
             return (
-                <TableRow key={user.matricula}>
+                <TableRow key={index}>
                     <TableCell className="font-medium max-w-48">{user.matricula || "Não Possuí"}</TableCell>
                     <TableCell className="font-medium">{user.nome}</TableCell>
                     <TableCell className="">{t(user.tipo)}</TableCell>

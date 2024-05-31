@@ -20,7 +20,9 @@ export const createUserSchema = z.object({
 
     telefone: requiredStringField(1, 255, "O telefone não pode estar vazio"),
 
-    unidade_id: requiredStringField(1, 255, "A unidade não pode estar vazia"),
+    unidade_id:  optionalStringField(255).nullable(),
+    
+    empresa_id: optionalStringField(255).nullable(),
 
     turno: requiredStringField(1, 255, "Selecione um turno"),
 });
