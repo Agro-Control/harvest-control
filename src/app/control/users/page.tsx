@@ -88,7 +88,7 @@ export default function Users() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
-                <CreateUserModal>
+                <CreateUserModal refetchOperators={refetchOperators}>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"

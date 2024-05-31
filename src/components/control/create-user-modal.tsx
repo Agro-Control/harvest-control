@@ -13,33 +13,33 @@ import {UsersThree, User, EnvelopeSimple, IdentificationCard, Phone, SunHorizon,
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {createUserSchema} from "@/utils/validations/createUserSchema";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {QueryObserverResult, RefetchOptions, useMutation, useQueryClient} from "@tanstack/react-query";
 import {MaskedInput} from "@/components/ui/masked-input";
 import {useGetUnits} from "@/utils/hooks/useGetUnits";
 import SubmitButton from "@/components/submit-button";
 import {zodResolver} from "@hookform/resolvers/zod";
+import GetOperador from "@/types/get-operador";
 import {useAuth} from "@/utils/hooks/useAuth";
-import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
 import {InputMask} from "@react-input/mask";
 import {Input} from "@/components/ui/input";
-import {useToast} from "../ui/use-toast";
 import {ReactNode, useState} from "react";
+import {useToast} from "../ui/use-toast";
 import {useForm} from "react-hook-form";
 import Operador from "@/types/operador";
-import {Gestor} from "@/types/gestor";
 import {AxiosError} from "axios";
 import api from "@/lib/api";
 import {z} from "zod";
 
 interface CreateUserModalProps {
     children: ReactNode;
+    refetchOperators: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOperador, Error>>;
 }
 
 type Form = z.infer<typeof createUserSchema>;
 type PostData = Omit<Operador, "id" | "matricula">;
 
-const CreateUserModal = ({children}: CreateUserModalProps) => {
+const CreateUserModal = ({children, refetchOperators}: CreateUserModalProps) => {
     const [open, setOpen] = useState(false);
     const {toast} = useToast();
     const {t} = useTranslation();
@@ -80,7 +80,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                 title: t("success"),
                 description: t(`post${whichRoleCreate}-success`),
             });
-            queryClient.refetchQueries({queryKey: ["operatorList"], type: "active", exact: true});
+            refetchOperators();
             setOpen(false);
             form.reset();
         },
