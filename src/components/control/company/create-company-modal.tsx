@@ -125,7 +125,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
         const { data } = await api.post("/empresas", postData);
         return data;
     };
-
+ 
     // Hook do react query para fazer a validação se foi sucesso ou se a requisição deu problema
     const { mutate, isPending } = useMutation({
         mutationFn: createCompanyRequest,
@@ -145,6 +145,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
             const { response } = error;
             if (!response) {
                 toast({
+                    duration: 1000,
                     variant: "destructive",
                     title: t("network-error"),
                     description: t("network-error-description"),
@@ -157,6 +158,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
             const descriptionCode = `postCompany-description-error-${status}`;
 
             toast({
+                duration: 1000,
                 variant: "destructive",
                 title: t(titleCode),
                 description: t(descriptionCode),

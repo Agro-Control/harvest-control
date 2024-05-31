@@ -2,7 +2,7 @@
 import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import CreateUserModal from "@/components/control/create-user-modal";
 import StatusCodeHandler from "@/components/status-code-handler";
-import { useGetOperators } from "@/utils/hooks/useGetOperators";
+import { useGetOperatorsList } from "@/utils/hooks/useGetOperatorsList";
 import LoadingAnimation from "@/components/loading-animation";
 import { useGetManagers } from "@/utils/hooks/useGetManagers";
 import UsersList from "@/components/control/users/user-list";
@@ -34,7 +34,7 @@ export default function Users() {
 
     const [query] = useQueryState("query");
     const [status] = useQueryState("status");
-
+ 
     const {
         data: {operador = []} = {},
         error: operatorsError,
@@ -42,7 +42,7 @@ export default function Users() {
         isLoading: isLoadingOperators,
         refetch: refetchOperators,
         isRefetching: isRefetchingOperators,
-    } = useGetOperators(false, null, null, status, query, null);
+    } = useGetOperatorsList(null, null, status, query);
 
     const {
         data: {gestor = []} = {},

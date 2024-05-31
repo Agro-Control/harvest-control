@@ -16,11 +16,12 @@ import {createUserSchema} from "@/utils/validations/createUserSchema";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {MaskedInput} from "@/components/ui/masked-input";
 import {useGetUnits} from "@/utils/hooks/useGetUnits";
+import SubmitButton from "@/components/submit-button";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useAuth} from "@/utils/hooks/useAuth";
+import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
 import {InputMask} from "@react-input/mask";
-import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useToast} from "../ui/use-toast";
 import {ReactNode, useState} from "react";
@@ -46,9 +47,9 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
-    const empresa_id =  user && user?.empresa_id;
+    const empresa_id = user && user?.empresa_id;
     const grupo_id = user && user?.grupo_id;
-    const gestor_id =  user && user?.id;
+    const gestor_id = user && user?.id;
     const whichRoleCreate = isAdmin ? "Gestor" : "Operador";
     const {data: {unidades = []} = {}} = useGetUnits(!isAdmin, empresa_id, null, "A", null);
 
@@ -79,9 +80,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                 title: t("success"),
                 description: t(`post${whichRoleCreate}-success`),
             });
-
-            const queryKey = isAdmin ? "managers" : "operators";
-            queryClient.refetchQueries({queryKey: [queryKey], type: "active", exact: false});
+            queryClient.refetchQueries({queryKey: ["operatorList"], type: "active", exact: true});
             setOpen(false);
             form.reset();
         },
@@ -89,6 +88,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
             const {response} = error;
             if (!response) {
                 toast({
+                    duration: 1000,
                     variant: "destructive",
                     title: t("network-error"),
                     description: t("network-error-description"),
@@ -101,6 +101,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
             const descriptionCode = `post${whichRoleCreate}-description-error-${status}`;
 
             toast({
+                duration: 1000,
                 variant: "destructive",
                 title: t(titleCode),
                 description: t(descriptionCode),
@@ -110,15 +111,30 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
 
     const onHandleSubmit = (data: Form) => {
         if (isAdmin) {
+           
+            const formattedData = {
+                ...data,
+                cpf: data.cpf.replace(/\D/g, ""),
+                telefone: data.telefone.replace(/\D/g, ""),
+                tipo: data.tipo.substring(0, 1),
+                status: "A",
+                data_contratacao: new Date().toISOString(),
+                gestor_id: gestor_id != null ? gestor_id.toString() : null,
+                empresa_id: empresa_id,
+                grupo_id: grupo_id,
+            };
+            mutate(formattedData);
             return;
         }
 
         const formattedData = {
             ...data,
+            cpf: data.cpf.replace(/\D/g, ""),
+            telefone: data.telefone.replace(/\D/g, ""),
             tipo: data.tipo.substring(0, 1),
             status: "A",
             data_contratacao: new Date().toISOString(),
-            gestor_id:  gestor_id != null ? gestor_id.toString() : null,
+            gestor_id: gestor_id != null ? gestor_id.toString() : null,
             empresa_id: empresa_id,
             grupo_id: grupo_id,
         };
@@ -284,13 +300,7 @@ const CreateUserModal = ({children}: CreateUserModalProps) => {
                     </form>
                 </Form>
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        form="user-form"
-                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                    >
-                        Confirmar
-                    </Button>
+                    <SubmitButton isLoading={isPending} form="user-form" />
                 </DialogFooter>
             </DialogContent>
         </Dialog>
