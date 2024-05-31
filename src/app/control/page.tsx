@@ -45,7 +45,7 @@ export default function Home() {
                 <p className=" font-poppins text-sm">Acesso Rápido:</p>
 
                 <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <FastAccessCard title={isAdmin ? "Grupo Empresarial" :"Máquinas"} image={isAdmin ? "group" :"machines" }/>
+                    <FastAccessCard title={isAdmin ? "Empresas" :"Máquinas"} image={isAdmin ? "companies" :"machines" }/>
                     <FastAccessCard title={isAdmin ? "Usuários" : "Operadores"} image="users" />
                     <FastAccessCard isLast title="Dashboards" image="dashboard" />
                 </div>

@@ -12,9 +12,8 @@ export default function BusinessManagementHome() {
             <div className="flex w-full flex-col items-start justify-center gap-1 ">
             <p className=" font-poppins text-sm">Acesso Rápido:</p>
                 <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <FastAccessCard title="Grupo Empresarial" image="group" />
                     <FastAccessCard title="Empresas" image="companies" />
-                    <FastAccessCard isLast title="Unidades" image="units" />
+                    <FastAccessCard title="Unidades" image="units" />
                 </div>
             </div>
         </div>

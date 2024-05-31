@@ -1,30 +1,39 @@
 "use client";
 
+import {UsersThree, User, EnvelopeSimple, IdentificationCard, Phone, SunHorizon, Factory} from "@phosphor-icons/react";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogClose,
     DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {MaskedInput} from "@/components/ui/masked-input";
+import formatPhone from "@/utils/functions/formatPhone";
+import formatCpf from "@/utils/functions/formatCpf";
+import {useAuth} from "@/utils/hooks/useAuth";
 import {Button} from "@/components/ui/button";
+import {useTranslation} from "react-i18next";
+import {InputMask} from "@react-input/mask";
 import {Input} from "@/components/ui/input";
+import Operador from "@/types/operador";
+import {Gestor} from "@/types/gestor";
 import {ReactNode} from "react";
 
 interface EditUserProps {
-    userInformation: {
-        matricula: string;
-        name: string;
-        status: string;
-        profile: string;
-        contract: string;
-    };
+    userInformation: Operador | Gestor;
     children: ReactNode;
 }
 
 const ViewUserModal = ({children, userInformation}: EditUserProps) => {
+    const auth = useAuth();
+    const user = auth.user;
+    const isAdmin = user?.tipo === "D";
+
+    const {t} = useTranslation();
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
@@ -35,45 +44,75 @@ const ViewUserModal = ({children, userInformation}: EditUserProps) => {
                 </DialogHeader>
 
                 <div className="grid grid-cols-2 gap-4 py-4">
-                    <Input disabled className=" col-span-1" id="name" placeholder="Nome" value={userInformation.name} />
+                    <Input
+                        Icon={User}
+                        disabled
+                        value={userInformation.nome}
+                        className=""
+                        id="name"
+                        placeholder="Nome"
+                    />
 
                     <Input
                         disabled
-                        className="col-span-1 "
+                        Icon={UsersThree}
+                        className=""
                         id="role"
                         placeholder="Cargo"
-                        value={userInformation.name}
+                        value={t(userInformation.tipo)}
                     />
 
-                    <Input disabled className="col-span-2 " id="email" placeholder="Email" />
+                    <Input
+                        disabled
+                        Icon={SunHorizon}
+                        className=""
+                        id="role"
+                        placeholder="Turno"
+                        value={t(userInformation.turno)}
+                    />
 
-                    <Input disabled className="col-span-1 " id="identifier" placeholder="CPF" />
+                    <MaskedInput
+                        maskInput={{
+                            input: InputMask,
+                            mask: "___.___.___-__",
+                        }}
+                        Icon={IdentificationCard}
+                        id="identifier"
+                        placeholder="CPF"
+                        disabled
+                        value={formatCpf(userInformation.cpf)}
+                    />
 
-                    <Input disabled className="col-span-1 " id="phone" placeholder="Telefone" />
+                    <Input
+                        disabled
+                        value={userInformation.email || "Não Informado"}
+                        Icon={EnvelopeSimple}
+                        id="email"
+                        placeholder="Email"
+                    />
 
-                    <Input disabled className="col-span-1 " id="address" placeholder="CEP" />
-
-                    <Input disabled className="col-span-1 " id="state" placeholder="Estado" />
-
-                    <Input disabled className="col-span-1 " id="city" placeholder="Cidade" />
-
-                    <Input disabled className="col-span-1 " id="neighborhood" placeholder="Bairro" />
-
-                    <Input disabled className="col-span-1 " id="street" placeholder="Rua" />
-
-                    <Input disabled className="col-span-1 " id="number" placeholder="Número" />
-
-                    <Input disabled className="col-span-1 " id="company" placeholder="Empresa" />
+                    <MaskedInput
+                        disabled
+                        maskInput={{
+                            input: InputMask,
+                            mask: "(__) _____-____",
+                        }}
+                        Icon={Phone}
+                        id="phone"
+                        placeholder="Telefone"
+                        value={formatPhone(userInformation.telefone)}
+                    />
                 </div>
 
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        form="user-form"
-                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
-                    >
-                        Confirmar
-                    </Button>
+                    <DialogClose asChild>
+                        <Button
+                            type="button"
+                            className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                        >
+                            Voltar
+                        </Button>
+                    </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
