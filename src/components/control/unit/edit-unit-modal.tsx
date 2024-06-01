@@ -7,6 +7,8 @@ import {
     House,
     Hash,
     Flag,
+    MagnifyingGlass,
+    CircleNotch,
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -33,6 +35,8 @@ import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
+import { handleCepData } from "@/utils/handleCepData";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -44,6 +48,7 @@ interface EditUnitProps {
 type Form = z.infer<typeof editUnitSchema>;
 
 const EditUnitModal = ({ children, unit }: EditUnitProps) => {
+    const [isLoadingCep, setIsLoadingCep] = useState(false);
     const [open, setOpen] = useState(false);
     const { t } = useTranslation();
     const { toast } = useToast();
@@ -65,14 +70,37 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
             cidade: unit.cidade,
             bairro: unit.bairro,
             logradouro: unit.logradouro || "",
-            numero: unit.numero  || "",
-            complemento: unit.complemento  || "",
+            numero: unit.numero || "",
+            complemento: unit.complemento || "",
             status: unit.status,
             empresa_id: unit.empresa_id?.toString()
         }
     });
 
     const { getValues, setValue, watch } = form;
+    const watchCep = watch("cep");
+    const cepValidLength = watchCep ? watchCep.length === 8 : false;
+
+    const onHandleClick = async () => {
+        setIsLoadingCep(true);
+        const { cep } = getValues();
+        const formattedCep = cep.replace(/\D/g, "");
+        const isLengthValid = formattedCep.length === 8;
+
+        if (isLengthValid) {
+            const response = await handleCepData(formattedCep, setValue);
+            if (response.error === true) {
+                toast({
+                    variant: "destructive",
+                    title: "Falha ao preencher dados do CEP",
+                    description:
+                        "Ocorreu um erro na busca, ou excedeu o limite de tentativas. Por favor, tente novamente mais tarde.",
+                });
+            }
+        }
+
+        setIsLoadingCep(false);
+    };
 
     const editUnitRequest = async (putData: Unidade | null) => {
         const { data } = await api.put("/unidades", putData);
@@ -163,15 +191,29 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                             control={form.control}
                             name="cep"
                             render={({ field }) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            Icon={NavigationArrow}
-                                            placeholder="CEP"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
+                                <FormItem className="col-span-2 flex w-full flex-row items-start justify-center gap-3 space-y-0">
+                                    <div className="flex w-full flex-col gap-2">
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                Icon={NavigationArrow}
+                                                placeholder="CEP"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </div>
+                                    <Button
+                                        onClick={onHandleClick}
+                                        disabled={cepValidLength ? false : true}
+                                        type="button"
+                                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                                    >
+                                        {isLoadingCep ? (
+                                            <CircleNotch className="h-5 w-5 animate-spin" />
+                                        ) : (
+                                            <MagnifyingGlass className="h-5 w-5" />
+                                        )}
+                                    </Button>
                                 </FormItem>
                             )}
                         />

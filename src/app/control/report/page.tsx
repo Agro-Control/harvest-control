@@ -5,74 +5,84 @@ import LoadingAnimation from "@/components/loading-animation";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useQueryState } from "nuqs";
 import { AxiosError } from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGetEvents } from "@/utils/hooks/useGetEvents";
 import Evento from "@/types/evento";
 import ReportRow from "@/components/control/report/report-row";
 import ReportCard from "@/components/control/report/report-card";
+import Filter from "@/components/control/filter";
+import FilterInformationLabel from "@/types/filter-information-label";
+import FilterWithLabel from "@/components/control/filter-with-label";
+import Operador from "@/types/operador";
 
 export default function Reports() {
     const auth = useAuth();
     const user = auth.user;
-    // Hook que pega os parametros da URL
-    const [query] = useQueryState("query"); // query é o nome do parametro que está na URL - Usado paro o campo busca.
 
-    const {
-        data: { eventos = [] } = {},
-        error,
-        isError,
-        isLoading,
-        refetch,
-        isRefetching,
-    } = useGetEvents(parseInt(query!));
+    const evetnTypeFilter: FilterInformationLabel = {
+        filterItem: [
+            { value: "all", label: "Todos" },
+            { value: "operacao", label: "Operação" },
+            { value: "transbordo", label: "Transbordo" },
+            { value: "deslocamento", label: "Deslocamento" },
+            { value: "aguardando transbordo", label: "Aguardando Transbordo" },
+            { value: "manutencao", label: "Manutenção" },
+            { value: "clima", label: "Clima" },
+            { value: "troca de turno", label: "Troca de Turno" },
+        ],
+    };
 
+    // Hooks para obter os parâmetros da URL e os eventos da API
+    const [query] = useQueryState("query");
+    const [tipoEvento] = useQueryState("Eventos");
+    const { data: { eventos = [] } = {}, error, isError, isLoading, refetch, isRefetching } = useGetEvents(parseInt(query!));
     const isLoadingData = isLoading || isRefetching;
 
     useEffect(() => {
-
-
-    }, [query]);
-
-    console.log('isError:', isError);
-    console.log('isLoadingData:', isLoadingData);
-    console.log('query:', query);
-    console.log('eventos:', eventos);
+       
+    }, [eventos, tipoEvento]);
 
     return (
-
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
             <div className="flex w-full flex-row justify-between items-start ">
                 <p className="font-poppins text-4xl font-medium">Relatório de Eventos</p>
-                    <ReportCard />
+                <ReportCard />
             </div>
-            <Table  >
+            <form className="fflex w-full flex-row items-start justify-start gap-4">
+                <FilterWithLabel filter={evetnTypeFilter} paramType="Eventos" />
+            </form>
+            <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead>ID</TableHead>
                         <TableHead>Nome</TableHead>
-                        <TableHead>Data Inicio</TableHead>
+                        <TableHead>Data Início</TableHead>
                         <TableHead>Data Fim</TableHead>
                         <TableHead>Duração</TableHead>
                     </TableRow>
                 </TableHeader>
 
-                {/* Renderiza a lista de empresas SE não houver erro e nem estiver carregando  */}
+                {/* Renderizar os eventos filtrados na tabela */}
                 <TableBody>
-                    {!isError && !isLoadingData && eventos && eventos.length > 0 &&
-                        eventos.map((evento: Evento) => {
-                            return (
-                                <ReportRow key={evento.id} evento={evento} />
-                            );
-                        })
+                {!isError && !isLoadingData && eventos && eventos.length > 0 &&
+                        eventos.filter(evento => {
+                            if (tipoEvento) {
+                                const nomeMatch = evento.nome && evento.nome.toLowerCase().includes(tipoEvento.toLowerCase());
+                                return nomeMatch;
+                            } else {
+                                return true; // Se nenhum tipo de evento estiver selecionado, exibir todos os eventos
+                            }
+                        }).map((evento: Evento) => (
+                            <ReportRow key={evento.id} evento={evento} />
+                        ))
                     }
-                    {/* {!isError && !isLoadingData && eventos && eventos.length === 0 && <div className="flex w-full items-center justify-center font-medium">Ordem encontrada mas sem nenhum evento capturado</div>} */}
                 </TableBody>
             </Table>
-         
-            {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
+            {/* Renderizar animação de carregamento, se necessário */}
             {isLoadingData && <LoadingAnimation />}
-            {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
-           {eventos.length === 0 && !isLoadingData && <div className="flex w-full items-center justify-center font-medium">Pesquise uma ordem para mostrar os eventos</div>}
+            {/* Renderizar mensagem se não houver eventos */}
+            {eventos.length === 0 && !isLoadingData && <div className="flex w-full items-center justify-center font-medium">Nenhum evento encontrado.</div>}
+            {/* Renderizar mensagem de erro, se houver */}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="report" error={error as AxiosError} />}
         </div>
     );

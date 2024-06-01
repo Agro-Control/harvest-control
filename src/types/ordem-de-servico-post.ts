@@ -1,6 +1,6 @@
 import Operador from "./operador";
 
-interface OrdemServico {
+interface OrdemServicoPost {
     id?: number;
     data_inicio?: string;
     status?: string;
@@ -13,8 +13,7 @@ interface OrdemServico {
     unidade_id?: number;
     empresa_id?: number;
     maquina_id?: number;
-    operadores?: Operador[];
-    nome_maquina?: string | null;
+    operadores?: number[];
   }
   
-  export default OrdemServico;
+  export default OrdemServicoPost;

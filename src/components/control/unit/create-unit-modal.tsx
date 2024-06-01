@@ -8,6 +8,8 @@ import {
     House,
     Hash,
     Flag,
+    MagnifyingGlass,
+    CircleNotch,
 } from "@phosphor-icons/react";
 import {
     Dialog,
@@ -37,6 +39,8 @@ import { MaskedInput } from "@/components/ui/masked-input";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/utils/hooks/useAuth";
 import SubmitButton from "@/components/submit-button";
+import { handleCepData } from "@/utils/handleCepData";
+import { Button } from "@/components/ui/button";
 
 
 interface createUnitProps {
@@ -48,6 +52,7 @@ type Form = z.infer<typeof editUnitSchema>;
 const CreateUnitModal = ({ children }: createUnitProps) => {
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [open, setOpen] = useState(false);
+    const [isLoadingCep, setIsLoadingCep] = useState(false);
     const { toast } = useToast();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
@@ -75,6 +80,10 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     // Variavel usada para monitorar o campo do cnpj
     const watchEmpresaId = watch("empresa_id");
 
+    const watchCep = watch("cep");
+    const cepValidLength = watchCep ? watchCep.length === 9 : false;
+
+
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         error, // Erro retornado pela Api
@@ -91,6 +100,27 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             setCompanyOptions(options);
         }
     }, [empresas]);
+
+    const onHandleClick = async () => {
+        setIsLoadingCep(true);
+        const { cep } = getValues();
+        const formattedCep = cep.replace(/\D/g, "");
+        const isLengthValid = formattedCep.length === 8;
+
+        if (isLengthValid) {
+            const response = await handleCepData(formattedCep, setValue);
+            if (response.error === true) {
+                toast({
+                    variant: "destructive",
+                    title: "Falha ao preencher dados do CEP",
+                    description:
+                        "Ocorreu um erro na busca, ou excedeu o limite de tentativas. Por favor, tente novamente mais tarde.",
+                });
+            }
+        }
+
+        setIsLoadingCep(false);
+    };
 
     const createUnitRequest = async (postData: Unidade | null) => {
         const { data } = await api.post("/unidades", postData);
@@ -141,7 +171,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             cep: data.cep.replace(/\D/g, ""),
             status: "A",
             empresa_id: !isAdmin ? user?.empresa_id : parseInt(data.empresa_id),
-            gestor_id: !isAdmin ? user?.id : empresaSelecionada?.gestor_id! 
+            gestor_id: !isAdmin ? user?.id : empresaSelecionada?.gestor_id!
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -182,19 +212,33 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                             control={form.control}
                             name="cep"
                             render={({ field }) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <MaskedInput
-                                            {...field}
-                                            Icon={NavigationArrow}
-                                            placeholder="CEP"
-                                            maskInput={{
-                                                input: InputMask,
-                                                mask: "_____-___",
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
+                                <FormItem className="col-span-2 flex w-full flex-row items-start justify-center gap-3 space-y-0">
+                                    <div className="flex w-full flex-col gap-2">
+                                        <FormControl>
+                                            <MaskedInput
+                                                {...field}
+                                                Icon={NavigationArrow}
+                                                placeholder="CEP"
+                                                maskInput={{
+                                                    input: InputMask,
+                                                    mask: "_____-___",
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </div>
+                                    <Button
+                                        onClick={onHandleClick}
+                                        disabled={cepValidLength ? false : true}
+                                        type="button"
+                                        className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
+                                    >
+                                        {isLoadingCep ? (
+                                            <CircleNotch className="h-5 w-5 animate-spin" />
+                                        ) : (
+                                            <MagnifyingGlass className="h-5 w-5" />
+                                        )}
+                                    </Button>
                                 </FormItem>
                             )}
                         />
@@ -207,7 +251,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input
-
+                                            disabled
                                             Icon={MapTrifold}
                                             id="estado"
                                             placeholder={t(field.name)}

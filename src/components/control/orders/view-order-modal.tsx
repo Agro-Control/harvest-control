@@ -3,8 +3,6 @@ import {
     Buildings,
     Factory,
     Truck,
-    MapPin,
-    Gauge,
     Sun,
     SunHorizon,
     Moon,
@@ -23,24 +21,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ReactNode, useEffect, useState } from "react";
-import SubmitButton from "@/components/submit-button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/components/ui/use-toast";
+import { ReactNode, useState } from "react";
 import OrdemServico from "@/types/ordem-de-servico";
-import { useAuth } from "@/utils/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { AxiosError } from "axios";
-import { format } from "date-fns";
-import { api } from "@/lib/api";
-import { z } from "zod";
 import { useGetUnit } from "@/utils/hooks/useGetUnit";
 import useFormattedDate from "@/utils/formatDate";
 import { useGetCompany } from "@/utils/hooks/useGetCompany";
-import { dataTagSymbol } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useGetField } from "@/utils/hooks/useGetField";
 import { useGetMachine } from "@/utils/hooks/useGetMachine";
