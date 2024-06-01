@@ -1,8 +1,11 @@
 "use client";
 import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import CreateUserModal from "@/components/control/create-user-modal";
-import StatusCodeHandler from "@/components/status-code-handler";
 import { useGetOperatorsList } from "@/utils/hooks/useGetOperatorsList";
+import CreateUserModal from "@/components/control/create-user-modal";
+import FilterInformationLabel from "@/types/filter-information-label";
+import FilterWithLabel from "@/components/control/filter-with-label";
+import StatusCodeHandler from "@/components/status-code-handler";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import LoadingAnimation from "@/components/loading-animation";
 import { useGetManagers } from "@/utils/hooks/useGetManagers";
 import UsersList from "@/components/control/users/user-list";
@@ -11,8 +14,9 @@ import SearchBar from "@/components/control/search-bar";
 import Filter from "@/components/control/filter";
 import {useAuth} from "@/utils/hooks/useAuth";
 import {Button} from "@/components/ui/button";
-import {AxiosError} from "axios";
+import Empresa from "@/types/empresa";
 import {useQueryState} from "nuqs";
+import {AxiosError} from "axios";
 import {useEffect} from "react";
 
 const statusFilter: FilterInformation = {
@@ -34,7 +38,22 @@ export default function Users() {
 
     const [query] = useQueryState("query");
     const [status] = useQueryState("status");
+    const [empresa] = useQueryState("company");
  
+    const {
+        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
+    } = useGetCompanies(isAdmin, grupo_id, null, null, null);
+
+    const companyFilter: FilterInformationLabel = {
+        filterItem: [
+            { value: "all", label: "Todas"},
+            ...empresas.map((empresa: Empresa) => ({
+                value: empresa.id?.toString()!,
+                label: empresa.nome!,
+            })),
+        ],
+    };
+
     const {
         data: {operador = []} = {},
         error: operatorsError,
@@ -51,7 +70,7 @@ export default function Users() {
         isLoading,
         refetch: refetchManager,
         isRefetching,
-    } = useGetManagers(null, null, null, status, query);
+    } = useGetManagers(null, Number(empresa), null, status, query);
 
     const isLoadingData = isLoading || isRefetching  || isLoadingOperators || isRefetchingOperators;
     const isErrorData = isError || isOperatorsError;
@@ -78,7 +97,7 @@ export default function Users() {
         if (isGestor) {
             refetchOperators();
         }
-    }, [status, query]);
+    }, [status, query, empresa]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -87,6 +106,7 @@ export default function Users() {
             </div>
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
+                {isAdmin && <FilterWithLabel filter={companyFilter} paramType="company" />}
                 <Filter filter={statusFilter} paramType="status" />
                 <CreateUserModal refetchOperators={refetchOperators} refetchManager={refetchManager} >
                     <Button
@@ -101,18 +121,19 @@ export default function Users() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Matricula</TableHead>
+                       {!isAdmin && <TableHead>Matricula</TableHead>}
                         <TableHead>Nome</TableHead>
                         <TableHead>Perfil</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Contratação</TableHead>
-                        <TableHead>Turno</TableHead>
+                        {!isAdmin &&<TableHead>Turno</TableHead>}
+                        <TableHead>{isAdmin ? "Empresa" : "Unidade"}</TableHead>
                         <TableHead>Ações</TableHead>
                     </TableRow>
                 </TableHeader>
                 {!isErrorData &&
                     !isLoadingData &&
-                    (isAdmin ? <UsersList usuarios={gestor} refetchManager={refetchManager} /> : <UsersList usuarios={operador} refetchOperators={refetchOperators} />)}
+                    (isAdmin ? <UsersList usuarios={gestor} refetchManager={refetchManager} managerList /> : <UsersList usuarios={operador} refetchOperators={refetchOperators} />)}
             </Table>
             {isLoadingData && <LoadingAnimation />}
             {isErrorData && !isLoadingData && (

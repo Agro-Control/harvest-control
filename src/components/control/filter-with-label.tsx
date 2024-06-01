@@ -1,6 +1,8 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import FilterInformationLabel from "@/types/filter-information-label";
 import {useQueryState} from "nuqs";
+import {useTranslation}  from "react-i18next";
+
 interface FilterProps {
     filter: FilterInformationLabel;
     paramType: string;
@@ -9,6 +11,7 @@ interface FilterProps {
 const FilterWithLabel = ({filter, paramType}: FilterProps) => {
     const setTypeParam = useQueryState(paramType)[1];
     const items = filter.filterItem;
+    const {t} = useTranslation()
 
     const handleValueChange = async (value: string) => {
         if (value === "all") return await setTypeParam("");
@@ -19,7 +22,7 @@ const FilterWithLabel = ({filter, paramType}: FilterProps) => {
     return (
         <Select onValueChange={handleValueChange}>
             <SelectTrigger className="h-10 w-[180px] ">
-                <SelectValue placeholder={paramType} />
+                <SelectValue placeholder={t(paramType)} />
             </SelectTrigger>
             <SelectContent>
                 {items.map((item) => {
