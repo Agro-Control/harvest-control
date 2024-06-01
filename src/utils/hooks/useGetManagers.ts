@@ -15,7 +15,7 @@ const getManagersRequest = async (
             grupo_id,
             codigo,
             status,
-            empresa_id: empresa_id === "" ? null : empresa_id,
+            empresa_id: !empresa_id ? null : empresa_id,
             unidade_id,
         },
     });
@@ -40,5 +40,7 @@ export const useGetManagers = (
 
             return true;
         },
+        
+    
     });
 };

@@ -5,6 +5,7 @@ import {factory} from "./factory";
 import {reducer} from "./reducer";
 import {api} from "@/lib/api";
 import {jwtDecode, JwtPayload} from "jwt-decode";
+import {AxiosError} from "axios";
 
 export type AuthState = {
     user: UserData | null;
@@ -33,7 +34,7 @@ export const AuthContext = createContext<[AuthState, AuthActions] | null>(null);
 
 export function AuthContextProvider({children}: AuthContextProviderProps) {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {getCookie} = useCookie();
+    const {getCookie, removeCookie} = useCookie();
     const actions = useRef(factory(dispatch));
     const {setUser} = actions.current;
     const {user} = state;
@@ -41,9 +42,19 @@ export function AuthContextProvider({children}: AuthContextProviderProps) {
 
     const userId = token && jwtDecode<UserSessionJwt>(token).id;
 
-    const getUserSession = async (id: number): Promise<UserData> => {
-        const {data} = await api.get(`/usersession/${id}`);
-        return data;
+    const getUserSession = async (id: number): Promise<UserData | null> => {
+        try {
+            const {data} = await api.get(`/usersession/${id}`);
+
+            return data;
+        } catch (error: any) {
+            const axiosError = error as AxiosError;
+            if (axiosError.response?.status === 401) {
+                window.location.href = "/login";
+                removeCookie("user_session");
+            }
+            return null;
+        }
     };
 
     useEffect(() => {
