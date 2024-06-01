@@ -23,7 +23,6 @@ import {ReactNode, useEffect, useState} from "react";
 import SubmitButton from "@/components/submit-button";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useToast} from "@/components/ui/use-toast";
-import OrdemServico from "@/types/ordem-de-servico";
 import {useAuth} from "@/utils/hooks/useAuth";
 import {useTranslation} from "react-i18next";
 import {Input} from "@/components/ui/input";
@@ -32,6 +31,7 @@ import {AxiosError} from "axios";
 import {format} from "date-fns";
 import {api} from "@/lib/api";
 import {z} from "zod";
+import OrdemServicoPost from "@/types/ordem-de-servico-post";
 
 interface createOrderProps {
     children: ReactNode;
@@ -172,7 +172,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
         derivedEnableFlag,
     ]);
 
-    const createOrderRequest = async (postData: OrdemServico | null) => {
+    const createOrderRequest = async (postData: OrdemServicoPost | null) => {
         const {data} = await api.post("/ordens", postData);
         return data;
     };
@@ -217,6 +217,17 @@ const CreateOrderModal = ({children}: createOrderProps) => {
     const onHandleSubmit = (data: Form) => {
         const startDate = addTimeToDate(data.data_inicio);
         const endDate = addTimeToDate(data.data_fim);
+        const operadoresSelecionados = [];
+    
+        if (data.operador_manha !== null && data.operador_manha !== "nenhum") {
+            operadoresSelecionados.push(parseInt(data.operador_manha));
+        }
+        if (data.operador_tarde !== null && data.operador_tarde !== "nenhum") {
+            operadoresSelecionados.push(parseInt(data.operador_tarde));
+        }
+        if (data.operador_noturno !== null && data.operador_noturno !== "nenhum") {
+            operadoresSelecionados.push(parseInt(data.operador_noturno));
+        }
 
         const formattedData = {
             status: "A",
@@ -230,11 +241,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
             velocidade_minima: parseFloat(data.velocidade_minima),
             velocidade_maxima: parseFloat(data.velocidade_maxima),
             rpm: parseInt(data.rpm),
-            operadores: [
-                parseInt(data.operador_manha!),
-                parseInt(data.operador_tarde!),
-                parseInt(data.operador_noturno!),
-            ],
+            operadores: operadoresSelecionados,
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);

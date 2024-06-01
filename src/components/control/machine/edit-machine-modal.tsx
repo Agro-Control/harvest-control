@@ -124,7 +124,7 @@ const EditMachineModal = ({ maquina,  children }: EditMachineModalProps) => {
             nome: data.nome!,
             data_aquisicao: maquina.data_aquisicao, //format(data.data_aquisicao,'yyyy-MM-dd HH:mm:ss') ,
             status: data.status!,
-            capacidade_operacional: parseInt(data.capacidade_operacional!),
+            capacidade_operacional: 0,
             unidade_id: !isAdmin ? parseInt(user!.unidade_id) : parseInt(data.unidade_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda

@@ -15,7 +15,6 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Factory, GasPump, GearSix, Truck, Wrench } from "@phosphor-icons/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { format } from "date-fns";
 import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,7 +27,6 @@ import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 import Maquina from "@/types/maquina";
-import { DatePicker } from "@/components/ui/date-picker";
 import SubmitButton from "@/components/submit-button";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 
@@ -129,8 +127,8 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
             modelo: data.modelo!,
             nome: data.nome!,
             data_aquisicao: null, //format(data.data_aquisicao,'yy-MM-dd HH:mm:ss') ,
-            status: null,
-            capacidade_operacional: parseInt(data.capacidade_operacional!),
+            status: "A",
+            capacidade_operacional: 0,
             unidade_id: parseInt(data.unidade_id),
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
