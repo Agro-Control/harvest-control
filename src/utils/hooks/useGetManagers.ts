@@ -10,11 +10,12 @@ const getManagersRequest = async (
     status: string | null,
 ) => {
     const {data} = await api.get<GetGestor>("/gestores", {
+       
         params: {
             grupo_id,
             codigo,
             status,
-            empresa_id,
+            empresa_id: empresa_id === "" ? null : empresa_id,
             unidade_id,
         },
     });
