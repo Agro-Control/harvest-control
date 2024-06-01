@@ -13,6 +13,10 @@ interface Operador {
     turno: string;
     tipo: string;
     grupo_id: number | null;
+    empresa: string | null | undefined;
+    unidade: string | null | undefined;
+    
+
 }
 
 export default Operador; 

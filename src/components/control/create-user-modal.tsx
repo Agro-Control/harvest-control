@@ -40,7 +40,7 @@ interface CreateUserModalProps {
 }
 
 type Form = z.infer<typeof createUserSchema>;
-type PostData = Omit<Operador, "id" | "matricula">;
+type PostData = Omit<Operador, "id" | "matricula" | "empresa" | "unidade">;
 
 const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUserModalProps) => {
     const [open, setOpen] = useState(false);

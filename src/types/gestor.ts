@@ -13,4 +13,6 @@ export interface Gestor {
     turno: string;
     tipo: string;
     grupo_id: number;
+    empresa: string | null | undefined;
+    unidade: string | null | undefined;
 }
