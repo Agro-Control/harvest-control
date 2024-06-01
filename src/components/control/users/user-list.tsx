@@ -14,22 +14,25 @@ interface UsersListProps {
     usuarios: Operador[] | Gestor[];
     refetchOperators?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOperador, Error>>;
     refetchManager?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetGestor, Error>>;
+    managerList?: boolean;
 }
 
-const UsersList = ({usuarios, refetchOperators, refetchManager}: UsersListProps) => {
+const UsersList = ({usuarios, refetchOperators, refetchManager, managerList = false}: UsersListProps) => {
     const {t} = useTranslation();
 
+    
     return (
         <TableBody>
             {usuarios.map((user, index) => {
                 return (
                     <TableRow key={index}>
-                        <TableCell className="max-w-48 font-medium">{user.matricula || "Não Possuí"}</TableCell>
+                        {!managerList && <TableCell className="max-w-48 font-medium">{user.matricula || "Não Possuí"}</TableCell>}
                         <TableCell className="font-medium">{user.nome}</TableCell>
                         <TableCell className="">{t(user.tipo)}</TableCell>
                         <TableCell className="">{t(user.status)}</TableCell>
                         <TableCell className="">{format(user.data_contratacao, "dd/MM/yyyy")}</TableCell>
-                        <TableCell className="">{t(user.turno) || "Não Possuí"}</TableCell>
+                      {!managerList &&  <TableCell className="">{t(user.turno) || "Não Possuí"}</TableCell>}
+                      <TableCell className="">{managerList ? user.empresa : user.unidade}</TableCell>
                         <TableCell className="w-28">
                             <div className="-ml-1 flex w-full flex-row items-center gap-3">
                                 <EditUserModal
