@@ -208,7 +208,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                                             }}
                                         >
                                             <SelectTrigger className="h-10 w-full ">
-                                                <SelectValue placeholder="Status" {...field} />
+                                                <SelectValue placeholder={t(userInformation.status)} defaultValue={userInformation.status} {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="A">Ativo</SelectItem>

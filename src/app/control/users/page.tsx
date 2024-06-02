@@ -123,7 +123,7 @@ export default function Users() {
                     <TableRow>
                        {!isAdmin && <TableHead>Matricula</TableHead>}
                         <TableHead>Nome</TableHead>
-                        <TableHead>Perfil</TableHead>
+                        <TableHead>Cargo</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Contratação</TableHead>
                         {!isAdmin &&<TableHead>Turno</TableHead>}

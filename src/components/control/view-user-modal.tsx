@@ -62,14 +62,14 @@ const ViewUserModal = ({children, userInformation}: EditUserProps) => {
                         value={t(userInformation.tipo)}
                     />
 
-                    <Input
+                    {!isAdmin && <Input
                         disabled
                         Icon={SunHorizon}
                         className=""
                         id="role"
                         placeholder="Turno"
                         value={t(userInformation.turno)}
-                    />
+                    />}
 
                     <MaskedInput
                         maskInput={{
