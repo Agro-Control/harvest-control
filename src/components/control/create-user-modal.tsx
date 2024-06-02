@@ -71,7 +71,7 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
             tipo: whichRoleCreate,
             cpf: "",
             telefone: "",
-            turno: "",
+            turno: isAdmin ? "M" : "",
             place_id: "",
         },
     });
@@ -126,6 +126,7 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
         if (isAdmin) {   
             const formattedData = {
                 ...cleanedData,
+                turno: "",
                 empresa_id: Number(data.place_id),
                 cpf: data.cpf.replace(/\D/g, ""),
                 telefone: data.telefone.replace(/\D/g, ""),
@@ -204,7 +205,7 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
                             )}
                         />
 
-                        <FormField
+                       {!isAdmin && <FormField
                             control={form.control}
                             name="turno"
                             render={({field}) => (
@@ -216,7 +217,7 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
                                             }}
                                         >
                                             <SelectTrigger Icon={SunHorizon} className="h-10 w-full ">
-                                                <SelectValue placeholder="Turno" {...field} />
+                                                <SelectValue placeholder="Turno"  {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="M">Manhã</SelectItem>
@@ -228,7 +229,7 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        />}
 
                         <FormField
                             control={form.control}

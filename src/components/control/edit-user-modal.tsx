@@ -9,29 +9,31 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {QueryObserverResult, RefetchOptions, useMutation, useQueryClient} from "@tanstack/react-query";
+import {User, EnvelopeSimple, IdentificationCard, Phone, SunHorizon, Factory} from "@phosphor-icons/react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {User, EnvelopeSimple, IdentificationCard, Phone, SunHorizon} from "@phosphor-icons/react";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
+import {QueryObserverResult, RefetchOptions, useMutation} from "@tanstack/react-query";
 import { editUserSchema } from "@/utils/validations/editUserSchema";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import {MaskedInput} from "@/components/ui/masked-input";
 import formatPhone from "@/utils/functions/formatPhone";
 import SubmitButton from "@/components/submit-button";
 import {zodResolver} from "@hookform/resolvers/zod";
 import formatCpf from "@/utils/functions/formatCpf";
+import GetOperador from "@/types/get-operador";
 import {useAuth} from "@/utils/hooks/useAuth";
 import {InputMask} from "@react-input/mask";
 import {Input} from "@/components/ui/input";
+import GetGestor from "@/types/get-gestor";
+import {ReactNode, useState} from "react";
+import {useToast} from "../ui/use-toast";
 import {useForm} from "react-hook-form";
 import Operador from "@/types/operador";
 import {Gestor} from "@/types/gestor";
-import {ReactNode, useState} from "react";
-import {z} from "zod";
-import GetOperador from "@/types/get-operador";
-import GetGestor from "@/types/get-gestor";
-import api from "@/lib/api";
-import {useToast} from "../ui/use-toast";
 import {AxiosError} from "axios";
+import api from "@/lib/api";
+import {z} from "zod";
+
 import {useTranslation} from "react-i18next";
 type Form = z.infer<typeof editUserSchema>;
 
@@ -51,8 +53,12 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
+    const grupo_id = user && user?.grupo_id;
     const whichRoleCreate = isAdmin ? "Gestor" : "Operador";
     const {t} = useTranslation();
+    const {data: {empresas = []} = {}, refetch: refetchCompanies} = useGetCompanies(false, grupo_id, null, null, "A", true);
+
+
 
     const form = useForm<Form>({
         resolver: zodResolver(editUserSchema),
@@ -63,6 +69,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
             telefone: formatPhone(userInformation.telefone) || "",
             turno: userInformation.turno || "",
             status: userInformation.status,
+            empresa_id: String(userInformation.empresa_id) || "",
         },
     });
 
@@ -82,6 +89,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                 description: t(`put${whichRoleCreate}-success`),
             });
             isAdmin ? refetchManager?.() : refetchOperators?.();
+            isAdmin && refetchCompanies();
             setOpen(false);
             form.reset();
         },
@@ -115,6 +123,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
     function onSubmit(data: Form) {
         const formattedData = {
             ...userInformation,
+            empresa_id: Number(data.empresa_id),
             nome: data.nome,
             email: data.email,
             turno: data.turno || "",
@@ -198,7 +207,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                                                 form.setValue("status", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={SunHorizon} className="h-10 w-full ">
+                                            <SelectTrigger className="h-10 w-full ">
                                                 <SelectValue placeholder="Status" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -256,6 +265,36 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                                 </FormItem>
                             )}
                         />
+                        {isAdmin && (
+                               <FormField
+                               control={form.control}
+                               name="empresa_id"
+                               render={({field}) => (
+                                   <FormItem className="col-span-1 ">
+                                       <FormControl>
+                                           <Select
+                                               onValueChange={(value) => {
+                                                   form.setValue("empresa_id", value);
+                                               }}
+                                           >
+                                               <SelectTrigger Icon={Factory} className="h-10 w-full ">
+                                                   <SelectValue placeholder="Empresa" {...field} />
+                                               </SelectTrigger>
+                                               <SelectContent>
+                                                   {
+                                                   empresas.map((company) => (
+                                                       <SelectItem key={company.id} value={company.id!.toString()}>
+                                                           {company.nome}
+                                                       </SelectItem>
+                                                   ))}
+                                               </SelectContent>
+                                           </Select>
+                                       </FormControl>
+                                       <FormMessage />
+                                   </FormItem>
+                               )}
+                           />
+                        )}
                     </form>
                 </Form>
                 <DialogFooter>
