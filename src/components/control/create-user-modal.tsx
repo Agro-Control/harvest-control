@@ -150,7 +150,7 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
             status: "A",
             data_contratacao: new Date().toISOString(),
             gestor_id: gestor_id != null ? gestor_id.toString() : null,
-            empresa_id: empresa_id,
+            empresa_id: empresa_id!,
             grupo_id: grupo_id,
         };
         mutate(formattedData);
