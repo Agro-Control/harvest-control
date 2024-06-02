@@ -16,6 +16,7 @@ import {QueryObserverResult, RefetchOptions, useMutation} from "@tanstack/react-
 import {editUserSchema} from "@/utils/validations/editUserSchema";
 import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
 import {MaskedInput} from "@/components/ui/masked-input";
+import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import formatPhone from "@/utils/functions/formatPhone";
 import SubmitButton from "@/components/submit-button";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -29,6 +30,7 @@ import {ReactNode, useState} from "react";
 import {useToast} from "../ui/use-toast";
 import {useForm} from "react-hook-form";
 import Operador from "@/types/operador";
+import Unidade from "@/types/unidade";
 import {Gestor} from "@/types/gestor";
 import {AxiosError} from "axios";
 import api from "@/lib/api";
@@ -55,8 +57,15 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
+    const empresa_id = user && user?.empresa_id;
     const grupo_id = user && user?.grupo_id;
     const whichRoleCreate = isAdmin ? "Gestor" : "Operador";
+
+  const {
+        data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
+    } = useGetUnits(!isAdmin, empresa_id, grupo_id, null, null);
+
+
     const {t} = useTranslation();
     const {data: {empresas = []} = {}, refetch: refetchCompanies} = useGetCompanies(
         false,
@@ -77,6 +86,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
             turno: userInformation.turno || "",
             status: userInformation.status,
             empresa_id: String(userInformation.empresa_id) || "",
+            unidade_id: String(userInformation.empresa_id) || "",
         },
     });
 
@@ -131,6 +141,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
         const formattedData = {
             ...userInformation,
             empresa_id: Number(data.empresa_id),
+            unidade_id: isAdmin ? null : data.unidade_id,
             nome: data.nome,
             email: data.email,
             turno: data.turno || "",
@@ -281,7 +292,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                                 </FormItem>
                             )}
                         />
-                        {isAdmin && (
+                        {isAdmin ? (
                             <FormField
                                 control={form.control}
                                 name="empresa_id"
@@ -312,7 +323,37 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                                     </FormItem>
                                 )}
                             />
+                        )
+                    : (
+                        <FormField
+                        control={form.control}
+                        name="unidade_id"
+                        render={({field}) => (
+                            <FormItem className="col-span-1 ">
+                                <FormControl>
+                                    <Select
+                                        onValueChange={(value) => {
+                                            form.setValue("unidade_id", value);
+                                        }}
+                                    >
+                                        <SelectTrigger Icon={Factory} className="h-10 w-full ">
+                                            <SelectValue placeholder={userInformation.unidade} {...field} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {unidades.map((unidade) => (
+                                                <SelectItem key={unidade.id} value={unidade.id!.toString()}>
+                                                    {unidade.nome}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
                         )}
+                    />
+                    )
+                    }
                     </form>
                 </Form>
                 <DialogFooter>

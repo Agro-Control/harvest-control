@@ -16,4 +16,5 @@ export const editUserSchema = z.object({
     turno: optionalStringField(1),
     status: requiredStringField(1,1, "Selecione o status"),
     empresa_id: requiredStringField(1, 255, "Selecione a empresa"),
+    unidade_id: requiredStringField(1, 255, "Selecione a unidade"),
 });
