@@ -278,9 +278,12 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                                                }}
                                            >
                                                <SelectTrigger Icon={Factory} className="h-10 w-full ">
-                                                   <SelectValue placeholder="Empresa" {...field} />
+                                                   <SelectValue placeholder={userInformation.empresa} {...field} />
                                                </SelectTrigger>
                                                <SelectContent>
+                                               <SelectItem value={userInformation.empresa_id.toString()}>
+                                               {userInformation.empresa}
+                                                       </SelectItem>
                                                    {
                                                    empresas.map((company) => (
                                                        <SelectItem key={company.id} value={company.id!.toString()}>

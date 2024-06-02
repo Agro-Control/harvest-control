@@ -8,7 +8,7 @@ export interface Gestor {
     data_contratacao: string;
     gestor_id: string | null;
     unidade_id: string | null;
-    empresa_id: number | null;
+    empresa_id: number;
     matricula: string | null;
     turno: string;
     tipo: string;
