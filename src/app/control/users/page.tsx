@@ -18,6 +18,8 @@ import Empresa from "@/types/empresa";
 import {useQueryState} from "nuqs";
 import {AxiosError} from "axios";
 import {useEffect} from "react";
+import { useGetUnits } from "@/utils/hooks/useGetUnits";
+import Unidade from "@/types/unidade";
 
 const statusFilter: FilterInformation = {
     filterItem: [
@@ -40,10 +42,15 @@ export default function Users() {
     const [query] = useQueryState("query");
     const [status] = useQueryState("status");
     const [empresa] = useQueryState("company");
+    const [unidade] = useQueryState("unit");
  
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
     } = useGetCompanies(isAdmin, grupo_id, null, null, null, false);
+
+    const {
+        data: { unidades = [] } = {}, // Objeto contendo a lista de unidades
+    } = useGetUnits(!isAdmin, empresa_id, grupo_id, null, null);
 
     const companyFilter: FilterInformationLabel = {
         filterItem: [
@@ -51,6 +58,15 @@ export default function Users() {
             ...empresas.map((empresa: Empresa) => ({
                 value: empresa.id?.toString()!,
                 label: empresa.nome!,
+            })),
+        ],
+    };
+    const unitFilter: FilterInformationLabel = {
+        filterItem: [
+            { value: "all", label: "Todas"},
+            ...unidades.map((unidade: Unidade) => ({
+                value: unidade.id?.toString()!,
+                label: unidade.nome!,
             })),
         ],
     };
@@ -62,7 +78,7 @@ export default function Users() {
         isLoading: isLoadingOperators,
         refetch: refetchOperators,
         isRefetching: isRefetchingOperators,
-    } = useGetOperatorsList(empresa_id, null, null, status, query);
+    } = useGetOperatorsList(empresa_id, Number(unidade), null, status, query);
  
     const {
         data: {gestor = []} = {},
@@ -98,7 +114,7 @@ export default function Users() {
         if (isGestor) {
             refetchOperators();
         }
-    }, [status, query, empresa]);
+    }, [status, query, empresa, unidade]);
 
     return (
         <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -108,6 +124,7 @@ export default function Users() {
             <div className="flex w-full flex-row items-start justify-start gap-4 ">
                 <SearchBar text="Digite o nome para pesquisar..." />
                 {isAdmin && <FilterWithLabel filter={companyFilter} paramType="company" />}
+                {!isAdmin && <FilterWithLabel filter={unitFilter} paramType="unit" />}
                 <Filter filter={statusFilter} paramType="status" />
                 <CreateUserModal refetchOperators={refetchOperators} refetchManager={refetchManager} >
                     <Button
