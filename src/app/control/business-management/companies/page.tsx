@@ -121,14 +121,14 @@ export default function Companies() {
                 <TableBody>
                     {!isLoadingEmpresaData &&
                         !isErrorEmpresa && !isAdmin &&
-                        <CompanyRow key={empresa.id} empresa={empresa} />
+                        <CompanyRow key={empresa.id} empresa={empresa} refetchEmpresa={refetchEmpresa}  isSingleCompany={true} />
                     }
                     {!isError &&
                         !isLoadingData && isAdmin &&
 
                         empresas.map((empresa: Empresa) => {
                             return (
-                                <CompanyRow key={empresa.id} empresa={empresa} />
+                                <CompanyRow key={empresa.id} empresa={empresa}  refetchCompanies={refetch} isSingleCompany={false} />
                             );
                         })
                     }

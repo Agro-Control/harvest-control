@@ -38,10 +38,10 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { InputMask } from "@react-input/mask";
+import GetEmpresa from "@/types/get-empresa";
 import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import Empresa from "@/types/empresa";
-import GetEmpresa from "@/types/get-empresa";
 import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 import { z } from "zod";
@@ -123,6 +123,7 @@ const CreateCompanyModal = ({ children, refetchCompanies }: CreateCompanyProps) 
         mutationFn: createCompanyRequest,
         onSuccess: () => {
             toast({
+                duration: 1000,
                 className: "border-green-500 bg-green-500",
                 title: t("success"),
                 description: t("postCompany-success"),

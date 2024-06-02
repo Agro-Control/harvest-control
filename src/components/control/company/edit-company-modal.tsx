@@ -21,43 +21,50 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { editCompanySchema } from "@/utils/validations/editCompanySchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetManagers } from "@/utils/hooks/useGetManagers";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {QueryObserverResult, RefetchOptions, useMutation, useQueryClient} from "@tanstack/react-query";
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
+import {editCompanySchema} from "@/utils/validations/editCompanySchema";
+import {zodResolver} from "@hookform/resolvers/zod";
 import SubmitButton from "@/components/submit-button";
-import { toast } from "@/components/ui/use-toast";
-import { useAuth } from "@/utils/hooks/useAuth";
-import { useTranslation } from "react-i18next";
-import { Input } from "@/components/ui/input";
-import { ReactNode, useState } from "react";
-import { useForm } from "react-hook-form";
+import {toast} from "@/components/ui/use-toast";
+import {useAuth} from "@/utils/hooks/useAuth";
+import {useTranslation} from "react-i18next";
+import {Input} from "@/components/ui/input";
+import GetEmpresa from "@/types/get-empresa";
+import {ReactNode, useState} from "react";
+import {useForm} from "react-hook-form";
 import Empresa from "@/types/empresa";
-import { AxiosError } from "axios";
-import { api } from "@/lib/api";
-import { z } from "zod";
+import {AxiosError} from "axios";
+import {api} from "@/lib/api";
+import {z} from "zod";
 
 interface EditCompanyProps {
     company: Empresa;
     children: ReactNode;
+    isSingleCompany: boolean;
+    refetchCompanies?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetEmpresa, Error>>;
+    refetchEmpresa?: (options?: RefetchOptions) => Promise<QueryObserverResult<any, Error>>;
 }
 
 type Form = z.infer<typeof editCompanySchema>;
 
-const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
-    const { t } = useTranslation();
+const EditCompanyModal = ({
+    children,
+    company,
+    isSingleCompany,
+    refetchCompanies,
+    refetchEmpresa,
+}: EditCompanyProps) => {
+    const {t} = useTranslation();
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
-    const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
+    const [statusOptions, setStatusOptions] = useState<{value: string}[]>([{value: "A"}, {value: "I"}]);
 
-
-    
-  /*  const {
+    /*  const {
         data: {usuarios : gestores = []} = {}, // Objeto contendo a lista de gestores
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
@@ -85,12 +92,12 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
     });
 
     const createCompanyRequest = async (putData: Empresa | null) => {
-        const { data } = await api.put("/empresas", putData);
+        const {data} = await api.put("/empresas", putData);
         return data;
     };
 
     // Hook do react query para fazer a validação se foi sucesso ou se a requisição deu problema
-    const { mutate, isPending } = useMutation({
+    const {mutate, isPending} = useMutation({
         mutationFn: createCompanyRequest,
         onSuccess: () => {
             toast({
@@ -99,13 +106,12 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                 description: t("putCompany-success"),
             });
 
-            // Refetch na lista de empresas
-            queryClient.refetchQueries({ queryKey: ["companies"], type: "active", exact: true });
+            isSingleCompany ? refetchEmpresa?.() : refetchCompanies?.();
             setOpen(false);
             form.reset();
         },
         onError: (error: AxiosError) => {
-            const { response } = error;
+            const {response} = error;
             if (!response) {
                 toast({
                     variant: "destructive",
@@ -115,7 +121,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                 return;
             }
 
-            const { status } = response;
+            const {status} = response;
             const titleCode = `postCompany-error-${status}`;
             const descriptionCode = `postCompany-description-error-${status}`;
 
@@ -127,7 +133,6 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
         },
     });
 
-
     // Função de submit do formulário de criação de empresa
     const onHandleSubmit = (data: Form) => {
         const formattedData = {
@@ -137,16 +142,11 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
             cep: data.cep.replace(/\D/g, ""),
             status: data.status,
             data_criacao: company.data_criacao,
-            grupo_id: user?.grupo_id,             
+            grupo_id: user?.grupo_id,
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
     };
-
-
-
-
-
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -166,15 +166,10 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="nome"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
-                                        <Input
-                                            Icon={Buildings}
-                                            id="nome"
-                                            placeholder="Nome da Empresa"
-                                            {...field}
-                                        />
+                                        <Input Icon={Buildings} id="nome" placeholder="Nome da Empresa" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -184,7 +179,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="cnpj"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input
@@ -204,7 +199,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="telefone"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input
@@ -222,7 +217,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="cep"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input Icon={NavigationArrow} id="cep" placeholder="CEP" {...field} />
@@ -235,15 +230,10 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="estado"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
-                                        <Input
-                                            Icon={MapTrifold}
-                                            id="estado"
-                                            placeholder={t(field.name)}
-                                            {...field}
-                                        />
+                                        <Input Icon={MapTrifold} id="estado" placeholder={t(field.name)} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -253,7 +243,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="cidade"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input Icon={MapPin} id="cidade" placeholder="Cidade" {...field} />
@@ -265,7 +255,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="bairro"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input Icon={Factory} id="bairro" placeholder="Bairro" {...field} />
@@ -278,7 +268,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="logradouro"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input Icon={House} id="logradouro" placeholder="Endereço" {...field} />
@@ -290,7 +280,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="numero"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input Icon={Hash} id="numero" placeholder="Número" {...field} />
@@ -302,7 +292,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                         <FormField
                             control={form.control}
                             name="complemento"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1 ">
                                     <FormControl>
                                         <Input Icon={Flag} id="complemento" placeholder="Complemento" {...field} />
@@ -311,11 +301,11 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                 </FormItem>
                             )}
                         />
-                         
+
                         <FormField
                             control={form.control}
                             name="status"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
