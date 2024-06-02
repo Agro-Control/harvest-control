@@ -13,8 +13,8 @@ import {User, EnvelopeSimple, IdentificationCard, Phone, SunHorizon, Factory} fr
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {QueryObserverResult, RefetchOptions, useMutation} from "@tanstack/react-query";
-import { editUserSchema } from "@/utils/validations/editUserSchema";
-import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
+import {editUserSchema} from "@/utils/validations/editUserSchema";
+import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
 import {MaskedInput} from "@/components/ui/masked-input";
 import formatPhone from "@/utils/functions/formatPhone";
 import SubmitButton from "@/components/submit-button";
@@ -38,14 +38,16 @@ import {useTranslation} from "react-i18next";
 type Form = z.infer<typeof editUserSchema>;
 
 
+interface DataError {
+
+    error: string;
+}
 interface EditUserProps {
     userInformation: Operador | Gestor;
     children: ReactNode;
     refetchOperators?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOperador, Error>>;
     refetchManager?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetGestor, Error>>;
 }
-
-
 
 const EditUserModal = ({children, userInformation, refetchOperators, refetchManager}: EditUserProps) => {
     const [open, setOpen] = useState(false);
@@ -56,9 +58,14 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
     const grupo_id = user && user?.grupo_id;
     const whichRoleCreate = isAdmin ? "Gestor" : "Operador";
     const {t} = useTranslation();
-    const {data: {empresas = []} = {}, refetch: refetchCompanies} = useGetCompanies(false, grupo_id, null, null, "A", true);
-
-
+    const {data: {empresas = []} = {}, refetch: refetchCompanies} = useGetCompanies(
+        false,
+        grupo_id,
+        null,
+        null,
+        "A",
+        true,
+    );
 
     const form = useForm<Form>({
         resolver: zodResolver(editUserSchema),
@@ -75,7 +82,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
 
     const editUserRequest = async (putData: Operador | Gestor | null) => {
         const url = isAdmin ? "/gestores" : "/operadores";
-        const { data } = await api.put(url, putData);
+        const {data} = await api.put(url, putData);
         return data;
     };
 
@@ -105,9 +112,11 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                 return;
             }
 
-            const {status} = response;
-            const titleCode = `put${whichRoleCreate}-error-${status}`;
-            const descriptionCode = `put${whichRoleCreate}-description-error-${status}`;
+            const {status, data} = response;
+            const dataError = data as DataError;
+            const errorMessage = dataError.error;
+            const titleCode = status === 409 ? errorMessage : `put${whichRoleCreate}-error-${status}`;
+            const descriptionCode =  `put${whichRoleCreate}-description-error-${status}`;
 
             toast({
                 duration: 1000,
@@ -117,8 +126,6 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
             });
         },
     });
-
-
 
     function onSubmit(data: Form) {
         const formattedData = {
@@ -130,7 +137,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
             status: data.status,
             cpf: data.cpf.replace(/\D/g, ""),
             telefone: data.telefone.replace(/\D/g, ""),
-        }
+        };
         mutate(formattedData);
         console.log(formattedData);
     }
@@ -145,8 +152,12 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} id="edit-user-form" className="grid grid-cols-2 gap-4 py-4">
-                    <FormField
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        id="edit-user-form"
+                        className="grid grid-cols-2 gap-4 py-4"
+                    >
+                        <FormField
                             control={form.control}
                             name="nome"
                             render={({field}) => (
@@ -158,7 +169,7 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                                 </FormItem>
                             )}
                         />
-                          <FormField
+                        <FormField
                             control={form.control}
                             name="email"
                             render={({field}) => (
@@ -171,31 +182,33 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                             )}
                         />
 
-                      { !isAdmin &&  <FormField
-                            control={form.control}
-                            name="turno"
-                            render={({field}) => (
-                                <FormItem className="col-span-1 ">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("turno", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={SunHorizon} className="h-10 w-full ">
-                                                <SelectValue placeholder="Turno" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="M">Manhã</SelectItem>
-                                                <SelectItem value="T">Tarde</SelectItem>
-                                                <SelectItem value="N">Noite</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />}
+                        {!isAdmin && (
+                            <FormField
+                                control={form.control}
+                                name="turno"
+                                render={({field}) => (
+                                    <FormItem className="col-span-1 ">
+                                        <FormControl>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue("turno", value);
+                                                }}
+                                            >
+                                                <SelectTrigger Icon={SunHorizon} className="h-10 w-full ">
+                                                    <SelectValue placeholder="Turno" {...field} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="M">Manhã</SelectItem>
+                                                    <SelectItem value="T">Tarde</SelectItem>
+                                                    <SelectItem value="N">Noite</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                         <FormField
                             control={form.control}
                             name="status"
@@ -208,7 +221,11 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                                             }}
                                         >
                                             <SelectTrigger className="h-10 w-full ">
-                                                <SelectValue placeholder={t(userInformation.status)} defaultValue={userInformation.status} {...field} />
+                                                <SelectValue
+                                                    placeholder={t(userInformation.status)}
+                                                    defaultValue={userInformation.status}
+                                                    {...field}
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="A">Ativo</SelectItem>
@@ -243,7 +260,6 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                             )}
                         />
 
-                      
                         <FormField
                             control={form.control}
                             name="telefone"
@@ -266,42 +282,41 @@ const EditUserModal = ({children, userInformation, refetchOperators, refetchMana
                             )}
                         />
                         {isAdmin && (
-                               <FormField
-                               control={form.control}
-                               name="empresa_id"
-                               render={({field}) => (
-                                   <FormItem className="col-span-1 ">
-                                       <FormControl>
-                                           <Select
-                                               onValueChange={(value) => {
-                                                   form.setValue("empresa_id", value);
-                                               }}
-                                           >
-                                               <SelectTrigger Icon={Factory} className="h-10 w-full ">
-                                                   <SelectValue placeholder={userInformation.empresa} {...field} />
-                                               </SelectTrigger>
-                                               <SelectContent>
-                                               <SelectItem value={userInformation.empresa_id.toString()}>
-                                               {userInformation.empresa}
-                                                       </SelectItem>
-                                                   {
-                                                   empresas.map((company) => (
-                                                       <SelectItem key={company.id} value={company.id!.toString()}>
-                                                           {company.nome}
-                                                       </SelectItem>
-                                                   ))}
-                                               </SelectContent>
-                                           </Select>
-                                       </FormControl>
-                                       <FormMessage />
-                                   </FormItem>
-                               )}
-                           />
+                            <FormField
+                                control={form.control}
+                                name="empresa_id"
+                                render={({field}) => (
+                                    <FormItem className="col-span-1 ">
+                                        <FormControl>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue("empresa_id", value);
+                                                }}
+                                            >
+                                                <SelectTrigger Icon={Factory} className="h-10 w-full ">
+                                                    <SelectValue placeholder={userInformation.empresa} {...field} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value={userInformation.empresa_id.toString()}>
+                                                        {userInformation.empresa}
+                                                    </SelectItem>
+                                                    {empresas.map((company) => (
+                                                        <SelectItem key={company.id} value={company.id!.toString()}>
+                                                            {company.nome}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         )}
                     </form>
                 </Form>
                 <DialogFooter>
-                <SubmitButton isLoading={isPending} form="edit-user-form" />
+                    <SubmitButton isLoading={isPending} form="edit-user-form" />
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -39,6 +39,11 @@ interface CreateUserModalProps {
     refetchManager?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetGestor, Error>>;
 }
 
+interface DataError {
+
+    error: string;
+}
+
 type Form = z.infer<typeof createUserSchema>;
 type PostData = Omit<Operador, "id" | "matricula" | "empresa" | "unidade">;
 
@@ -108,8 +113,10 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
                 return;
             }
 
-            const {status} = response;
-            const titleCode = `post${whichRoleCreate}-error-${status}`;
+            const {status, data} = response;
+            const dataError = data as DataError;
+            const errorMessage = dataError.error;
+            const titleCode = status === 409 ? errorMessage :  `post${whichRoleCreate}-error-${status}`;
             const descriptionCode = `post${whichRoleCreate}-description-error-${status}`;
 
             toast({
