@@ -61,7 +61,6 @@ const CreateCompanyModal = ({ children, refetchCompanies }: CreateCompanyProps) 
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
-    
     // Hook que inicia a toast 
     const { toast } = useToast();
 
@@ -81,18 +80,8 @@ const CreateCompanyModal = ({ children, refetchCompanies }: CreateCompanyProps) 
             logradouro: "",
             numero: "",
             complemento: "",
-            gestor_id: "",
         },
     });
-
-  /*const {
-        data: {usuarios: gestores = []} = {}, // Objeto contendo a lista de gestores
-        error, // Erro retornado pela Api
-        isError, // Booleano que indica se houve erro
-        isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
-        isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetManagers(isAdmin ? user?.grupo_id : null, null, null, "G");*/
 
     // Desenstruturando funcões do hook form
     const { getValues, setValue, watch } = form;
@@ -178,7 +167,6 @@ const CreateCompanyModal = ({ children, refetchCompanies }: CreateCompanyProps) 
             telefone: data.telefone.replace(/\D/g, ""),
             cep: data.cep.replace(/\D/g, ""),
             status: "A",
-            gestor_id: data.gestor_id != null ? parseInt(data.gestor_id) : null,
             grupo_id: user?.grupo_id,
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
@@ -372,33 +360,6 @@ const CreateCompanyModal = ({ children, refetchCompanies }: CreateCompanyProps) 
                                 </FormItem>
                             )}
                         />
-                       {/*isAdmin && <FormField
-                            control={form.control}
-                            name="gestor_id"
-                            render={({ field }) => (
-                                <FormItem className="col-span-2">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("gestor_id", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={UserPlus}>
-                                                <SelectValue placeholder="Selecione o Gestor" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {gestores.map((gestor) => (
-                                                    <SelectItem key={gestor.id} value={gestor.id.toString() || ""}>
-                                                        {gestor.nome}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />*/}
                     </form>
                 </Form>
                 <DialogFooter>

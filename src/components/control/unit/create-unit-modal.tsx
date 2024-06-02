@@ -59,6 +59,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
+    const gestor_id = user && user?.id;
 
     const form = useForm<Form>({
         resolver: zodResolver(editUnitSchema),
@@ -171,7 +172,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
             cep: data.cep.replace(/\D/g, ""),
             status: "A",
             empresa_id: !isAdmin ? user?.empresa_id : parseInt(data.empresa_id),
-            gestor_id: !isAdmin ? user?.id : empresaSelecionada?.gestor_id!
+            gestor_id: gestor_id,
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);

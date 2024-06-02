@@ -15,7 +15,7 @@ interface Unidade {
     data_criacao?: string;
     empresa_id?: number;
     empresa_nome?: string;
-    gestor_id?: number;
+    gestor_id: number | null;
 }
 
 export default Unidade;

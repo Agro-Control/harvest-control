@@ -81,7 +81,6 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
             numero: company.numero || "",
             complemento: company.complemento || "",
             status: company.status,
-            gestor_id: company.gestor_id! ? company.gestor_id!.toString() : "",
         },
     });
 
@@ -138,7 +137,6 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
             cep: data.cep.replace(/\D/g, ""),
             status: data.status,
             data_criacao: company.data_criacao,
-            gestor_id: data.gestor_id != null ? parseInt(data.gestor_id) : null,
             grupo_id: user?.grupo_id,             
         };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
@@ -313,33 +311,7 @@ const EditCompanyModal = ({ children, company }: EditCompanyProps) => {
                                 </FormItem>
                             )}
                         />
-                           {/*isAdmin && <FormField
-                            control={form.control}
-                            name="gestor_id"
-                            render={({ field }) => (
-                                <FormItem className="col-span-2">
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                form.setValue("gestor_id", value);
-                                            }}
-                                        >
-                                            <SelectTrigger Icon={UserPlus}>
-                                                <SelectValue placeholder="Selecione o Gestor" {...field} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {gestores.map((gestor) => (
-                                                    <SelectItem key={gestor.id} value={gestor.id.toString()}>
-                                                        {gestor.nome}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />*/}
+                         
                         <FormField
                             control={form.control}
                             name="status"

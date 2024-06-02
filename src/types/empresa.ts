@@ -12,7 +12,6 @@ interface Empresa {
   complemento?: string;
   status: string;
   data_criacao?: string; 
-  gestor_id: number | null;
 }
 
 export default Empresa;

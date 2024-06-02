@@ -30,7 +30,7 @@ interface Response {
 }
 
 type Form = z.infer<typeof createCompanySchema>;
-
+ 
 type UnitForm = z.infer<typeof editUnitSchema>;
 
 type UnitFormFields = keyof Omit<UnitForm, "cnpj" | "id" | "empresa_id">;

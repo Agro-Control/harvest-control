@@ -16,6 +16,5 @@ export const createCompanySchema = z.object({
         logradouro: requiredStringField(4,60, "CNPJ inválido"),
         numero: requiredStringField(1,20, "Número inválido"),
         complemento: optionalStringField(255),
-        gestor_id: optionalStringField(255),
 
 });
