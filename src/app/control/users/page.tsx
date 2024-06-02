@@ -35,6 +35,7 @@ export default function Users() {
     const isAdmin = user?.tipo === "D";
     const isGestor = user?.tipo === "G";
     const grupo_id = user && user?.grupo_id;
+    const empresa_id = user && user?.empresa_id;
 
     const [query] = useQueryState("query");
     const [status] = useQueryState("status");
@@ -61,8 +62,8 @@ export default function Users() {
         isLoading: isLoadingOperators,
         refetch: refetchOperators,
         isRefetching: isRefetchingOperators,
-    } = useGetOperatorsList(null, null, status, query);
-
+    } = useGetOperatorsList(empresa_id, null, null, status, query);
+ 
     const {
         data: {gestor = []} = {},
         error,
