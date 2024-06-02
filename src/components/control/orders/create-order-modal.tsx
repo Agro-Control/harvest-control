@@ -18,6 +18,7 @@ import {useGetOperators} from "@/utils/hooks/useGetOperators";
 import {useGetMachines} from "@/utils/hooks/useGetMachines";
 import {useGetFields} from "@/utils/hooks/useGetFields";
 import {DatePicker} from "@/components/ui/date-picker";
+import {DateTimePicker} from "@/components/ui/datetime-picker";
 import {useGetUnits} from "@/utils/hooks/useGetUnits";
 import {ReactNode, useEffect, useState} from "react";
 import SubmitButton from "@/components/submit-button";
@@ -351,7 +352,9 @@ const CreateOrderModal = ({children}: createOrderProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <DatePicker placeHolder={"Data Início"} {...field} />
+                                        <DateTimePicker  placeHolder={"Data Início"} {...field}/>
+{/*                                         
+                                        <DatePicker placeHolder={"Data Início"} {...field} /> */}
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -363,7 +366,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <DatePicker placeHolder={"Data de Finalização"} {...field} />
+                                        {/* <DatePicker placeHolder={"Data de Finalização"} {...field} /> */}
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
