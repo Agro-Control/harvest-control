@@ -1,7 +1,6 @@
 import Cookie from "js-cookie";
 
 const EXPIRE_TIME = 1;
-// const EXPIRE_TIME = 1/48;
 
 const useCookie = () => {
   const getCookie = (key: string) => Cookie.get(key);
