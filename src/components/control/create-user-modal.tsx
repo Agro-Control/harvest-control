@@ -92,6 +92,7 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
                 description: t(`post${whichRoleCreate}-success`),
             });
             isAdmin ? refetchManager?.() : refetchOperators?.();
+            isAdmin && refetchCompanies();
             setOpen(false);
             form.reset();
         },
