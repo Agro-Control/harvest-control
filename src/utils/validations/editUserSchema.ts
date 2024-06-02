@@ -15,4 +15,5 @@ export const editUserSchema = z.object({
     telefone: requiredStringField(1, 255, "O telefone não pode estar vazio"),
     turno: optionalStringField(1),
     status: requiredStringField(1,1, "Selecione o status"),
+    empresa_id: requiredStringField(1, 255, "Selecione a empresa"),
 });
