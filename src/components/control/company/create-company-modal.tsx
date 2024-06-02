@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createCompanySchema } from "@/utils/validations/createCompanySchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {QueryObserverResult, RefetchOptions, useMutation, useQueryClient} from "@tanstack/react-query";
 import { useGetManagers } from "@/utils/hooks/useGetManagers";
 import { MaskedInput } from "@/components/ui/masked-input";
 import { handleCnpjData } from "@/utils/handleCnpjData";
@@ -41,17 +41,20 @@ import { InputMask } from "@react-input/mask";
 import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import Empresa from "@/types/empresa";
+import GetEmpresa from "@/types/get-empresa";
 import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 import { z } from "zod";
 
 interface CreateCompanyProps {
     children: ReactNode;
+
+    refetchCompanies: (options?: RefetchOptions) => Promise<QueryObserverResult<GetEmpresa, Error>>
 }
 
 type Form = z.infer<typeof createCompanySchema>;
 
-const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
+const CreateCompanyModal = ({ children, refetchCompanies }: CreateCompanyProps) => {
     // Estado que salva o carregamento da  busca do CNPJ
     const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
     const [open, setOpen] = useState(false);
@@ -137,7 +140,7 @@ const CreateCompanyModal = ({ children }: CreateCompanyProps) => {
             });
 
             // Refetch na lista de empresas
-            queryClient.refetchQueries({ queryKey: ["companies"], type: "active", exact: true });
+            refetchCompanies();
             setOpen(false);
             form.reset();
         },

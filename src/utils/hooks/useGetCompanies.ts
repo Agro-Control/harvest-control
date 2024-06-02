@@ -7,6 +7,7 @@ const getCompaniesRequest = async (
     estado: string | null,
     codigo: string | null,
     status: string | null,
+    disp_gestor: boolean, 
 ) => {
     const { data } = await api.get<GetEmpresa>("/empresas", {
         params: {
@@ -14,6 +15,7 @@ const getCompaniesRequest = async (
             codigo: codigo,
             estado: estado,
             status: status,
+            disp_gestor: disp_gestor,
         },
     });
     return data;
@@ -25,11 +27,12 @@ export const useGetCompanies = (
     estado: string | null,
     codigo: string | null,
     status: string | null,
+    disp_gestor: boolean,
 ) => {
         return useQuery({
             enabled: !!enable_flag,
-            queryKey: ["companies"],
-            queryFn: () => getCompaniesRequest(grupo_id, estado, codigo, status),
+            queryKey: ["companies", disp_gestor],
+            queryFn: () => getCompaniesRequest(grupo_id, estado, codigo, status, disp_gestor),
         });
     
 };

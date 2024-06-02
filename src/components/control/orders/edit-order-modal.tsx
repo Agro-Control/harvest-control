@@ -23,12 +23,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { createOrderSchema } from "@/utils/validations/createOrderSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { useGetOperators } from "@/utils/hooks/useGetOperators";
-import { useGetMachines } from "@/utils/hooks/useGetMachines";
-import { useGetFields } from "@/utils/hooks/useGetFields";
-import { DatePicker } from "@/components/ui/date-picker";
-import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import { ReactNode, useEffect, useState } from "react";
 import SubmitButton from "@/components/submit-button";
 import { zodResolver } from "@hookform/resolvers/zod";

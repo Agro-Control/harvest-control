@@ -67,7 +67,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
     const watchIdEmpresa = watch("empresa_id");
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A", false);
 
     const {
         data: { unidades = [] } = {}, // Objeto contendo a lista de unidades

@@ -98,7 +98,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A", false);
 
     const {data: {unidades = []} = {}} = useGetUnits(
         enableFlag,

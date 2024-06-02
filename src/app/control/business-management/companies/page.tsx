@@ -62,7 +62,7 @@ export default function Companies() {
         isLoading, // Booleano que indica se está carregando
         refetch, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, estado, query, status);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, estado, query, status, false);
 
     const estadoFilter: FilterInformation = {
         filterItem: [
@@ -95,7 +95,7 @@ export default function Companies() {
                 <SearchBar text="Digite o nome para pesquisar..." />
                 {isAdmin && <Filter filter={estadoFilter} paramType="estado" />}
                 {isAdmin && <Filter filter={statusFilter} paramType="status" />}
-                {isAdmin && <CreateCompanyModal>
+                {isAdmin && <CreateCompanyModal refetchCompanies={refetch}>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"

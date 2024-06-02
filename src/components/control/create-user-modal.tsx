@@ -18,6 +18,7 @@ import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
 import {MaskedInput} from "@/components/ui/masked-input";
 import {useGetUnits} from "@/utils/hooks/useGetUnits";
 import SubmitButton from "@/components/submit-button";
+import {ReactNode, useState, useEffect} from "react";
 import {zodResolver} from "@hookform/resolvers/zod";
 import GetOperador from "@/types/get-operador";
 import {useAuth} from "@/utils/hooks/useAuth";
@@ -25,7 +26,6 @@ import {useTranslation} from "react-i18next";
 import {InputMask} from "@react-input/mask";
 import {Input} from "@/components/ui/input";
 import GetGestor from "@/types/get-gestor";
-import {ReactNode, useState} from "react";
 import {useToast} from "../ui/use-toast";
 import {useForm} from "react-hook-form";
 import Operador from "@/types/operador";
@@ -55,7 +55,13 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
     const whichRoleCreate = isAdmin ? "Gestor" : "Operador";
     const {data: {unidades = []} = {}} = useGetUnits(!isAdmin, empresa_id, null, "A", null);
 
-    const {data: {empresas = []} = {}} = useGetCompanies(isAdmin, grupo_id, null, null, "A");
+    const {data: {empresas = []} = {}, refetch: refetchCompanies} = useGetCompanies(false, grupo_id, null, null, "A", true);
+
+    useEffect(() => {
+        if(isAdmin) {
+            refetchCompanies();
+        }
+    },[])
 
     const form = useForm<Form>({
         resolver: zodResolver(createUserSchema),
@@ -321,7 +327,8 @@ const CreateUserModal = ({children, refetchOperators, refetchManager}: CreateUse
                                                 <SelectValue placeholder="Empresa" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {empresas.map((company) => (
+                                                {
+                                                empresas.map((company) => (
                                                     <SelectItem key={company.id} value={company.id!.toString()}>
                                                         {company.nome}
                                                     </SelectItem>

@@ -42,7 +42,7 @@ export default function Users() {
  
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(isAdmin, grupo_id, null, null, null);
+    } = useGetCompanies(isAdmin, grupo_id, null, null, null, false);
 
     const companyFilter: FilterInformationLabel = {
         filterItem: [

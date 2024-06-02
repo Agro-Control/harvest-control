@@ -69,7 +69,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
 
     const {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A");
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A", false);
 
     useEffect(() => {
         console.log(watchIdUnidade);

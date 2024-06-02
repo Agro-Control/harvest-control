@@ -47,7 +47,7 @@ const Machines = () => {
         data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         isError: isCompanyError,
         refetch: refetchCompanies,
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, null, false);
 
     const {
         data: { unidades = [] } = {},

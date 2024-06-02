@@ -46,7 +46,7 @@ export default function Units() {
         isError: isCompanyError,
         refetch: refetchEmpresa,
         // Objeto contendo a lista de empresas
-    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, null);
+    } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, null, false);
 
     const {
         data: { unidades = [] } = {},
