@@ -1,4 +1,5 @@
 "use client";
+import {Funnel, ClockCountdown, TrendUp, Play, HourglassMedium, Truck, Gear, Pause, Footprints, Repeat} from "@phosphor-icons/react";
 import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import StatusCodeHandler from "@/components/status-code-handler";
 import ReportCard from "@/components/control/report/report-card";
@@ -6,12 +7,12 @@ import OrderEvent from "@/components/control/report/order-event";
 import ReportRow from "@/components/control/report/report-row";
 import LoadingAnimation from "@/components/loading-animation";
 import {useGetEvents} from "@/utils/hooks/useGetEvents";
+import {useGetOrderEvent} from "@/utils/hooks/useGetOrderEvent";
 import {useAuth} from "@/utils/hooks/useAuth";
 import {useQueryState} from "nuqs";
 import Evento from "@/types/evento";
 import {AxiosError} from "axios";
 import {useEffect} from "react";
-import {Funnel, ClockCountdown, TrendUp, Play, HourglassMedium, Truck, Gear, Pause, Footprints, Repeat} from "@phosphor-icons/react";
 
 export default function Reports() {
     const auth = useAuth();
@@ -28,9 +29,18 @@ export default function Reports() {
         refetch,
         isRefetching,
     } = useGetEvents(parseInt(query!));
+
     const isLoadingData = isLoading || isRefetching;
 
+const { data, isLoading: isLoadingOrderEvent , isRefetching: isRefetchingOrderEvent,  refetch: refetchOrderEvents } = useGetOrderEvent(Number(query));
+
+const isLoadingOrderEventData = isLoadingOrderEvent || isRefetchingOrderEvent;
     useEffect(() => {}, [eventos, tipoEvento]);
+
+    useEffect(() => {
+        refetchOrderEvents()
+        console.log(data)
+    }, [query]);
 
     return (
         <div className="flex min-h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10 text-green-950 ">
@@ -55,14 +65,14 @@ export default function Reports() {
                 </div>
 
                 <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-4 ">
-                    <OrderEvent Icon={TrendUp} event={0} isLoading={false} title="total" />
-                    <OrderEvent Icon={Play} event={0} isLoading={false} title="inicio_ordem_servico" />
-                    <OrderEvent Icon={HourglassMedium} event={0} isLoading={false} title="duracao_total" />
-                    <OrderEvent Icon={Footprints} event={0} isLoading={false} title="deslocamento" />
-                    <OrderEvent Icon={Gear} event={0} isLoading={false} title="manutencao" />
-                    <OrderEvent Icon={Truck} event={0} isLoading={false} title="transbordo" />
-                    <OrderEvent Icon={Repeat} event={0} isLoading={false} title="operacao" />
-                    <OrderEvent Icon={Pause} event={0} isLoading={false} title="aguardando_transbordo" />
+                    <OrderEvent Icon={TrendUp} event={data?.total || 0} isLoading={isLoadingOrderEventData} title="total" />
+                    <OrderEvent Icon={Play} event={data?.inicio_ordem_servico || 0} isLoading={isLoadingOrderEventData} title="inicio_ordem_servico" />
+                    <OrderEvent Icon={HourglassMedium} event={data?.duracao_total || 0} isLoading={isLoadingOrderEventData} title="duracao_total" />
+                    <OrderEvent Icon={Footprints} event={data?.deslocamento || 0} isLoading={isLoadingOrderEventData} title="deslocamento" />
+                    <OrderEvent Icon={Gear} event={data?.manutencao || 0} isLoading={isLoadingOrderEventData} title="manutencao" />
+                    <OrderEvent Icon={Truck} event={data?.transbordo || 0} isLoading={isLoadingOrderEventData} title="transbordo" />
+                    <OrderEvent Icon={Repeat} event={data?.operacao || 0} isLoading={isLoadingOrderEventData} title="operacao" />
+                    <OrderEvent Icon={Pause} event={data?.aguardando_transbordo || 0} isLoading={isLoadingOrderEventData} title="aguardando_transbordo" />
                 </div>
             </div>
 
