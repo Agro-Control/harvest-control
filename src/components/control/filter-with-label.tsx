@@ -6,12 +6,13 @@ import {useTranslation}  from "react-i18next";
 interface FilterProps {
     filter: FilterInformationLabel;
     paramType: string;
+    isFull?: boolean;
 }
 
-const FilterWithLabel = ({filter, paramType}: FilterProps) => {
+const FilterWithLabel = ({filter, paramType, isFull = false}: FilterProps) => {
     const setTypeParam = useQueryState(paramType)[1];
     const items = filter.filterItem;
-    const {t} = useTranslation()
+    const {t} = useTranslation();
 
     const handleValueChange = async (value: string) => {
         if (value === "all") return await setTypeParam("");
@@ -21,7 +22,7 @@ const FilterWithLabel = ({filter, paramType}: FilterProps) => {
 
     return (
         <Select onValueChange={handleValueChange}>
-            <SelectTrigger className="h-10 w-[180px] ">
+            <SelectTrigger className={`h-10 ${isFull ? "w-full" : "w-[180px]"}`}>
                 <SelectValue placeholder={t(paramType)} />
             </SelectTrigger>
             <SelectContent>
