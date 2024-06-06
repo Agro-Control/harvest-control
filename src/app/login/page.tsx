@@ -21,10 +21,11 @@ import {api} from "@/lib/api";
 import Image from "next/image";
 import {z} from "zod";
 import Token from "@/types/token";
-
+import bgLogin from "@/assets/bg-login.png";
 type Form = z.infer<typeof loginSchema>;
 
 const Login = () => {
+
     const {addUser} = useAuth();
 
     const {toast} = useToast();
@@ -42,20 +43,19 @@ const Login = () => {
     const {push} = useRouter();
 
     const getUserRequest = async (postData: Form) => {
-            const {data: tokenResponse} = await api.post<Token>("/login", postData);
-            const userId = jwtDecode<UserSessionJwt>(tokenResponse.token).id;
-            const {data: userData} = await api.get(`/usersession/${userId}`, {
-                headers: {
-                    Authorization: `Bearer ${tokenResponse.token}`,
-                },
-            });
-            const data: User = {
-                token: tokenResponse.token,
-                usuario: userData,
-            };
+        const {data: tokenResponse} = await api.post<Token>("/login", postData);
+        const userId = jwtDecode<UserSessionJwt>(tokenResponse.token).id;
+        const {data: userData} = await api.get(`/usersession/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${tokenResponse.token}`,
+            },
+        });
+        const data: User = {
+            token: tokenResponse.token,
+            usuario: userData,
+        };
 
-            return data;
-      
+        return data;
     };
 
     const {mutate, isPending} = useMutation({
@@ -88,17 +88,28 @@ const Login = () => {
             });
         },
     });
-
     const onHandleSubmit = (data: Form) => {
         mutate(data);
     };
 
+
     return (
         <div className="flex h-screen w-full flex-col items-center justify-center overflow-hidden text-green-950 ">
-            <div className="flex w-[80vw] md:w-[50vw] lg:w-[40vw] xl:w-[20vw]  flex-col items-center justify-center  ">
+            <Image
+                className="absolute inset-0 z-0 h-screen w-screen object-cover"
+                placeholder="blur"
+                alt="cover"
+                src={bgLogin}
+                priority={true}
+            />
+
+            <div className="z-50 flex w-[90vw] flex-col items-center justify-center rounded-xl bg-black-950/80 py-12 md:w-[60vw] lg:w-[50vw] xl:w-[24vw]  ">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onHandleSubmit)} className="flex w-full flex-col gap-6">
-                        <Image src={logo2} className="h-[64px] w-auto" alt="Agro Control" width={512} height={512} />
+                    <form
+                        onSubmit={form.handleSubmit(onHandleSubmit)}
+                        className="flex w-[80vw] flex-col gap-6 md:w-[50vw] lg:w-[40vw] xl:w-[20vw]"
+                    >
+                        <Image src={logo2} className="h-[64px] w-auto" alt="Agro Control" placeholder="blur" />
                         <FormField
                             control={form.control}
                             name="login"

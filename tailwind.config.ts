@@ -21,6 +21,7 @@ const config = {
                 unity: "url('../assets/unity-card.png')",
                 group: "url('../assets/group-card.png')",
                 report: "url('../assets/report-card.png')",
+                login: "url('../assets/bg-login.png')",
             },
             fontFamily: {
                 poppins: "var(--font-poppins)",
