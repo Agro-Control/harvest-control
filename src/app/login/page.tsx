@@ -97,9 +97,9 @@ const Login = () => {
         <div className="flex h-screen w-full flex-col items-center justify-center overflow-hidden text-green-950 ">
             <Image
                 className="absolute inset-0 z-0 h-screen w-screen object-cover"
+                src={bgLogin}
                 placeholder="blur"
                 alt="cover"
-                src={bgLogin}
                 priority={true}
             />
 
@@ -109,7 +109,7 @@ const Login = () => {
                         onSubmit={form.handleSubmit(onHandleSubmit)}
                         className="flex w-[80vw] flex-col gap-6 md:w-[50vw] lg:w-[40vw] xl:w-[20vw]"
                     >
-                        <Image src={logo2} className="h-[64px] w-auto" alt="Agro Control" placeholder="blur" />
+                        <Image src={logo2} className="h-[64px] w-auto" alt="Agro Control" priority={true}  />
                         <FormField
                             control={form.control}
                             name="login"
