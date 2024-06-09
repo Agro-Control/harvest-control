@@ -1,22 +1,30 @@
 "use client";
 
 import {Files} from "@phosphor-icons/react";
-import { useGetOrderStatus } from "@/utils/hooks/useGetOrderStatus";
+import {useGetOrderStatus} from "@/utils/hooks/useGetOrderStatus";
 import React from "react";
-import PieGraph, { Data } from "./responsive-pie";
-import { useTranslation } from "react-i18next";
+import PieGraph, {Data} from "./responsive-pie";
+import {useTranslation} from "react-i18next";
+import {useAuth} from "@/utils/hooks/useAuth";
 
 const OrderStatusPie = () => {
-    const {data} = useGetOrderStatus(1);
     const {t} = useTranslation();
+    const auth = useAuth();
+    const user = auth.user;
+    const isAdmin = user?.tipo === "D";
+    const empresa_id = user && user?.empresa_id;
+    const grupo_id = user && user?.grupo_id;
 
+    const {data} = useGetOrderStatus(grupo_id, isAdmin ? null : empresa_id);
     const greenShades = ["#15803c", "#166533"];
-    const formattedData: Data[] = data ? Object.entries(data).map(([key, value], index) => ({
-        id: t(key),
-        label: t(key),
-        value: Number(value) || 0,
-        color: "#15803c",
-    })) : [];
+    const formattedData: Data[] = data
+        ? Object.entries(data).map(([key, value], index) => ({
+              id: t(key),
+              label: t(key),
+              value: Number(value) || 0,
+              color: "#15803c",
+          }))
+        : [];
 
     return (
         <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4  lg:min-h-[480px] xl:col-span-1">
@@ -55,7 +63,7 @@ const OrderStatusPie = () => {
 
                     "
                     >
-                       Status
+                        Status
                     </p>
                 </div>
             </div>
@@ -73,13 +81,7 @@ const OrderStatusPie = () => {
                     text-base
                     font-normal"
             >
-
-
-
-<PieGraph data={formattedData} />
-
-
-
+                <PieGraph data={formattedData} />
             </div>
         </div>
     );

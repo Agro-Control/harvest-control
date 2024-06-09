@@ -7,9 +7,11 @@ import Link from "next/link";
 
 const ActiveOrdersCard = () => {
     const {user} = useAuth();
+    const isAdmin = user?.tipo === "D";
     const grupo_id = user && user?.grupo_id;
+    const empresa_id = user && user?.empresa_id;
 
-    const {data, isLoading, isRefetching, refetch} = useGetActiveOrders(grupo_id);
+    const {data, isLoading, isRefetching, refetch} = useGetActiveOrders(grupo_id, isAdmin ? null : empresa_id);
     const isLoadingData = isLoading || isRefetching;
 
     return (
@@ -22,7 +24,7 @@ const ActiveOrdersCard = () => {
             firstDataValue={data?.ordens_ativas || 0}
             FirstDataIcon={FileArrowUp}
         >
-             <Link
+           {!isAdmin &&  <Link
              href="/control/orders"
                     className="text-black flex h-9
         w-full
@@ -46,7 +48,7 @@ const ActiveOrdersCard = () => {
                     
                             <p className="font-bold"> Acessar ordens</p>
                     </Link>
-
+}
         </SingleDataCard>
     );
 };

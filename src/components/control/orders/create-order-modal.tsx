@@ -40,23 +40,6 @@ interface createOrderProps {
 
 type Form = z.infer<typeof createOrderSchema>;
 
-    const addTimeToDate = (date: Date): Date => {
-    // Cria uma nova data baseada na data fornecida
-    const newDate = new Date(date);
-
-    // Obtém a hora, minuto e segundo atuais
-    const currentHour = new Date().getHours();
-    const currentMinute = new Date().getMinutes();
-    const currentSecond = new Date().getSeconds();
-
-    // Define a hora, minuto e segundo atuais na nova data
-    newDate.setHours(currentHour);
-    newDate.setMinutes(currentMinute);
-    newDate.setSeconds(currentSecond);
-
-    return newDate;
-};
-
 const CreateOrderModal = ({children}: createOrderProps) => {
     const auth = useAuth();
     const user = auth.user;

@@ -8,19 +8,20 @@ interface OperatorsByGroup {
     operadores_totais: number;
 }
 
-const getOperatorsByGroup = async (grupo_id: number | null) => {
+const getOperatorsByGroup = async (grupo_id: number | null,   empresa_id: number | null) => {
     const { data } = await api.get<OperatorsByGroup>("dashboards/operadores_operando", {
         params: {
-            grupo_id
+            grupo_id,
+            empresa_id
         }
     });
     return data;
 };
 
-export const useGetOperatorsByGroup = (grupo_id: number | null) => {
+export const useGetOperatorsByGroup = (grupo_id: number | null,   empresa_id: number | null) => {
     return useQuery({
         queryKey: ["operators_by_group", grupo_id],
         enabled: true, 
-        queryFn: () => getOperatorsByGroup(grupo_id),
+        queryFn: () => getOperatorsByGroup(grupo_id, empresa_id),
     });
 };

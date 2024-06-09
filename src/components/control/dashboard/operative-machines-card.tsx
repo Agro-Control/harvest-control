@@ -6,9 +6,11 @@ import DoubleDataCard from "./double-data-card";
 
 const OperativeMachinesCard = () => {
     const {user} = useAuth();
+    const isAdmin = user?.tipo === "D";
     const grupo_id = user && user?.grupo_id;
+    const empresa_id = user && user?.empresa_id;
 
-    const {data, isLoading, isRefetching, refetch} = useGetOperativeMachinesByGroup(grupo_id);
+    const {data, isLoading, isRefetching, refetch} = useGetOperativeMachinesByGroup(grupo_id, isAdmin ? null : empresa_id);
     const isLoadingData = isLoading || isRefetching;
 
     return (

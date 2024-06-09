@@ -10,14 +10,20 @@ interface SingleDataCardProps {
     firstDataValue: number | null;
     isLoading: boolean;
     children: React.ReactNode;
-
 }
 
-
-const SingleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, firstDataValue, children, isLoading}: SingleDataCardProps) => {
-
+const SingleDataCard = ({
+    Icon,
+    title,
+    subtitle,
+    FirstDataIcon,
+    firstDataTitle,
+    firstDataValue,
+    children,
+    isLoading,
+}: SingleDataCardProps) => {
     return (
-        <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4  xl:col-span-1 lg:min-h-[130px]">
+        <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4  lg:min-h-[130px] xl:col-span-1">
             <div className="flex w-full flex-row gap-4">
                 <div
                     className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg
@@ -57,7 +63,7 @@ const SingleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
                     </p>
                 </div>
             </div>
-            <div className="flex w-full flex-col items-center justify-between gap-2 2xl:flex-row lg:gap-2">
+            <div className="flex w-full flex-col items-center justify-between gap-2 lg:gap-2 2xl:flex-row">
                 <div
                     className="text-black flex h-9
         w-full
@@ -75,7 +81,7 @@ const SingleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
 "
                 >
                     <FirstDataIcon className="h-5 w-5 text-green-950 " />
-                    <div className="flex flex-row gap-1 items-center ">
+                    <div className="flex flex-row items-center gap-1 ">
                         <p> {firstDataTitle}</p>
                         {isLoading ? (
                             <CircleNotch className="h-4 w-4 animate-spin text-green-900" />
@@ -86,11 +92,9 @@ const SingleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
                 </div>
 
                 <div className="flex h-8 max-w-[1px] flex-1 bg-divider" />
-{children}
+                {children}
             </div>
         </div>
     );
-}
+};
 export default SingleDataCard;
-
-
