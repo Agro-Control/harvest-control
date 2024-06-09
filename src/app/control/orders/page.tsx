@@ -118,7 +118,7 @@ export default function Orders() {
                     !isLoadingData &&
                     ordens_servico.map((ordem: OrdemServico) => {
                         return (
-                            <TableBody>
+                            <TableBody key={ordem.id} >
                                 <OrdersRow key={ordem.id} ordem={ordem} />
                             </TableBody>
                         );
