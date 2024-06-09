@@ -40,7 +40,7 @@ interface createOrderProps {
 
 type Form = z.infer<typeof createOrderSchema>;
 
-const addTimeToDate = (date: Date): Date => {
+    const addTimeToDate = (date: Date): Date => {
     // Cria uma nova data baseada na data fornecida
     const newDate = new Date(date);
 
@@ -216,10 +216,8 @@ const CreateOrderModal = ({children}: createOrderProps) => {
     });
 
     const onHandleSubmit = (data: Form) => {
-        const startDate = addTimeToDate(data.data_inicio);
-        const endDate = addTimeToDate(data.data_fim);
         const operadoresSelecionados = [];
-    
+
         if (data.operador_manha !== null && data.operador_manha !== "nenhum") {
             operadoresSelecionados.push(parseInt(data.operador_manha));
         }
@@ -237,8 +235,8 @@ const CreateOrderModal = ({children}: createOrderProps) => {
             gestor_id: user?.id,
             unidade_id: parseInt(data.id_unidade!),
             maquina_id: parseInt(data.id_maquina!),
-            data_inicio: format(startDate, "yyyy-MM-dd HH:mm:ss"),
-            data_fim: format(endDate, "yyyy-MM-dd HH:mm:ss"),
+            data_inicio: format(data.data_inicio, "yyyy-MM-dd HH:mm:ss"),
+            data_fim: format(data.data_fim, "yyyy-MM-dd HH:mm:ss"),
             velocidade_minima: parseFloat(data.velocidade_minima),
             velocidade_maxima: parseFloat(data.velocidade_maxima),
             rpm: parseInt(data.rpm),
@@ -252,7 +250,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[480px]">
+            <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle className="font-poppins text-green-950">Criar Ordem</DialogTitle>
                     <DialogDescription>Insira as informações para criar uma Ordem.</DialogDescription>
@@ -352,9 +350,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        <DateTimePicker  placeHolder={"Data Início"} {...field}/>
-{/*                                         
-                                        <DatePicker placeHolder={"Data Início"} {...field} /> */}
+                                        <DateTimePicker placeHolder={"Data Início"} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -366,7 +362,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
                             render={({field}) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
-                                        {/* <DatePicker placeHolder={"Data de Finalização"} {...field} /> */}
+                                        <DateTimePicker placeHolder={"Data Fim"} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -476,7 +472,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
                                                 form.setValue("id_talhao", value);
                                             }}
                                         >
-                                            <SelectTrigger Icon={Grains} className="h-10 w-[180px] ">
+                                            <SelectTrigger Icon={Grains} className="h-10 w-full ">
                                                 <SelectValue placeholder="Selecione o Talhão" {...field} />
                                             </SelectTrigger>
                                             <SelectContent>
