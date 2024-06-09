@@ -1,5 +1,7 @@
 "use client";
-import {Funnel, ClockCountdown, TrendUp, Play, HourglassMedium, Truck, Gear, Pause, Footprints, Repeat} from "@phosphor-icons/react";
+import {
+    Funnel,
+    ClockCountdown,} from "@phosphor-icons/react";
 import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import StatusCodeHandler from "@/components/status-code-handler";
 import ReportCard from "@/components/control/report/report-card";
@@ -28,18 +30,36 @@ export default function Reports() {
         isLoading,
         refetch,
         isRefetching,
-    } = useGetEvents(parseInt(query!));
+    } = useGetEvents(parseInt(query!), tipoEvento);
 
     const isLoadingData = isLoading || isRefetching;
 
-const { data, isLoading: isLoadingOrderEvent , isRefetching: isRefetchingOrderEvent,  refetch: refetchOrderEvents } = useGetOrderEvent(Number(query));
-
-const isLoadingOrderEventData = isLoadingOrderEvent || isRefetchingOrderEvent;
-    useEffect(() => {}, [eventos, tipoEvento]);
+   
+    const {
+        data,
+        isLoading: isLoadingOrderEvent,
+        isRefetching: isRefetchingOrderEvent,
+        refetch: refetchOrderEvents,
+    } = useGetOrderEvent(Number(query));
 
     useEffect(() => {
-        refetchOrderEvents()
-        console.log(data)
+        if (!query || query === "") return;
+        const intervalId = setInterval(() => {
+            refetchOrderEvents();
+        }, 10000); // 10000 ms = 10 s
+
+        // Limpar o intervalo quando o componente for desmontado
+        return () => clearInterval(intervalId);
+    }, [refetchOrderEvents]);
+
+
+    const isLoadingOrderEventData = isLoadingOrderEvent || isRefetchingOrderEvent;
+    useEffect(() => {
+        refetch();
+    }, [eventos, tipoEvento]);
+
+    useEffect(() => {
+        refetchOrderEvents();
     }, [query]);
 
     return (
@@ -48,60 +68,56 @@ const isLoadingOrderEventData = isLoadingOrderEvent || isRefetchingOrderEvent;
                 <p className="font-poppins text-4xl font-medium">Relatório de Eventos</p>
             </div>
 
+            <div className="flex w-full flex-col gap-2 xl:flex-row">
+                <div className="flex w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4 lg:col-span-1 lg:min-h-[130px]">
+                    <div className="flex w-full flex-row gap-4">
+                        <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-green-500 bg-green-400/50">
+                            <ClockCountdown className="h-5 w-5 text-green-950 " />
+                        </div>
 
-<div className="flex flex-col xl:flex-row w-full gap-2">
-            <div className="flex w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4 lg:col-span-1 lg:min-h-[130px]">
-                <div className="flex w-full flex-row gap-4">
-                    <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-green-500 bg-green-400/50">
-                        <ClockCountdown className="h-5 w-5 text-green-950 " />
+                        <div className="flex flex-col gap-1 md:gap-0 ">
+                            <p className="line-clamp-1 text-base font-bold leading-5 text-green-950">Eventos</p>
+                            <p className="line-clamp-3 text-xs font-normal text-gray-500">
+                                Todos os eventos do sistema e a contagem de suas ocorrências
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="flex flex-col gap-1 md:gap-0 ">
-                        <p className="line-clamp-1 text-base font-bold leading-5 text-green-950">Eventos</p>
-                        <p className="line-clamp-3 text-xs font-normal text-gray-500">
-                            Todos os eventos do sistema e a contagem de suas ocorrências
-                        </p>
+                    <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-4 ">
+                    <OrderEvent
+                                    duracao={data?.duracao_total || 0}
+                                    quantidade={data?.total || 0}
+                                    isLoading={isLoadingOrderEventData}
+                                    title="Eventos"
+                                />
+                        {data?.eventos.map((evento) => {
+                            return (
+                                <OrderEvent
+                                    duracao={evento.duracao || 0}
+                                    quantidade={evento.quantidade || 0}
+                                    isLoading={isLoadingOrderEventData}
+                                    title={evento.evento}
+                                />
+                            );
+                        })}
                     </div>
                 </div>
 
-                <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-4 ">
-                    <OrderEvent Icon={TrendUp} event={data?.total || 0} isLoading={isLoadingOrderEventData} title="total" />
-                    <OrderEvent Icon={Play} event={data?.inicio_ordem_servico || 0} isLoading={isLoadingOrderEventData} title="inicio_ordem_servico" />
-                    <OrderEvent Icon={HourglassMedium} event={data?.duracao_total || 0} isLoading={isLoadingOrderEventData} title="duracao_total" />
-                    <OrderEvent Icon={Footprints} event={data?.deslocamento || 0} isLoading={isLoadingOrderEventData} title="deslocamento" />
-                    <OrderEvent Icon={Gear} event={data?.manutencao || 0} isLoading={isLoadingOrderEventData} title="manutencao" />
-                    <OrderEvent Icon={Truck} event={data?.transbordo || 0} isLoading={isLoadingOrderEventData} title="transbordo" />
-                    <OrderEvent Icon={Repeat} event={data?.operacao || 0} isLoading={isLoadingOrderEventData} title="operacao" />
-                    <OrderEvent Icon={Pause} event={data?.aguardando_transbordo || 0} isLoading={isLoadingOrderEventData} title="aguardando_transbordo" />
+                <div className="flex  flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4 md:min-w-[300px] lg:col-span-1 lg:min-h-[130px]">
+                    <div className="flex w-full flex-row gap-4">
+                        <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-green-500 bg-green-400/50">
+                            <Funnel className="h-5 w-5 text-green-950 " />
+                        </div>
+
+                        <div className="flex flex-col gap-1 md:gap-0 ">
+                            <p className="line-clamp-1 text-base font-bold leading-5 text-green-950">Filtros</p>
+                            <p className="line-clamp-1 text-xs font-normal text-gray-500">Ordem de serviço</p>
+                        </div>
+                    </div>
+
+                    <ReportCard />
                 </div>
             </div>
-
-            <div className="flex  md:min-w-[300px] flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4 lg:col-span-1 lg:min-h-[130px]">
-            <div className="flex w-full flex-row gap-4">
-                    <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-green-500 bg-green-400/50">
-                        <Funnel className="h-5 w-5 text-green-950 " />
-                    </div>
-
-                    <div className="flex flex-col gap-1 md:gap-0 ">
-                        <p className="line-clamp-1 text-base font-bold leading-5 text-green-950">Filtros</p>
-                        <p className="line-clamp-1 text-xs font-normal text-gray-500">
-                            Ordem de serviço
-                        </p>
-                    </div>
-                </div>
-
-                <ReportCard />
-               
-               
-            </div>
-
-
-</div>
-
-
-
-
-
 
             <Table>
                 <TableHeader>

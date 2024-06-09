@@ -166,6 +166,5 @@
     "inicio_ordem_servico": "Inicio de Ordem",
     "troca_turno": "Troca de Turno",
     "fim_ordem": "Fim de Ordem",
-    "total_de_ordens": "Total de Ordens",
-    "aguardando_transbordo": "Aguardando Transbordo"
+    "total_de_ordens": "Total de Ordens"
 }
