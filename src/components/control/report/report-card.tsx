@@ -9,7 +9,6 @@ const ReportCard = () => {
             {value: "operacao", label: "Operação"},
             {value: "transbordo", label: "Transbordo"},
             {value: "deslocamento", label: "Deslocamento"},
-            {value: "aguardando transbordo", label: "Aguardando Transbordo"},
             {value: "manutencao", label: "Manutenção"},
             {value: "clima", label: "Clima"},
             {value: "troca de turno", label: "Troca de Turno"},

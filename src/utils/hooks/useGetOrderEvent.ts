@@ -1,19 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import {api} from "@/lib/api";
 
+interface EventInfo {
+    evento: string;
+    quantidade: number;
+    duracao: number;
+}
+
+
 interface OrderEvent {
     total: number | null;
-    operacao: number | null;
-    transbordo: number | null;
-    deslocamento: number | null;
-    manutencao: number | null;
-    clima: number | null;
-    abastecimento: number | null;
-    inicio_ordem_servico: number | null;
     duracao_total: number | null;
-    troca_turno: number | null;
-    fim_ordem: number | null;
-    aguardando_transbordo: number | null;
+    eventos: EventInfo[];
 }
 
 const getOrderEvent = async (ordem_id: number | null) => {
