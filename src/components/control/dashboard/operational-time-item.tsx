@@ -1,6 +1,6 @@
 import {CircularProgressbar} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-
+import { useMediaQuery } from "@/utils/hooks/useMediaQuery";
 interface OperationalTimeItemProps {
     title: string;
     description: string;
@@ -10,7 +10,7 @@ interface OperationalTimeItemProps {
 }
 
 const OperationalTimeItem = ({color, title, description, value, total}: OperationalTimeItemProps) => {
-
+    const isDesktop = useMediaQuery("(min-width: 500px)");
     const percentageValue = Math.round((value / total) * 100);
 
    
@@ -77,7 +77,7 @@ const OperationalTimeItem = ({color, title, description, value, total}: Operatio
                             {title}
                         </p>
                     </div>
-                    <p
+                  { isDesktop && <p
                         className="
                         line-clamp-1
                         text-xs
@@ -88,10 +88,10 @@ const OperationalTimeItem = ({color, title, description, value, total}: Operatio
                     "
                     >
                         {description}
-                    </p>
+                    </p>}
                 </div>
             </div>
-            <p className="font-bold">{formatDuration(value)}</p>
+           {isDesktop && <p className="font-bold">{formatDuration(value)}</p>}
         </div>
     );
 };

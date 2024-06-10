@@ -2,12 +2,14 @@
 
 import {ChartLine} from "@phosphor-icons/react";
 import {useGetOperationalTime} from "@/utils/hooks/useGetOperationalTime";
-import React from "react";
+import React, { useEffect } from "react";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "@/utils/hooks/useAuth";
 import OperationalTimeItem from "./operational-time-item";
+import { useMediaQuery } from "@/utils/hooks/useMediaQuery";
 
 const OperationalTime = () => {
+    const isDesktop = useMediaQuery("(min-width: 376px)");
     const {t} = useTranslation();
     const auth = useAuth();
     const user = auth.user;
@@ -15,8 +17,7 @@ const OperationalTime = () => {
     const empresa_id = user && user?.empresa_id;
     const grupo_id = user && user?.grupo_id;
 
-    const {data} = useGetOperationalTime(grupo_id, isAdmin ? null : empresa_id);
-
+    const {data, refetch} = useGetOperationalTime(grupo_id, isAdmin ? null : empresa_id);
     
     const formatDuration = (duration: number): string => {
         if (duration === 0) {
@@ -61,7 +62,7 @@ const OperationalTime = () => {
                     >
                         Jornada da frota
                     </p>
-                    <p
+                   {isDesktop && <p
                         className="
                         line-clamp-1
                         text-xs
@@ -72,7 +73,7 @@ const OperationalTime = () => {
                     "
                     >
                         Relação do tempo total e eventos produzidos
-                    </p>
+                    </p>}
                 </div>
                
 
