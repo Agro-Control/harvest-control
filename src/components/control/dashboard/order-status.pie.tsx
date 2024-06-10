@@ -2,7 +2,7 @@
 
 import {ChartDonut} from "@phosphor-icons/react";
 import {useGetOrderStatus} from "@/utils/hooks/useGetOrderStatus";
-import React from "react";
+import React, { useEffect } from "react";
 import PieGraph, {Data} from "./responsive-pie";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "@/utils/hooks/useAuth";

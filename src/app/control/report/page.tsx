@@ -1,7 +1,5 @@
 "use client";
-import {
-    Funnel,
-    ClockCountdown,} from "@phosphor-icons/react";
+import {Funnel, ClockCountdown} from "@phosphor-icons/react";
 import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import StatusCodeHandler from "@/components/status-code-handler";
 import ReportCard from "@/components/control/report/report-card";
@@ -34,23 +32,12 @@ export default function Reports() {
 
     const isLoadingData = isLoading || isRefetching;
 
-   
     const {
         data,
         isLoading: isLoadingOrderEvent,
         isRefetching: isRefetchingOrderEvent,
         refetch: refetchOrderEvents,
     } = useGetOrderEvent(Number(query));
-
-    useEffect(() => {
-        if (!query || query === "") return;
-        const intervalId = setInterval(() => {
-            refetchOrderEvents();
-        }, 10000); // 10000 ms = 10 s
-
-        // Limpar o intervalo quando o componente for desmontado
-        return () => clearInterval(intervalId);
-    }, [refetchOrderEvents]);
 
 
     const isLoadingOrderEventData = isLoadingOrderEvent || isRefetchingOrderEvent;
@@ -84,15 +71,18 @@ export default function Reports() {
                     </div>
 
                     <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-4 ">
-                    <OrderEvent
-                                    duracao={data?.duracao_total || 0}
-                                    quantidade={data?.total || 0}
-                                    isLoading={isLoadingOrderEventData}
-                                    title="Eventos"
-                                />
-                        {data?.eventos.map((evento) => {
+                        {data && (
+                            <OrderEvent
+                                duracao={data?.duracao_total || 0}
+                                quantidade={data?.total || 0}
+                                isLoading={isLoadingOrderEventData}
+                                title="Eventos"
+                            />
+                        )}
+                        {data?.eventos.map((evento, index) => {
                             return (
                                 <OrderEvent
+                                    key={index}
                                     duracao={evento.duracao || 0}
                                     quantidade={evento.quantidade || 0}
                                     isLoading={isLoadingOrderEventData}
