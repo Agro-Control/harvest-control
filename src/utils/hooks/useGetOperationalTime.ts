@@ -26,5 +26,7 @@ export const useGetOperationalTime = (grupo_id: number | null,  empresa_id: numb
         queryKey: ["operational_time", grupo_id],
         enabled: true, 
         queryFn: () => getOperationalTime(grupo_id, empresa_id),
+        refetchInterval: 9000
+        
     });
 };

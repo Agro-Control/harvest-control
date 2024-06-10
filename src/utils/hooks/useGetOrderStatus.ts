@@ -21,5 +21,6 @@ export const useGetOrderStatus = (grupo_id: number | null, empresa_id: number | 
         queryKey: ["order_status"],
         enabled: true,
         queryFn: () => getOrderStatus(grupo_id, empresa_id),
+        refetchInterval: 9000
     });
 };

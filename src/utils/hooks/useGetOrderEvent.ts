@@ -30,9 +30,10 @@ export const useGetOrderEvent = (ordem_id: number | null) => {
         queryKey: ["ordem_eventos", ordem_id],
         enabled: false,
         queryFn: () => getOrderEvent(ordem_id),
+        refetchInterval: 10000,
         retry: (failureCount, error) => {
 
-            if (error instanceof Error && error.message.includes("404") || error.message.includes("400") ) {
+            if (error instanceof Error && error.message.includes("404") || error.message.includes("400")  ) {
                 if (failureCount == 1)
                     return false;
             }

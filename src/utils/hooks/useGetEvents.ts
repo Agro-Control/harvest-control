@@ -16,10 +16,14 @@ export const useGetEvents = (id_ordem: number | null, nome: string | null) => {
     return useQuery({
         queryKey: ["events", id_ordem],
         queryFn: () => getEventsRequest(id_ordem, nome),
+        refetchInterval: 10000,
         retry: (failureCount, error) => {
+            if (error instanceof Error && error.message.includes("422")) {
+                    return false;
+            }
 
-            if (error instanceof Error && error.message.includes("404")) {
-                if (failureCount == 3)
+            if (error instanceof Error && error.message.includes("404")|| error.message.includes("422")  ) {
+                if (failureCount == 2)
                     return false;
             }
 
