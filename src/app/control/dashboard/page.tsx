@@ -2,6 +2,7 @@ import ActiveUsersCard from "@/components/control/dashboard/active-users-card";
 import ActiveOrdersCard from "@/components/control/dashboard/active-orders-card";
 import OperativeMachinesCard from "@/components/control/dashboard/operative-machines-card";
 import OrderStatusPie from "@/components/control/dashboard/order-status.pie";
+import OperationalTime from "@/components/control/dashboard/operational-time";
 
 export default function Dashboard() {
     return (
@@ -15,7 +16,7 @@ export default function Dashboard() {
                 <ActiveOrdersCard />
             </div>
             <div className="grid w-full gap-6 grid-cols-2 ">
-                <OrderStatusPie />
+                <OperationalTime />
                 <OrderStatusPie />
             </div>
         </div>
