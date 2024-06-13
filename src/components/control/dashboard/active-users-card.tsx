@@ -15,14 +15,14 @@ const ActiveUsersCard = () => {
 
     return (
         <DoubleDataCard
-            title="Relação de usuários"
+            title="Relação de operadores"
             subtitle="Totais e Ativos"
             Icon={User}
             isLoading={isLoadingData}
-            firstDataTitle="Usuarios totais: "
+            firstDataTitle="Operadores totais: "
             firstDataValue={data?.operadores_totais || 0}
             FirstDataIcon={Users}
-            secondDataTitle="Usuarios ativos: "
+            secondDataTitle="Operadores ativos: "
             secondDataValue={data?.operadores_ativos || 0}
             SecondDataIcon={Pulse}
         />
