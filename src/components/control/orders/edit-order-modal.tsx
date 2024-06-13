@@ -38,6 +38,7 @@ import { api } from "@/lib/api";
 import { z } from "zod";
 import Orders from "@/app/control/orders/page";
 import { editOrderSchema } from "@/utils/validations/editOrderSchema";
+import OrdemServicoPost from "@/types/ordem-de-servico-post";
 
 
 interface editOrderProps {
@@ -45,7 +46,9 @@ interface editOrderProps {
     ordem: OrdemServico;
 }
 
-type Form = z.infer<typeof createOrderSchema>;
+type Form = z.infer<typeof editOrderSchema>;
+
+
 
 
 const EditOrderModal = ({ children, ordem }: editOrderProps) => {
@@ -70,7 +73,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
 
 
 
-    const editOrderRequest = async (putData: OrdemServico | null) => {
+    const editOrderRequest = async (putData: OrdemServicoPost | null) => {
         const { data } = await api.put("/ordens", putData);
         return data;
     };
@@ -111,18 +114,18 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
     });
 
     const onHandleSubmit = (data: Form) => {
+        const operadorIds: number[] = ordem.operadores!.map((operador) => operador.id);
 
-        const formattedData = {
-            ...data,
-            data_inicio: format(ordem.data_inicio!, 'yyyy-MM-dd HH:mm:ss'),
-            data_fim: format(ordem.data_fim!, 'yyyy-MM-dd HH:mm:ss'),
-            status: data.status,
-            velocidade_minima: parseFloat(data.velocidade_minima),
-            velocidade_maxima: parseFloat(data.velocidade_maxima),
-            rpm: parseInt(data.rpm),
-            operadores: ordem.operadores,
+    // Formata os dados com os IDs dos operadores
+    const formattedData = {
+        id: ordem.id,
+        status: data.status,
+        velocidade_minima: parseFloat(data.velocidade_minima),
+        velocidade_maxima: parseFloat(data.velocidade_maxima),
+        rpm: parseInt(data.rpm),
+        operadores: operadorIds, // Substitui ordem.operadores pelos IDs extraídos
+    };
 
-        };
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
     };
