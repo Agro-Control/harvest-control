@@ -27,7 +27,7 @@ const OrderStatusPie = () => {
         : [];
 
 
-const colors =  ["#16a34a","#15803c","#166533", "#14532b","#052e14"]
+const colors =  ["#166533","#16a34a", "#14532b","#052e14"]
 
     return (
         <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4  lg:min-h-[480px] xl:col-span-1">
