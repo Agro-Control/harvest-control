@@ -4,6 +4,9 @@ import { api } from "@/lib/api";
 import GetEventos from "@/types/get-eventos";
 
 const getEventsRequest = async (id_ordem: number | null, nome: string | null) => {
+
+    if(isNaN(Number(id_ordem))) id_ordem = null;
+
     const { data } = await api.get<GetEventos>(`/eventos/${id_ordem}`,{
         params: {
             nome
@@ -16,7 +19,6 @@ export const useGetEvents = (id_ordem: number | null, nome: string | null) => {
     return useQuery({
         queryKey: ["events", id_ordem],
         queryFn: () => getEventsRequest(id_ordem, nome),
-        refetchInterval: 10000,
         retry: (failureCount, error) => {
             if (error instanceof Error && error.message.includes("422")) {
                     return false;

@@ -21,8 +21,8 @@ const OrderEvent = ({ quantidade, duracao,isLoading, title}: OrderEventProps) =>
         const minutes = Math.floor((duration % 3600) / 60);
         const seconds = duration % 60;
     
-        const hoursStr = hours > 0 ? `${hours}hr` : '';
-        const minutesStr = minutes > 0 ? `${minutes}min  ` : '';
+        const hoursStr = hours > 0 ? `${hours}h` : '';
+        const minutesStr = minutes > 0 ? `${minutes}m  ` : '';
         const secondsStr = seconds > 0 ? ` ${seconds}s` : '';
     
         return `${hoursStr} ${minutesStr}  ${secondsStr}`.trim();
