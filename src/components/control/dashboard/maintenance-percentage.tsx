@@ -1,18 +1,28 @@
 "use client";
 
-import tractor from "@/assets/tractor.svg";
-import Image from "next/image";
 import {CircleNotch, Wrench, Gear} from "@phosphor-icons/react";
 
-interface MaintenanceCardProps {
+interface MaintenancePercentageProps {
     title: string;
     subtitle: string;
     value: number | null;
     isLoading: boolean;
-    isEvent?: boolean;
 }
 
-const MaintenanceCard = ({title, subtitle, value, isLoading, isEvent = false}: MaintenanceCardProps) => {
+const MaintenancePercentage = ({title, subtitle, value, isLoading}: MaintenancePercentageProps) => {
+
+    const calculatePercentage = (value: number | null) => {
+        if (value === null ) {
+            return "0.00";
+        }
+        const totalSecondsInDay = 24 * 60 * 60;
+        const percentage = (value / totalSecondsInDay) * 100;
+        return percentage.toFixed(2);
+    }
+
+    const percentage = calculatePercentage(value);
+
+
     return (
         <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4  lg:min-h-[130px] xl:col-span-1">
             <div className="flex w-full flex-row gap-4">
@@ -70,16 +80,12 @@ const MaintenanceCard = ({title, subtitle, value, isLoading, isEvent = false}: M
     2xl:w-full
 "
                 >
-                    {isEvent ? (
-                        <Gear className="h-6 w-6 text-red-600" />
-                    ) : (
-                        <Image className="h-6 w-6 " src={tractor} alt="T" />
-                    )}
+                    <Gear className="h-6 w-6 text-red-600" />
                     <div className="flex flex-row items-center gap-1 ">
                         {isLoading ? (
                             <CircleNotch className="h-4 w-4 animate-spin text-green-900" />
                         ) : (
-                            <p className="font-bold"> {value} </p>
+                            <p className="font-bold">{percentage}%</p>
                         )}
                     </div>
                 </div>
@@ -87,4 +93,4 @@ const MaintenanceCard = ({title, subtitle, value, isLoading, isEvent = false}: M
         </div>
     );
 };
-export default MaintenanceCard;
+export default MaintenancePercentage;

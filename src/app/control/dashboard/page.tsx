@@ -3,10 +3,11 @@ import ActiveOrdersCard from "@/components/control/dashboard/active-orders-card"
 import OperativeMachinesCard from "@/components/control/dashboard/operative-machines-card";
 import OrderStatusPie from "@/components/control/dashboard/order-status.pie";
 import OperationalTime from "@/components/control/dashboard/operational-time";
+import MaintenanceGrid from "@/components/control/dashboard/maintenance-grid";
 
 export default function Dashboard() {
     return (
-        <div className="flex h-screen w-full flex-col items-center justify-start gap-10 px-6 pt-10  text-green-950 ">
+        <div className="flex h-screen w-full flex-col items-center justify-start gap-9 px-6 pt-10  text-green-950 ">
             <div className="flex w-full flex-row ">
                 <p className="font-poppins text-4xl font-medium">Dashboard</p>
             </div>
@@ -19,6 +20,7 @@ export default function Dashboard() {
                 <OperationalTime />
                 <OrderStatusPie />
             </div>
+            <MaintenanceGrid />
         </div>
     );
 }
