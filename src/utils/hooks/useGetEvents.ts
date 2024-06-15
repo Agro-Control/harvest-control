@@ -5,7 +5,7 @@ import GetEventos from "@/types/get-eventos";
 
 const getEventsRequest = async (id_ordem: number | null, nome: string | null) => {
 
-    if(isNaN(Number(id_ordem))) id_ordem = null;
+    if(isNaN(Number(id_ordem))) return;
 
     const { data } = await api.get<GetEventos>(`/eventos/${id_ordem}`,{
         params: {
