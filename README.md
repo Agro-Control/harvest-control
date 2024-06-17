@@ -1,59 +1,36 @@
-# React, NextJS, TypeScript and TailwindCSS Template.
+# Frontend Agro Control.
 
 <p align="center">
   <a href="https://github.com/maiconlara/nextjs-template"><img src="public/assets/readme-banner.png" alt="banner"></a>
 </p>
 
-💻 A template written in React with Next.js. Created to make developer's life easier, contains: Next.js, TypeScript, ESLint, Prettier, Husky, Framer-Motion, PostCSS, Tailwind CSS.
-
-This template is free to use in your own [Next.js](https://nextjs.org) project.
-
-### Features
-
-Developer experience first:
-
--   [Next.js](https://nextjs.org) as framework
--   Integrate with [Tailwind CSS](https://tailwindcss.com)
--   [TypeScript](https://www.typescriptlang.org) type inference
--   [Commitizen](https://commitizen.github.io/cz-cli) as standard commit tool
--   Linter with [ESLint](https://eslint.org)
--   Code Format with [Prettier](https://prettier.io)
--   Git Hooks with [Husky](https://typicode.github.io/husky)
--   Husky for Git Hooks
-
-### Requirements
-
-- Node.js and a Node Package Manager (use pnpm please)
-
-### Getting started
-
-Using the template:
+💻 A seguir apresentamos a maneira correta de instalar e executar a aplicação Frontend do TCC Agro Control.
 
 
-1. On GitHub.com, navigate to the main page of the repository.
-2. Above the file list, click Use this template.
-3. Select Create a new repository.
-4. Configure your own settings in github repo.
-5. Click Create repository from template.
+### Requisitos
+
+- Node.js e um Gerenciador de Pacotes Node, a aplicação usa o pnpm.
+
+### Como executar a aplicação
+
+Clonando o repositório
 
 
-Then, you can run locally:
+1. No GitHub.com, navegue até https://github.com/Agro-Control/frontend.
+2. Nas opções acima dos arquivos do repositório selecione Code.
+3. Copie o código SSH ou HTTPS.
+4. Abra o terminal e execute git clone git@github.com:Agro-Control/frontend.git (ou HTTPS).
+
+
+Então, execute localmente:
 
 ```
 pnpm install
-pnpm run dev
+pnpm build
+pnpm start
 ```
 
-### Commiting
-To commit you have to:
-
-```
-git add .
-pnpm commit
-follow the cli rules
-```
-
-### Structure
+### Estrutura do código
 
 ```
 .
@@ -72,4 +49,4 @@ follow the cli rules
 
 
 
-<p align="center">Everyone is welcome to contribute to this project 🤍</p>
+<p align="center">Desenvolvido com amor pela equipe do TCC Agro Control 🤍</p>
