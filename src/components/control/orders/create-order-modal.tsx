@@ -17,7 +17,6 @@ import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
 import {useGetOperators} from "@/utils/hooks/useGetOperators";
 import {useGetMachines} from "@/utils/hooks/useGetMachines";
 import {useGetFields} from "@/utils/hooks/useGetFields";
-import {DatePicker} from "@/components/ui/date-picker";
 import {DateTimePicker} from "@/components/ui/datetime-picker";
 import {useGetUnits} from "@/utils/hooks/useGetUnits";
 import {ReactNode, useEffect, useState} from "react";

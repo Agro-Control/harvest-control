@@ -17,4 +17,8 @@ export default function formatDuration(seconds: number | null): string {
         }
     }
     return "0s";
+};
+export function convertDurationToHoursFromSeconds(durationInSeconds: number): number {
+    return parseFloat((durationInSeconds / 3600).toFixed(2));
 }
+

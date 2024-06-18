@@ -39,6 +39,7 @@ import { z } from "zod";
 import Orders from "@/app/control/orders/page";
 import { editOrderSchema } from "@/utils/validations/editOrderSchema";
 import OrdemServicoPost from "@/types/ordem-de-servico-post";
+import { useGetOperators } from "@/utils/hooks/useGetOperators";
 
 
 interface editOrderProps {
@@ -60,6 +61,10 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }, { value: "E" }, { value: "C" }, { value: "F" }]);
+    const morningOperator = ordem.operadores!.find(operator => operator.turno === 'M');
+    const afternoonOperator = ordem.operadores!.find(operator => operator.turno === 'T');
+    const nightOperator = ordem.operadores!.find(operator => operator.turno === 'N');
+
 
     const form = useForm<Form>({
         resolver: zodResolver(editOrderSchema),
@@ -68,9 +73,36 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
             velocidade_maxima: ordem.velocidade_maxima!.toString(),
             rpm: ordem.rpm!.toString(),
             status: ordem.status,
+
         }
     });
+    
+    const {data: {operador: operadores_manha = []} = {}, refetch: refetchOPM} = useGetOperators(
+        true,
+        ordem.unidade_id!,
+        "M",
+        "A",
+        null,
+        true,
+    );
 
+    const {data: {operador: operadores_tarde = []} = {}, refetch: refetchOPT} = useGetOperators(
+        true,
+        ordem.unidade_id!,
+        "T",
+        "A",
+        null,
+        true,
+    );
+
+    const {data: {operador: operadores_noite = []} = {}, refetch: refetchOPN} = useGetOperators(
+        true,
+        ordem.unidade_id!,
+        "N",
+        "A",
+        null,
+        true,
+    );
 
 
     const editOrderRequest = async (putData: OrdemServicoPost | null) => {
@@ -114,6 +146,17 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
     });
 
     const onHandleSubmit = (data: Form) => {
+        const operadoresSelecionados = [];
+
+        if (data.operador_manha !== null && data.operador_manha !== "nenhum") {
+            operadoresSelecionados.push(parseInt(data.operador_manha));
+        }
+        if (data.operador_tarde !== null && data.operador_tarde !== "nenhum") {
+            operadoresSelecionados.push(parseInt(data.operador_tarde));
+        }
+        if (data.operador_noturno !== null && data.operador_noturno !== "nenhum") {
+            operadoresSelecionados.push(parseInt(data.operador_noturno));
+        }
         const operadorIds: number[] = ordem.operadores!.map((operador) => operador.id);
 
     // Formata os dados com os IDs dos operadores
@@ -123,7 +166,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
         velocidade_minima: parseFloat(data.velocidade_minima),
         velocidade_maxima: parseFloat(data.velocidade_maxima),
         rpm: parseInt(data.rpm),
-        operadores: operadorIds, // Substitui ordem.operadores pelos IDs extraídos
+        operadores: operadoresSelecionados ? operadoresSelecionados : operadorIds, // Substitui ordem.operadores pelos IDs extraídos
     };
 
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
@@ -142,6 +185,99 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onHandleSubmit)} id="edit-order-form" className="grid grid-cols-2 gap-4 py-4">
                         <Input disabled Icon={Hash} className=" col-span-2" id="id" placeholder="Código da Ordem" value={ordem.id! || "Não informado"} />
+                        <FormField
+                            control={form.control}
+                            name="operador_manha"
+                            render={({field}) => (
+                                <FormItem className="col-span-2">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("operador_manha", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={SunHorizon} className="h-10 ">
+                                                <SelectValue
+                                                    placeholder={morningOperator?.nome || "Selecione o Operador do Turno da Manhã"}
+                                                    {...field}
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value={"nenhum"}>Nenhum</SelectItem>
+                                                {operadores_manha.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="operador_tarde"
+                            render={({field}) => (
+                                <FormItem className="col-span-2">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("operador_tarde", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={Sun} className="h-10">
+                                                <SelectValue
+                                                    placeholder={afternoonOperator?.nome || "Selecione o Operador do Turno da Tarde"}
+                                                    {...field}
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value={"nenhum"}>Nenhum</SelectItem>
+                                                {operadores_tarde.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="operador_noturno"
+                            render={({field}) => (
+                                <FormItem className="col-span-2">
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("operador_noturno", value);
+                                            }}
+                                        >
+                                            <SelectTrigger Icon={Moon} className="h-10">
+                                                <SelectValue
+                                                     placeholder={nightOperator?.nome ||"Selecione o Operador do Turno da Noite"}
+                                                    {...field}
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value={"nenhum"}>Nenhum</SelectItem>
+                                                {operadores_noite.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="velocidade_maxima"
