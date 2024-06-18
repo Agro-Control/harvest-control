@@ -1,7 +1,7 @@
 export default function useFormattedDate(): (dateString: Date | string | undefined) => string {
   return function formatDate(dateString: Date | string | undefined): string {
       if (!dateString || typeof dateString !== 'string') {
-          return "";
+          return "-";
       }
     
       const date = new Date(dateString);

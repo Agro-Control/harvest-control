@@ -4,13 +4,16 @@ import { useTranslation } from "react-i18next";
 import EditUnitModal from "./edit-unit-modal";
 import ViewUnitModal from "./view-unit-modal";
 import Unidade from "@/types/unidade";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import GetUnidade from "@/types/get-unidade";
 
 interface UnitRowProps {
     unidade: Unidade;
-    isAdmin: boolean
+    isAdmin: boolean;
+    refetchUnits: (options?: RefetchOptions) => Promise<QueryObserverResult<GetUnidade, Error>>
 }
 
-const UnitRow = ({ unidade, isAdmin }: UnitRowProps) => {
+const UnitRow = ({ unidade, isAdmin, refetchUnits }: UnitRowProps) => {
     const {t} = useTranslation();
 
     return (
@@ -21,7 +24,7 @@ const UnitRow = ({ unidade, isAdmin }: UnitRowProps) => {
             <TableCell className="">{t(unidade.status!)}</TableCell>
             <TableCell className="w-28">
                 <div className="-ml-1 flex w-full flex-row items-center gap-3">
-                    <EditUnitModal unit={unidade}>
+                    <EditUnitModal unit={unidade} refetchUnits={refetchUnits}>
                         <Pencil
                             className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
                             weight="fill"

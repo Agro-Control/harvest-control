@@ -5,11 +5,14 @@ import { Eye, Pencil } from "@phosphor-icons/react";
 import Maquina from "@/types/maquina";
 import EditMachineModal from "./edit-machine-modal";
 import ViewMachineModal from "./view-machine-modal";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import GetMaquina from "@/types/get-maquina";
 
 interface FieldRowProps {
     maquina: Maquina;
+    refetchMachines?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetMaquina, Error>>
 }
-const MachineRow = ({ maquina }: FieldRowProps) => {
+const MachineRow = ({ maquina, refetchMachines}: FieldRowProps) => {
     const { t } = useTranslation();
     const formatDate = useFormattedDate();
 
@@ -22,7 +25,7 @@ const MachineRow = ({ maquina }: FieldRowProps) => {
             <TableCell className="">{t(maquina.status!)}</TableCell>
             <TableCell className="w-28">
                 <div className="-ml-1 flex w-full flex-row items-center gap-3">
-                    <EditMachineModal maquina={maquina}>
+                    <EditMachineModal maquina={maquina} refetchMachines={refetchMachines}>
                         <Pencil
                             className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
                             weight="fill"

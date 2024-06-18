@@ -31,22 +31,24 @@ import Empresa from "@/types/empresa";
 import Talhao from "@/types/talhao";
 import { z } from "zod";
 import { api } from "@/lib/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { toast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
 import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import { useQueryState } from "nuqs";
+import GetTalhao from "@/types/get-talhao";
 
 interface editFieldProps {
     children: ReactNode;
     field: Talhao;
+    refetchFields: (options?: RefetchOptions) => Promise<QueryObserverResult<GetTalhao, Error>>
 }
 
 type Form = z.infer<typeof editFieldSchema>;
 
-const EditFieldModal = ({ children, field }: editFieldProps) => {
+const EditFieldModal = ({ children, field, refetchFields }: editFieldProps) => {
     const [open, setOpen] = useState(false);
     const [statusOptions, setStatusOptions] = useState<{ value: string }[]>([{ value: "A" }, { value: "I" }]);
     const { t } = useTranslation();
@@ -92,8 +94,8 @@ const EditFieldModal = ({ children, field }: editFieldProps) => {
                 title: t("success"),
                 description: t("putField-success"),
             });
-            // Refetch na lista de empresas
-            queryClient.refetchQueries({ queryKey: ["fields"], type: "active", exact: true });
+            
+            refetchFields?.();
             setOpen(false);
             form.reset();
         },

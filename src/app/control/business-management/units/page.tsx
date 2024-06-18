@@ -53,7 +53,7 @@ export default function Units() {
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
+        refetch: refetchUnits, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetUnits(!isAdmin ? true : enableFlag, !isAdmin ? user?.empresa_id! : (isNaN(parseInt(empresa!)) ? null : parseInt(empresa!)), isAdmin ? user.grupo_id : null, status, query);
 
@@ -80,7 +80,7 @@ export default function Units() {
         } else {
             setEnableFlag(false);
         }
-        refetch();
+        refetchUnits();
         console.log(empresa)
     }, [empresa, query, status]);
 
@@ -95,7 +95,7 @@ export default function Units() {
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
                 {isAdmin && <FilterWithLabel filter={companyFilter} paramType="Empresas" />}
-                <CreateUnitModal>
+                <CreateUnitModal refetchUnits={refetchUnits}>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
@@ -122,7 +122,7 @@ export default function Units() {
                     unidades.map((unidade: Unidade) => {
                         return (
                             <TableBody>
-                                <UnitRow key={unidade.id} unidade={unidade} isAdmin={isAdmin} />
+                                <UnitRow key={unidade.id} unidade={unidade} isAdmin={isAdmin} refetchUnits={refetchUnits}/>
                             </TableBody>
                         );
                     })}
