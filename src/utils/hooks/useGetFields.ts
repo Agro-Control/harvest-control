@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import GetTalhao from "@/types/get-talhao";
 
-const getFieldsRequest = async (unidade_id: number | null, codigo: string | null, status: string | null) => {
+const getFieldsRequest = async (empresa_id: number | null, unidade_id: number | null, codigo: string | null, status: string | null) => {
     const { data } = await api.get<GetTalhao>("/talhoes", {
         params: {
+            empresa_id: empresa_id,
             unidade_id: unidade_id,
             codigo: codigo,
             status: status,
@@ -13,10 +14,10 @@ const getFieldsRequest = async (unidade_id: number | null, codigo: string | null
     return data;
 };
 
-export const useGetFields = (enableFlag: boolean, unidade_id: number | null, status: string | null, codigo: string | null) => {
+export const useGetFields = (enableFlag: boolean, empresa_id: number | null,  unidade_id: number | null, status: string | null, codigo: string | null) => {
     return useQuery({
-        queryKey: ["fields", unidade_id, codigo, status],
-        queryFn: () => getFieldsRequest(unidade_id, codigo, status),
+        queryKey: ["fields", empresa_id, unidade_id, codigo, status],
+        queryFn: () => getFieldsRequest(empresa_id, unidade_id, codigo, status),
         enabled: enableFlag,
         retry: (failureCount, error) => {
 

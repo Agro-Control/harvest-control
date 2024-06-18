@@ -63,7 +63,7 @@ const Machines = () => {
         isLoading, // Booleano que indica se está carregando
         refetch: refetchMachines, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetMachines(enableFlag, parseInt(unidade!), status, query);
+    } = useGetMachines(true, unidade != "Todas" ? null : user?.empresa_id!, isNaN(parseInt(unidade!)) ? null : parseInt(unidade!), status, query);
 
     const companyFilter: FilterInformationLabel = {
         filterItem: [
@@ -151,7 +151,6 @@ const Machines = () => {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoading && <LoadingAnimation />}
             {isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir as máquinas</div>}
-            {!isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir as máquinas</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoading && <StatusCodeHandler requisitionType="machine" error={error as AxiosError} />}
         </div>

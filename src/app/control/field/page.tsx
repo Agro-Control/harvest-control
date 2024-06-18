@@ -63,7 +63,7 @@ export default function Field() {
         isLoading, // Booleano que indica se está carregando
         refetch: refetchFields, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
-    } = useGetFields(enableFlag, parseInt(unidade!), status, query);
+    } = useGetFields(true, unidade != "Todas" ? null : user?.empresa_id!, isNaN(parseInt(unidade!)) ? null : parseInt(unidade!), status, query);
 
     const companyFilter: FilterInformationLabel = {
         filterItem: [
@@ -146,7 +146,6 @@ export default function Field() {
             {/* Renderiza a animação de loading se estiver carregando ou refazendo a requisição */}
             {isLoadingData && <LoadingAnimation />}
             {isAdmin && !enableFlag && <div className="flex w-full items-center justify-center font-medium">Filtre as empresas e unidades para exibir os talhões</div>}
-            {!isAdmin && !enableFlag &&  <div className="flex w-full items-center justify-center font-medium">Filtre as unidades para exibir os talhões</div>}
             {/* Renderiza o componente com as mensagens de erro se houver erro e não estiver carregando */}
             {isError && !isLoadingData && <StatusCodeHandler requisitionType="field" error={error as AxiosError} />}
         </div>

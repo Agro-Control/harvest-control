@@ -97,6 +97,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
 
     const {data: {talhoes = []} = {}, refetch: refetchU} = useGetFields(
         derivedEnableFlag,
+        null,
         parseInt(watchIdUnit!),
         "A",
         null,
@@ -104,6 +105,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
 
     const {data: {maquinas = []} = {}, refetch: refetchM} = useGetMachines(
         derivedEnableFlag,
+        null,
         parseInt(watchIdUnit!),
         "A",
         null,
