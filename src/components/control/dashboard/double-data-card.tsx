@@ -58,7 +58,7 @@ const DoubleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
                     </p>
                 </div>
             </div>
-            <div className="flex w-full flex-col items-center justify-between gap-2 2xl:flex-row lg:gap-2">
+            <div className="flex w-full flex-col items-center justify-between gap-2 3xl:flex-row lg:gap-2">
                 <div
                     className="text-black flex h-9
         w-full
@@ -72,7 +72,7 @@ const DoubleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
         px-3
         text-base
         font-normal
-        2xl:w-auto
+        3xl:w-auto
 "
                 >
                     <FirstDataIcon className="h-5 w-5 text-green-950 " />
@@ -101,7 +101,7 @@ const DoubleDataCard = ({ Icon, title, subtitle, FirstDataIcon, firstDataTitle, 
         px-3
         text-base
         font-normal
-        2xl:w-auto
+        3xl:w-auto
 "
                 >
                     <SecondDataIcon className="h-5 w-5 text-green-900 " />

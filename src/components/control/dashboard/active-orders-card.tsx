@@ -38,7 +38,7 @@ const ActiveOrdersCard = () => {
         px-3
         text-base
         font-normal
-       2xl:w-auto
+       3xl:w-auto
         cursor-pointer
         hover:bg-gray-500/20
         transition-colors
