@@ -90,7 +90,7 @@ const EditMachineModal = ({ maquina,  children, refetchMachines }: EditMachineMo
                 title: t("success"),
                 description: t("putMachine-success"),
             });
-            // Refetch na lista de empresas
+
             refetchMachines?.();
             setOpen(false);
             form.reset();

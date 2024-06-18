@@ -61,7 +61,7 @@ export default function Field() {
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
+        refetch: refetchFields, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetFields(enableFlag, parseInt(unidade!), status, query);
 
@@ -96,7 +96,7 @@ export default function Field() {
             refetchUnits();
         } else if (unidade != null && unidade != "" && unidade != undefined) {
             setEnableFlag(true);
-            refetch();
+            refetchFields();
         } else {
             setEnableFlag(false);
         }
@@ -112,7 +112,7 @@ export default function Field() {
                 <Filter filter={statusFilter} paramType="status" />
                 {isAdmin && <FilterWithLabel filter={companyFilter} paramType="Empresas" />}
                 <FilterWithLabel filter={unitFilter} paramType="Unidades" />
-                <CreateFieldModal>
+                <CreateFieldModal refetchFields={refetchFields}>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
@@ -138,7 +138,7 @@ export default function Field() {
                     talhoes.map((talhao: Talhao) => {
                         return (
                             <TableBody>
-                                <FieldRow key={talhao.id} talhao={talhao} />
+                                <FieldRow key={talhao.id} talhao={talhao} refetchFields={refetchFields}/>
                             </TableBody>
                         );
                     })}

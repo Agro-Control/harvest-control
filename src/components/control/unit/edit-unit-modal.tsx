@@ -30,24 +30,26 @@ import { useForm } from "react-hook-form";
 import Unidade from "@/types/unidade";
 import { z } from "zod";
 import { useAuth } from "@/utils/hooks/useAuth";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
 import { handleCepData } from "@/utils/handleCepData";
 import { Button } from "@/components/ui/button";
+import GetUnidade from "@/types/get-unidade";
 
 
 
 interface EditUnitProps {
     unit: Unidade;
     children: ReactNode;
+    refetchUnits: (options?: RefetchOptions) => Promise<QueryObserverResult<GetUnidade, Error>>
 }
 
 type Form = z.infer<typeof editUnitSchema>;
 
-const EditUnitModal = ({ children, unit }: EditUnitProps) => {
+const EditUnitModal = ({ children, unit, refetchUnits }: EditUnitProps) => {
     const [isLoadingCep, setIsLoadingCep] = useState(false);
     const [open, setOpen] = useState(false);
     const { t } = useTranslation();
@@ -116,7 +118,7 @@ const EditUnitModal = ({ children, unit }: EditUnitProps) => {
                 description: t("putUnit-success"),
             });
             // Refetch na lista de empresas
-            queryClient.refetchQueries({ queryKey: ["units"], type: "active", exact: true });
+            refetchUnits?.();
             setOpen(false);
             form.reset();
         },

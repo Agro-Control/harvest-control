@@ -4,11 +4,14 @@ import EditFieldModal from "./edit-field-modal";
 import ViewFieldModal from "./view-field-modal";
 import { useTranslation } from "react-i18next";
 import Talhao from "@/types/talhao";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import GetTalhao from "@/types/get-talhao";
 
 interface FieldRowProps {
     talhao: Talhao;
+    refetchFields: (options?: RefetchOptions) => Promise<QueryObserverResult<GetTalhao, Error>>
 }
-const FieldRow = ({ talhao }: FieldRowProps) => {
+const FieldRow = ({ talhao, refetchFields}: FieldRowProps) => {
     const {t} = useTranslation();
 
     return (
@@ -18,7 +21,7 @@ const FieldRow = ({ talhao }: FieldRowProps) => {
             <TableCell className="">{t(talhao.status)}</TableCell>
             <TableCell className="w-28">
                 <div className="-ml-1 flex w-full flex-row items-center gap-3">
-                    <EditFieldModal field={talhao}>
+                    <EditFieldModal field={talhao} refetchFields={refetchFields}>
                         <Pencil
                             className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
                             weight="fill"

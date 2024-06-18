@@ -94,7 +94,6 @@ const CreateMachineModal = ({ children, refetchMachines }: CreateMachineModalPro
                 title: t("success"),
                 description: t("postMachine-success"),
             });
-            // Refetch na lista de empresas
             refetchMachines?.();
             setOpen(false);
             form.reset();
