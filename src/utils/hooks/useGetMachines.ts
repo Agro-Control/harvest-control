@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import GetMaquina from "@/types/get-maquina";
 
-const getMachinesRequest = async (unidade_id: number | null, codigo: string | null, status: string | null) => {
+const getMachinesRequest = async (empresa_id: number | null, unidade_id: number | null, codigo: string | null, status: string | null) => {
     const { data } = await api.get<GetMaquina>("/maquinas", {
         params: {
+            empresa_id: empresa_id,
             unidade_id: unidade_id,
             codigo: codigo,
             status: status,
@@ -13,10 +14,10 @@ const getMachinesRequest = async (unidade_id: number | null, codigo: string | nu
     return data;
 };
 
-export const useGetMachines = (enableFlag: boolean, unidade_id: number | null, status: string | null, codigo: string | null) => {
+export const useGetMachines = (enableFlag: boolean, empresa_id: number | null, unidade_id: number | null, status: string | null, codigo: string | null) => {
     return useQuery({
-        queryKey: ["machines", unidade_id, codigo, status],
-        queryFn: () => getMachinesRequest(unidade_id, codigo, status),
+        queryKey: ["machines", empresa_id, unidade_id, codigo, status],
+        queryFn: () => getMachinesRequest(empresa_id, unidade_id, codigo, status),
         enabled: enableFlag,
         retry: (failureCount, error) => {
 

@@ -45,4 +45,12 @@ export const editOrderSchema = z.object({
             message: "O RPM permitido é entre 1000 a 1500",
         },
     ),
+}).superRefine((data, ctx) => {
+    if (data.operador_manha === "nenhum" && data.operador_tarde === "nenhum" && data.operador_noturno === "nenhum") {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Pelo menos um operador deve ser selecionado.",
+            path: ["operador_manha"],
+        });
+    }
 });

@@ -4,7 +4,7 @@ interface OrdemServicoPost {
     id?: number;
     data_inicio?: string;
     status?: string;
-    data_fim?: string;
+    data_previsao_fim?: string;
     velocidade_minima?: number;
     velocidade_maxima?: number;
     rpm?: number;

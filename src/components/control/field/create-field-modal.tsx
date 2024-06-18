@@ -28,20 +28,22 @@ import Talhao from "@/types/talhao";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/lib/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import SubmitButton from "@/components/submit-button";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import { parse } from "path";
+import GetTalhao from "@/types/get-talhao";
 
 interface createFieldProps {
     children: ReactNode;
+    refetchFields: (options?: RefetchOptions) => Promise<QueryObserverResult<GetTalhao, Error>>
 }
 
 type Form = z.infer<typeof editFieldSchema>;
 
-const CreateFieldModal = ({ children }: createFieldProps) => {
+const CreateFieldModal = ({ children, refetchFields }: createFieldProps) => {
     const [open, setOpen] = useState(false);
     const [enableFlag, setEnableFlag] = useState(false);
     const { toast } = useToast();
@@ -100,8 +102,7 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
                 title: t("success"),
                 description: t("postField-success"),
             });
-            // Refetch na lista de empresas
-            queryClient.refetchQueries({ queryKey: ["fields"], type: "active", exact: true });
+            refetchFields?.()
             setOpen(false);
             setEnableFlag(false);
             form.reset();
@@ -136,7 +137,6 @@ const CreateFieldModal = ({ children }: createFieldProps) => {
             status: typeof data.status === 'string' ? data.status : 'A',
             unidade_id: parseInt(data.unidade_id),
         };
-        // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
     };
 

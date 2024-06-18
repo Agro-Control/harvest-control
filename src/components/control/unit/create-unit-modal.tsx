@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { editUnitSchema } from "@/utils/validations/editUnitSchema";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReactNode, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
@@ -41,15 +41,17 @@ import { useAuth } from "@/utils/hooks/useAuth";
 import SubmitButton from "@/components/submit-button";
 import { handleCepData } from "@/utils/handleCepData";
 import { Button } from "@/components/ui/button";
+import GetUnidade from "@/types/get-unidade";
 
 
 interface createUnitProps {
     children: ReactNode;
+    refetchUnits: (options?: RefetchOptions) => Promise<QueryObserverResult<GetUnidade, Error>>
 }
 
 type Form = z.infer<typeof editUnitSchema>;
 
-const CreateUnitModal = ({ children }: createUnitProps) => {
+const CreateUnitModal = ({ children, refetchUnits}: createUnitProps) => {
     const [companyOptions, setCompanyOptions] = useState<{ id: number; nome: string }[]>([]);
     const [open, setOpen] = useState(false);
     const [isLoadingCep, setIsLoadingCep] = useState(false);
@@ -137,7 +139,7 @@ const CreateUnitModal = ({ children }: createUnitProps) => {
                 description: t("postUnit-success"),
             });
             // Refetch na lista de empresas
-            queryClient.refetchQueries({ queryKey: ["units"], type: "active", exact: true });
+            refetchUnits?.();
             setOpen(false);
             form.reset();
         },

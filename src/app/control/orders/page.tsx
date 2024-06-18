@@ -52,7 +52,7 @@ export default function Orders() {
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
+        refetch : refetchOrders, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetOrders(!isAdmin ? user!.empresa_id : parseInt(empresa!), status, query);
 
@@ -79,7 +79,7 @@ export default function Orders() {
         } else {
             setEnableFlag(false);
         }
-        refetch();
+        refetchOrders();
     }, [empresa, query, status]);
 
     return (
@@ -91,7 +91,7 @@ export default function Orders() {
                 <SearchBar text="Digite o nome para pesquisar..." />
                 <Filter filter={statusFilter} paramType="status" />
                 {isAdmin && <FilterWithLabel filter={companyFilter} paramType="Empresas" />}
-                <CreateOrderModal>
+                <CreateOrderModal refetchOrders={refetchOrders}>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
@@ -107,6 +107,7 @@ export default function Orders() {
                         <TableHead>ID</TableHead>
                         <TableHead>Máquina</TableHead>
                         <TableHead>Data Início</TableHead>
+                        <TableHead>Data Prevista</TableHead>
                         <TableHead>Data Fim</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Ações</TableHead>
@@ -119,7 +120,7 @@ export default function Orders() {
                     ordens_servico.map((ordem: OrdemServico) => {
                         return (
                             <TableBody key={ordem.id} >
-                                <OrdersRow key={ordem.id} ordem={ordem} />
+                                <OrdersRow key={ordem.id} ordem={ordem} refetchOrders={refetchOrders} />
                             </TableBody>
                         );
                     })}
