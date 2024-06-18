@@ -22,6 +22,7 @@ const OrdersRow = ({ ordem, refetchOrders }: OrderRowProps) => {
             <TableCell className="font-medium">{ordem.id}</TableCell>
             <TableCell className="font-medium">{ordem.nome_maquina}</TableCell>
             <TableCell className="">{formatDate(ordem.data_inicio!)}</TableCell>
+            <TableCell className="">{formatDate(ordem.data_previsao_fim!)}</TableCell>
             <TableCell className="">{formatDate(ordem.data_fim!)}</TableCell>
             <TableCell className="">{t(ordem.status!)}</TableCell>
             <TableCell className="w-28">

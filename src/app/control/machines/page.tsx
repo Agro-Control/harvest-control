@@ -61,7 +61,7 @@ const Machines = () => {
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
-        refetch, // Função que faz a requisição novamente
+        refetch: refetchMachines, // Função que faz a requisição novamente
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetMachines(enableFlag, parseInt(unidade!), status, query);
 
@@ -94,7 +94,7 @@ const Machines = () => {
         }
         else if (unidade != null && unidade != "" && unidade != undefined) {
             setEnableFlag(true);
-            refetch();
+            refetchMachines();
         } else {
             setEnableFlag(false);
         }
@@ -116,7 +116,7 @@ const Machines = () => {
                 <FilterWithLabel filter={unitFilter} paramType="Unidades" />
 
 
-                <CreateMachineModal>
+                <CreateMachineModal refetchMachines={refetchMachines}>
                     <Button
                         type="button"
                         className="font-regular rounded-xl bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600"
@@ -143,7 +143,7 @@ const Machines = () => {
                     maquinas.map((maquina: Maquina) => {
                         return (
                             <TableBody>
-                                <MachineRow key={maquina.id} maquina={maquina} />
+                                <MachineRow key={maquina.id} maquina={maquina} refetchMachines={refetchMachines} />
                             </TableBody>
                         );
                     })}

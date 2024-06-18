@@ -21,7 +21,7 @@ import { z } from "zod";
 import { createMachineSchema } from "@/utils/validations/createMachineSchema";
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useGetUnits } from "@/utils/hooks/useGetUnits";
 import { AxiosError } from "axios";
@@ -29,14 +29,16 @@ import { api } from "@/lib/api";
 import Maquina from "@/types/maquina";
 import SubmitButton from "@/components/submit-button";
 import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
+import GetMaquina from "@/types/get-maquina";
 
 interface CreateMachineModalProps {
     children: ReactNode;
+    refetchMachines?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetMaquina, Error>>
 }
 
 type Form = z.infer<typeof createMachineSchema>;
 
-const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
+const CreateMachineModal = ({ children, refetchMachines }: CreateMachineModalProps) => {
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
     const { t } = useTranslation();
@@ -93,7 +95,7 @@ const CreateMachineModal = ({ children }: CreateMachineModalProps) => {
                 description: t("postMachine-success"),
             });
             // Refetch na lista de empresas
-            queryClient.refetchQueries({ queryKey: ["machines"], type: "active", exact: true });
+            refetchMachines?.();
             setOpen(false);
             form.reset();
         },

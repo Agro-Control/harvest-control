@@ -107,6 +107,7 @@ export default function Orders() {
                         <TableHead>ID</TableHead>
                         <TableHead>Máquina</TableHead>
                         <TableHead>Data Início</TableHead>
+                        <TableHead>Data Prevista</TableHead>
                         <TableHead>Data Fim</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Ações</TableHead>
