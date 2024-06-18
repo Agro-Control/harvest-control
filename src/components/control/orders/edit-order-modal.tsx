@@ -22,7 +22,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { createOrderSchema } from "@/utils/validations/createOrderSchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReactNode, useEffect, useState } from "react";
 import SubmitButton from "@/components/submit-button";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,11 +40,13 @@ import Orders from "@/app/control/orders/page";
 import { editOrderSchema } from "@/utils/validations/editOrderSchema";
 import OrdemServicoPost from "@/types/ordem-de-servico-post";
 import { useGetOperators } from "@/utils/hooks/useGetOperators";
+import GetOrdemDeServico from "@/types/get-ordem-de-servico";
 
 
 interface editOrderProps {
     children: ReactNode;
     ordem: OrdemServico;
+    refetchOrders?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOrdemDeServico, Error>>;
 }
 
 type Form = z.infer<typeof editOrderSchema>;
@@ -52,7 +54,7 @@ type Form = z.infer<typeof editOrderSchema>;
 
 
 
-const EditOrderModal = ({ children, ordem }: editOrderProps) => {
+const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
@@ -73,7 +75,9 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
             velocidade_maxima: ordem.velocidade_maxima!.toString(),
             rpm: ordem.rpm!.toString(),
             status: ordem.status,
-
+            operador_manha: morningOperator ? morningOperator.id.toString()! : "nenhum",
+            operador_tarde: afternoonOperator ? afternoonOperator.id.toString()! : "nenhum",
+            operador_noturno: nightOperator ? nightOperator.id.toString()! : "nenhum",
         }
     });
     
@@ -94,6 +98,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
         null,
         true,
     );
+  
 
     const {data: {operador: operadores_noite = []} = {}, refetch: refetchOPN} = useGetOperators(
         true,
@@ -103,6 +108,24 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
         null,
         true,
     );
+
+    useEffect(() => {
+        refetchOPM;
+        refetchOPT;
+        refetchOPN;
+        if (morningOperator && !operadores_manha.some(op => op.id === morningOperator.id)) {
+            operadores_manha.push(morningOperator);
+        }
+        if (afternoonOperator && !operadores_tarde.some(op => op.id === afternoonOperator.id)) {
+            operadores_tarde.push(afternoonOperator);
+        }
+        if (nightOperator && !operadores_noite.some(op => op.id === nightOperator.id)) {
+            operadores_noite.push(nightOperator);
+        }
+        if(onclose)
+            form.reset();
+    }, [morningOperator, afternoonOperator, nightOperator, operadores_manha, operadores_tarde, operadores_noite, onclose]);
+
 
 
     const editOrderRequest = async (putData: OrdemServicoPost | null) => {
@@ -118,7 +141,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
                 title: t("success"),
                 description: t("putOrder-success"),
             });
-            queryClient.refetchQueries({ queryKey: ["orders"], type: "active", exact: true });
+            refetchOrders?.();
             setOpen(false);
             form.reset();
         },
@@ -157,6 +180,7 @@ const EditOrderModal = ({ children, ordem }: editOrderProps) => {
         if (data.operador_noturno !== null && data.operador_noturno !== "nenhum") {
             operadoresSelecionados.push(parseInt(data.operador_noturno));
         }
+        
         const operadorIds: number[] = ordem.operadores!.map((operador) => operador.id);
 
     // Formata os dados com os IDs dos operadores

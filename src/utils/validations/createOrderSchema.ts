@@ -85,7 +85,19 @@ export const createOrderSchema = z.object({
             message: "O RPM permitido é entre 1000 a 1500",
         },
     ),
-}).refine((data) => data.data_fim > data.data_inicio, {
-    message: "A data final não deve ser menor que a inicial.",
-    path: ["data_fim"],
-  });
+}).superRefine((data, ctx) => {
+    if (data.data_fim <= data.data_inicio) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "A data final deve ser maior que a data inicial.",
+            path: ["data_fim"],
+        });
+    }
+    if (data.operador_manha === "nenhum" && data.operador_tarde === "nenhum" && data.operador_noturno === "nenhum") {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Pelo menos um operador deve ser selecionado.",
+            path: ["operador_manha"],
+        });
+    }
+});

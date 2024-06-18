@@ -12,7 +12,7 @@ import {
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {createOrderSchema} from "@/utils/validations/createOrderSchema";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {QueryObserverResult, RefetchOptions, useMutation, useQueryClient} from "@tanstack/react-query";
 import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
 import {useGetOperators} from "@/utils/hooks/useGetOperators";
 import {useGetMachines} from "@/utils/hooks/useGetMachines";
@@ -33,14 +33,17 @@ import {format} from "date-fns";
 import {api} from "@/lib/api";
 import {z} from "zod";
 import OrdemServicoPost from "@/types/ordem-de-servico-post";
+import GetOrdemDeServico from "@/types/get-ordem-de-servico";
 
 interface createOrderProps {
     children: ReactNode;
+    refetchOrders?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOrdemDeServico, Error>>;
+    
 }
 
 type Form = z.infer<typeof createOrderSchema>;
 
-const CreateOrderModal = ({children}: createOrderProps) => {
+const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
@@ -143,6 +146,8 @@ const CreateOrderModal = ({children}: createOrderProps) => {
             setEnableFlag(false);
             setDerivedEnableFlag(false);
         }
+        if(onclose)
+            form.reset();
     }, [
         empresas,
         unidades,
@@ -169,7 +174,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
                 title: t("success"),
                 description: t("postOrder-success"),
             });
-            queryClient.refetchQueries({queryKey: ["orders"], type: "active", exact: true});
+            refetchOrders?.();
             setEnableFlag(false);
             setDerivedEnableFlag(false);
             setOpen(false);
@@ -210,7 +215,16 @@ const CreateOrderModal = ({children}: createOrderProps) => {
         if (data.operador_noturno !== null && data.operador_noturno !== "nenhum") {
             operadoresSelecionados.push(parseInt(data.operador_noturno));
         }
-
+        if (data.operador_tarde == "nenhum" && data.operador_manha == "nenhum" && data.operador_noturno == "nenhum") {
+            // Impede a submissão e exibe uma mensagem de erro
+            toast({
+                variant: "destructive",
+                title: "Erro",
+                description: "Selecione pelo menos um operador!",
+            });
+            return;
+        }
+        
         const formattedData = {
             status: "A",
             empresa_id: !isAdmin ? user!.empresa_id : parseInt(data.id_empresa!),
@@ -219,7 +233,7 @@ const CreateOrderModal = ({children}: createOrderProps) => {
             unidade_id: parseInt(data.id_unidade!),
             maquina_id: parseInt(data.id_maquina!),
             data_inicio: format(data.data_inicio, "yyyy-MM-dd HH:mm:ss"),
-            data_fim: format(data.data_fim, "yyyy-MM-dd HH:mm:ss"),
+            data_previsao_fim: format(data.data_fim, "yyyy-MM-dd HH:mm:ss"),
             velocidade_minima: parseFloat(data.velocidade_minima),
             velocidade_maxima: parseFloat(data.velocidade_maxima),
             rpm: parseInt(data.rpm),
