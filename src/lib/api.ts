@@ -1,7 +1,7 @@
 import useCookie from "@/utils/hooks/useCookies";
 import axios from "axios";
 
-const apiUrl = "http://localhost:5000/";
+const apiUrl = "http://143.198.152.106/";
 
 const { getCookie } = useCookie();
 
