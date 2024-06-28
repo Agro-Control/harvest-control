@@ -1,5 +1,5 @@
 "use client";
-import {Buildings, Factory, Truck, MapPin, Gauge, Sun, SunHorizon, Moon, Grains} from "@phosphor-icons/react";
+import { Buildings, Factory, Truck, MapPin, Gauge, Sun, SunHorizon, Moon, Grains } from "@phosphor-icons/react";
 import {
     Dialog,
     DialogContent,
@@ -9,46 +9,52 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {createOrderSchema} from "@/utils/validations/createOrderSchema";
-import {QueryObserverResult, RefetchOptions, useMutation, useQueryClient} from "@tanstack/react-query";
-import {useGetCompanies} from "@/utils/hooks/useGetCompanies";
-import {useGetOperators} from "@/utils/hooks/useGetOperators";
-import {useGetMachines} from "@/utils/hooks/useGetMachines";
-import {useGetFields} from "@/utils/hooks/useGetFields";
-import {DateTimePicker} from "@/components/ui/datetime-picker";
-import {useGetUnits} from "@/utils/hooks/useGetUnits";
-import {ReactNode, useEffect, useState} from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { createOrderSchema } from "@/utils/validations/createOrderSchema";
+import { InvalidateQueryFilters, QueryCache, QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGetCompanies } from "@/utils/hooks/useGetCompanies";
+import { useGetOperators } from "@/utils/hooks/useGetOperators";
+import { useGetMachines } from "@/utils/hooks/useGetMachines";
+import { useGetFields } from "@/utils/hooks/useGetFields";
+import { DatePicker } from "@/components/ui/date-picker";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { useGetUnits } from "@/utils/hooks/useGetUnits";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import SubmitButton from "@/components/submit-button";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useToast} from "@/components/ui/use-toast";
-import {useAuth} from "@/utils/hooks/useAuth";
-import {useTranslation} from "react-i18next";
-import {Input} from "@/components/ui/input";
-import {useForm} from "react-hook-form";
-import {AxiosError} from "axios";
-import {format} from "date-fns";
-import {api} from "@/lib/api";
-import {z} from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/utils/hooks/useAuth";
+import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { AxiosError } from "axios";
+import { format } from "date-fns";
+import { api } from "@/lib/api";
+import { z } from "zod";
 import OrdemServicoPost from "@/types/ordem-de-servico-post";
 import GetOrdemDeServico from "@/types/get-ordem-de-servico";
+import GetOperador from "@/types/get-operador";
+import { useGetMorningOperators } from "@/utils/hooks/useGetMorningOperators";
+import { useGetAfternoonOperators } from "@/utils/hooks/useGetAfternoonOperators";
+import { useGetNightOperators } from "@/utils/hooks/useGetNightOperators";
 
 interface createOrderProps {
     children: ReactNode;
     refetchOrders?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetOrdemDeServico, Error>>;
-    
-}
 
+}
 type Form = z.infer<typeof createOrderSchema>;
 
-const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
+
+const CreateOrderModal = ({ children, refetchOrders }: createOrderProps) => {
+    const queryCache = new QueryCache();
     const auth = useAuth();
     const user = auth.user;
     const isAdmin = user?.tipo === "D";
     const [open, setOpen] = useState(false);
-    const {toast} = useToast();
-    const {t} = useTranslation();
+    const { toast } = useToast();
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const [enableFlag, setEnableFlag] = useState<boolean>(false);
     const [derivedEnableFlag, setDerivedEnableFlag] = useState<boolean>(false);
@@ -71,14 +77,25 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
         },
     });
 
-    const {getValues, setValue, watch} = form;
+    const { getValues, setValue, watch } = form;
     const watchIdEmpresa = watch("id_empresa");
     const watchIdUnit = watch("id_unidade");
     const watchDataIncio = watch("data_inicio");
     const watchDataFim = watch("data_fim");
 
+    const invalidateOperatorsQueries = (
+        queryClient: any,
+        derivedEnableFlag: boolean,
+        watchIdUnit: string | undefined
+    ) => {
+        queryClient.invalidateQueries(['morningoperators', derivedEnableFlag, parseInt(watchIdUnit!), "M", "A", null, true]);
+
+        queryClient.invalidateQueries(['afternoonoperators', derivedEnableFlag, parseInt(watchIdUnit!), "T", "A", null, true]);
+
+        queryClient.invalidateQueries(['nightoperators', derivedEnableFlag, parseInt(watchIdUnit!), "N", "A", null, true]);
+    };
     const {
-        data: {empresas = []} = {}, // Objeto contendo a lista de empresas
+        data: { empresas = [] } = {}, // Objeto contendo a lista de empresas
         error, // Erro retornado pela Api
         isError, // Booleano que indica se houve erro
         isLoading, // Booleano que indica se está carregando
@@ -86,7 +103,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
         isRefetching, // Booleano que indica se está fazendo a requisição novamente
     } = useGetCompanies(isAdmin ? true : false, isAdmin ? user?.grupo_id : null, null, null, "A", false);
 
-    const {data: {unidades = []} = {}} = useGetUnits(
+    const { data: { unidades = [] } = {} } = useGetUnits(
         enableFlag,
         !isAdmin ? user!.empresa_id : parseInt(watchIdEmpresa!),
         null,
@@ -94,7 +111,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
         null,
     );
 
-    const {data: {talhoes = []} = {}, refetch: refetchU} = useGetFields(
+    const { data: { talhoes = [] } = {}, refetch: refetchU } = useGetFields(
         derivedEnableFlag,
         null,
         parseInt(watchIdUnit!),
@@ -102,7 +119,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
         null,
     );
 
-    const {data: {maquinas = []} = {}, refetch: refetchM} = useGetMachines(
+    const { data: { maquinas = [] } = {}, refetch: refetchM } = useGetMachines(
         derivedEnableFlag,
         null,
         parseInt(watchIdUnit!),
@@ -110,7 +127,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
         null,
     );
 
-    const {data: {operador: operadores_manha = []} = {}, refetch: refetchOPM} = useGetOperators(
+    const { data: { operador: operadores_manha = [] } = {}, refetch: refetchOPM } = useGetMorningOperators(
         derivedEnableFlag,
         parseInt(watchIdUnit!),
         "M",
@@ -119,7 +136,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
         true,
     );
 
-    const {data: {operador: operadores_tarde = []} = {}, refetch: refetchOPT} = useGetOperators(
+    const { data: { operador: operadores_tarde = [] } = {}, refetch: refetchOPT } = useGetAfternoonOperators(
         derivedEnableFlag,
         parseInt(watchIdUnit!),
         "T",
@@ -128,7 +145,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
         true,
     );
 
-    const {data: {operador: operadores_noite = []} = {}, refetch: refetchOPN} = useGetOperators(
+    const { data: { operador: operadores_noite = [] } = {}, refetch: refetchOPN } = useGetNightOperators(
         derivedEnableFlag,
         parseInt(watchIdUnit!),
         "N",
@@ -139,35 +156,28 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
 
     useEffect(() => {
         if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined) setEnableFlag(true);
-        if (watchIdUnit !== "" && watchIdUnit !== undefined) setDerivedEnableFlag(true);
-        refetchOPM;
-        refetchOPT;
-        refetchOPN;
-        if (!open) {
-            setEnableFlag(false);
-            setDerivedEnableFlag(false);
+        if (watchIdUnit !== "" && watchIdUnit !== undefined) {
+            setDerivedEnableFlag(true);
+            invalidateOperatorsQueries(queryClient, derivedEnableFlag, watchIdUnit);
+            refetchOPM();
+            refetchOPT();
+            refetchOPN();
         }
-        if(onclose)
-            form.reset();
     }, [
-        empresas,
-        unidades,
-        operadores_manha,
-        operadores_noite,
-        operadores_tarde,
-        watchDataIncio,
+        queryClient,
         watchIdEmpresa,
         watchIdUnit,
-        enableFlag,
-        derivedEnableFlag,
+        derivedEnableFlag
     ]);
 
+
+
     const createOrderRequest = async (postData: OrdemServicoPost | null) => {
-        const {data} = await api.post("/ordens", postData);
+        const { data } = await api.post("/ordens", postData);
         return data;
     };
 
-    const {mutate, isPending} = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createOrderRequest,
         onSuccess: () => {
             toast({
@@ -179,10 +189,11 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
             setEnableFlag(false);
             setDerivedEnableFlag(false);
             setOpen(false);
+            invalidateOperatorsQueries(queryClient, derivedEnableFlag, watchIdUnit);
             form.reset();
         },
         onError: (error: AxiosError) => {
-            const {response} = error;
+            const { response } = error;
             if (!response) {
                 toast({
                     variant: "destructive",
@@ -192,7 +203,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                 return;
             }
 
-            const {status} = response;
+            const { status } = response;
             const titleCode = `postOrder-error-${status}`;
             const descriptionCode = `postOrder-description-error-${status}`;
 
@@ -203,6 +214,17 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
             });
         },
     });
+
+    const handleOpenChange = useCallback(() => {
+        setOpen(prev => !prev);
+        invalidateOperatorsQueries(queryClient, derivedEnableFlag, watchIdUnit);
+        form.reset();
+        queryCache.clear();
+        setEnableFlag(false);
+        setDerivedEnableFlag(false);
+
+
+    }, []);
 
     const onHandleSubmit = (data: Form) => {
         const operadoresSelecionados = [];
@@ -225,7 +247,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
             });
             return;
         }
-        
+
         const formattedData = {
             status: "A",
             empresa_id: !isAdmin ? user!.empresa_id : parseInt(data.id_empresa!),
@@ -235,8 +257,8 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
             maquina_id: parseInt(data.id_maquina!),
             data_inicio: format(data.data_inicio, "yyyy-MM-dd HH:mm:ss"),
             data_previsao_fim: format(data.data_fim, "yyyy-MM-dd HH:mm:ss"),
-            velocidade_minima: parseFloat(data.velocidade_minima),
-            velocidade_maxima: parseFloat(data.velocidade_maxima),
+            velocidade_minima: parseFloat(data.velocidade_minima.replace(',', '.')),
+            velocidade_maxima: parseFloat(data.velocidade_maxima.replace(',', '.')),
             rpm: parseInt(data.rpm),
             operadores: operadoresSelecionados,
         };
@@ -246,7 +268,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
 
     // adicionar Campo data previsao (1 dia minimo)
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
@@ -263,7 +285,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                             <FormField
                                 control={form.control}
                                 name="id_empresa"
-                                render={({field}) => (
+                                render={({ field }) => (
                                     <FormItem className="col-span-2">
                                         <FormControl>
                                             <Select
@@ -291,7 +313,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="id_unidade"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
@@ -318,10 +340,11 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="id_maquina"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
+                                            disabled={watchIdUnit === "" ? true : false}
                                             onValueChange={(value) => {
                                                 form.setValue("id_maquina", value);
                                             }}
@@ -345,7 +368,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="data_inicio"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <DateTimePicker placeHolder={"Data Início"} {...field} />
@@ -357,7 +380,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="data_fim"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <DateTimePicker placeHolder={"Data Fim"} {...field} />
@@ -369,10 +392,11 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_manha"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
+                                            disabled={watchIdUnit === "" ? true : false}
                                             onValueChange={(value) => {
                                                 form.setValue("operador_manha", value);
                                             }}
@@ -400,10 +424,11 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_tarde"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
+                                            disabled={watchIdUnit === "" ? true : false}
                                             onValueChange={(value) => {
                                                 form.setValue("operador_tarde", value);
                                             }}
@@ -431,10 +456,11 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_noturno"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
+                                            disabled={watchIdUnit === "" ? true : false}
                                             onValueChange={(value) => {
                                                 form.setValue("operador_noturno", value);
                                             }}
@@ -462,10 +488,11 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="id_talhao"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Select
+                                            disabled={watchIdUnit === "" ? true : false}
                                             onValueChange={(value) => {
                                                 form.setValue("id_talhao", value);
                                             }}
@@ -490,7 +517,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="velocidade_maxima"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input
@@ -508,7 +535,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="velocidade_minima"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input
@@ -525,7 +552,7 @@ const CreateOrderModal = ({children, refetchOrders}: createOrderProps) => {
                         <FormField
                             control={form.control}
                             name="rpm"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-1">
                                     <FormControl>
                                         <Input Icon={Gauge} id="rpm" placeholder="RPM" {...field} />

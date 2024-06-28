@@ -63,7 +63,7 @@ const SingleDataCard = ({
                     </p>
                 </div>
             </div>
-            <div className="flex w-full flex-col items-center justify-between gap-2 lg:gap-2 2xl:flex-row">
+            <div className="flex w-full flex-col items-center justify-between gap-2 lg:gap-2 3xl:flex-row">
                 <div
                     className="text-black flex h-9
         w-full
@@ -77,7 +77,7 @@ const SingleDataCard = ({
         px-3
         text-base
         font-normal
-        2xl:w-auto
+        3xl:w-auto
 "
                 >
                     <FirstDataIcon className="h-5 w-5 text-green-950 " />

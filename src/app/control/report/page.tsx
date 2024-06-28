@@ -70,7 +70,7 @@ export default function Reports() {
                         </div>
                     </div>
 
-                    <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-4 ">
+                    <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 2xl:grid-cols-2 3xl:grid-cols-4 ">
                         {data && (
                             <OrderEvent
                                 duracao={data?.duracao_total || 0}

@@ -27,12 +27,12 @@ const OrdersRow = ({ ordem, refetchOrders }: OrderRowProps) => {
             <TableCell className="">{t(ordem.status!)}</TableCell>
             <TableCell className="w-28">
                 <div className="-ml-1 flex w-full flex-row items-center gap-3">
-                    <EditOrderModal ordem={ordem} refetchOrders={refetchOrders}>
+                   {ordem.status != "C" && ordem.status != "F" && ordem.status != "E"  && <EditOrderModal ordem={ordem} refetchOrders={refetchOrders}>
                         <Pencil
                             className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900"
                             weight="fill"
                         />
-                    </EditOrderModal>
+                    </EditOrderModal>}
                     <ViewOrderModal ordem={ordem}>
                         <Eye className="h-5 w-5 cursor-pointer text-black-950 transition-colors hover:text-green-900" />
                     </ViewOrderModal>

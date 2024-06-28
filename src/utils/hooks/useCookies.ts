@@ -8,8 +8,8 @@ const useCookie = () => {
   const setCookie = (key: string, value: string) =>
     Cookie.set(key, value, {
       expires: EXPIRE_TIME,
-      sameSite: "None",
-      secure: true,
+      sameSite: "Lax",
+      secure: false,
     });
 
   const removeCookie = (key: string) => Cookie.remove(key);

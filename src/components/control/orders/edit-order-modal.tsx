@@ -22,8 +22,8 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { createOrderSchema } from "@/utils/validations/createOrderSchema";
-import { QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ReactNode, useEffect, useState } from "react";
+import { QueryCache, QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import SubmitButton from "@/components/submit-button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
@@ -39,8 +39,11 @@ import { z } from "zod";
 import Orders from "@/app/control/orders/page";
 import { editOrderSchema } from "@/utils/validations/editOrderSchema";
 import OrdemServicoPost from "@/types/ordem-de-servico-post";
-import { useGetOperators } from "@/utils/hooks/useGetOperators";
+import { useGetMorningOperators } from "@/utils/hooks/useGetMorningOperators";
+import { useGetAfternoonOperators } from "@/utils/hooks/useGetAfternoonOperators";
+import { useGetNightOperators } from "@/utils/hooks/useGetNightOperators";
 import GetOrdemDeServico from "@/types/get-ordem-de-servico";
+import Operador from "@/types/operador";
 
 
 interface editOrderProps {
@@ -66,6 +69,21 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     const morningOperator = ordem.operadores!.find(operator => operator.turno === 'M');
     const afternoonOperator = ordem.operadores!.find(operator => operator.turno === 'T');
     const nightOperator = ordem.operadores!.find(operator => operator.turno === 'N');
+    const [operadoresManha, setOperadoresManha] = useState<Operador[]>([]);
+    const [operadoresTarde, setOperadoresTarde] = useState<Operador[]>([]);
+    const [operadoresNoite, setOperadoresNoite] = useState<Operador[]>([]);
+    
+    const invalidateOperatorsQueries = (
+        queryClient: any, 
+        derivedEnableFlag: boolean,
+        IdUnit: number | undefined
+    ) => {
+        queryClient.invalidateQueries(['morningoperators', derivedEnableFlag, IdUnit!, "M", "A", null, true]);
+    
+        queryClient.invalidateQueries(['afternoonoperators', derivedEnableFlag, IdUnit!, "T", "A", null, true]);
+
+        queryClient.invalidateQueries(['nightoperators', derivedEnableFlag, IdUnit!, "N", "A", null, true]);
+    };
 
 
     const form = useForm<Form>({
@@ -80,8 +98,8 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
             operador_noturno: nightOperator ? nightOperator.id.toString()! : "nenhum",
         }
     });
-    
-    const {data: {operador: operadores_manha = []} = {}, refetch: refetchOPM} = useGetOperators(
+
+    const { data: { operador: operadores_manha = [] } = {}, refetch: refetchOPM } = useGetMorningOperators(
         true,
         ordem.unidade_id!,
         "M",
@@ -90,7 +108,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
         true,
     );
 
-    const {data: {operador: operadores_tarde = []} = {}, refetch: refetchOPT} = useGetOperators(
+    const { data: { operador: operadores_tarde = [] } = {}, refetch: refetchOPT } = useGetAfternoonOperators(
         true,
         ordem.unidade_id!,
         "T",
@@ -98,9 +116,9 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
         null,
         true,
     );
-  
 
-    const {data: {operador: operadores_noite = []} = {}, refetch: refetchOPN} = useGetOperators(
+
+    const { data: { operador: operadores_noite = [] } = {}, refetch: refetchOPN } = useGetNightOperators(
         true,
         ordem.unidade_id!,
         "N",
@@ -110,21 +128,18 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     );
 
     useEffect(() => {
-        refetchOPM;
-        refetchOPT;
-        refetchOPN;
-        if (morningOperator && !operadores_manha.some(op => op.id === morningOperator.id)) {
-            operadores_manha.push(morningOperator);
+        if (open && morningOperator && !operadores_manha.some(op => op.id === morningOperator.id)) {
+            setOperadoresManha([...operadores_manha, morningOperator]);
         }
-        if (afternoonOperator && !operadores_tarde.some(op => op.id === afternoonOperator.id)) {
-            operadores_tarde.push(afternoonOperator);
+        if (open && afternoonOperator && !operadores_tarde.some(op => op.id === afternoonOperator.id)) {
+            setOperadoresTarde([...operadores_tarde, afternoonOperator])
         }
-        if (nightOperator && !operadores_noite.some(op => op.id === nightOperator.id)) {
-            operadores_noite.push(nightOperator);
+        if (open && nightOperator && !operadores_noite.some(op => op.id === nightOperator.id)) {
+            setOperadoresNoite([...operadores_noite, nightOperator]);
         }
-        if(onclose)
+        if (onclose)
             form.reset();
-    }, [morningOperator, afternoonOperator, nightOperator, operadores_manha, operadores_tarde, operadores_noite, onclose]);
+    }, [open, morningOperator, afternoonOperator, nightOperator, onclose]);
 
 
 
@@ -142,6 +157,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                 description: t("putOrder-success"),
             });
             refetchOrders?.();
+            invalidateOperatorsQueries(queryClient, true, ordem.unidade_id!);
             setOpen(false);
             form.reset();
         },
@@ -168,6 +184,12 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
         },
     });
 
+    const handleOpenChange = useCallback(() => {
+        setOpen(prev => !prev);
+        form.reset();
+
+    }, []);
+
     const onHandleSubmit = (data: Form) => {
         const operadoresSelecionados = [];
 
@@ -180,18 +202,18 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
         if (data.operador_noturno !== null && data.operador_noturno !== "nenhum") {
             operadoresSelecionados.push(parseInt(data.operador_noturno));
         }
-        
+
         const operadorIds: number[] = ordem.operadores!.map((operador) => operador.id);
 
-    // Formata os dados com os IDs dos operadores
-    const formattedData = {
-        id: ordem.id,
-        status: data.status,
-        velocidade_minima: parseFloat(data.velocidade_minima),
-        velocidade_maxima: parseFloat(data.velocidade_maxima),
-        rpm: parseInt(data.rpm),
-        operadores: operadoresSelecionados ? operadoresSelecionados : operadorIds, // Substitui ordem.operadores pelos IDs extraídos
-    };
+        // Formata os dados com os IDs dos operadores
+        const formattedData = {
+            id: ordem.id,
+            status: data.status,
+            velocidade_minima: parseFloat(data.velocidade_minima.replace(',', '.')),
+            velocidade_maxima: parseFloat(data.velocidade_maxima.replace(',', '.')),
+            rpm: parseInt(data.rpm),
+            operadores: operadoresSelecionados ? operadoresSelecionados : operadorIds, // Substitui ordem.operadores pelos IDs extraídos
+        };
 
         // Aqui chama a função mutate do reactquery, jogando os dados formatados pra fazer a logica toda
         mutate(formattedData);
@@ -199,7 +221,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
 
     // adicionar Campo data previsao (1 dia minimo)
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
@@ -212,10 +234,11 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_manha"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
+                                            disabled={ordem.status == "E"}
                                             onValueChange={(value) => {
                                                 form.setValue("operador_manha", value);
                                             }}
@@ -228,7 +251,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadores_manha.map((operador) => (
+                                                {operadoresManha.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
@@ -243,10 +266,11 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_tarde"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
+                                            disabled={ordem.status == "E"}
                                             onValueChange={(value) => {
                                                 form.setValue("operador_tarde", value);
                                             }}
@@ -259,7 +283,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadores_tarde.map((operador) => (
+                                                {operadoresTarde.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
@@ -274,23 +298,24 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                         <FormField
                             control={form.control}
                             name="operador_noturno"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className="col-span-2">
                                     <FormControl>
                                         <Select
+                                            disabled={ordem.status == "E"}
                                             onValueChange={(value) => {
                                                 form.setValue("operador_noturno", value);
                                             }}
                                         >
                                             <SelectTrigger Icon={Moon} className="h-10">
                                                 <SelectValue
-                                                     placeholder={nightOperator?.nome ||"Selecione o Operador do Turno da Noite"}
+                                                    placeholder={nightOperator?.nome || "Selecione o Operador do Turno da Noite"}
                                                     {...field}
                                                 />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadores_noite.map((operador) => (
+                                                {operadoresNoite.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
@@ -304,6 +329,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                         />
                         <FormField
                             control={form.control}
+                            disabled={ordem.status == "E"}
                             name="velocidade_maxima"
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
@@ -322,6 +348,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
 
                         <FormField
                             control={form.control}
+                            disabled={ordem.status == "E"}
                             name="velocidade_minima"
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
@@ -339,6 +366,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                         />
                         <FormField
                             control={form.control}
+                            disabled={ordem.status == "E"}
                             name="rpm"
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
