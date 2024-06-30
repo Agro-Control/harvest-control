@@ -20,7 +20,7 @@ const MaintenanceGrid = () => {
     return (
         <div className="grid w-full gap-6 md:grid-cols-2 pb-4 xl:grid-cols-3">
                <MaintenanceCard title="Manutenção hoje" subtitle="Máquinas em manutenção hoje" value={data?.qtd_maquinas_manutencao_dia || 0}  isLoading={isLoadingData} />
-               <MaintenancePercentage title="Porcentagem do dia" subtitle="Tempo total de manutenção no dia" value={data?.tempo_total_manutencao || 0}  isLoading={isLoadingData} />
+               <MaintenancePercentage title="Tempo de manutenção" subtitle="Tempo total de manutenção da frota" value={data?.tempo_total_manutencao || 0}  isLoading={isLoadingData} />
                <MaintenanceCard title="Eventos mensais" subtitle="Eventos de manutenção nesse mês" isEvent value={data?.qtd_eventos_mes || 0}  isLoading={isLoadingData} />
             
             </div>
