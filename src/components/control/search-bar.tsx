@@ -21,7 +21,7 @@ const SearchBar = ({text, isReport = false}: SearchBarProps) => {
 
             if (query) setQueryParam(query);
         },
-        1500,
+        1000,
         [query],
     );
 
