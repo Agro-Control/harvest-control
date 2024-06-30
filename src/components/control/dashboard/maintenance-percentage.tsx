@@ -5,23 +5,29 @@ import {CircleNotch, Wrench, Gear} from "@phosphor-icons/react";
 interface MaintenancePercentageProps {
     title: string;
     subtitle: string;
-    value: number | null;
+    value: number;
     isLoading: boolean;
 }
 
 const MaintenancePercentage = ({title, subtitle, value, isLoading}: MaintenancePercentageProps) => {
 
-    const calculatePercentage = (value: number | null) => {
-        if (value === null ) {
-            return "0.00";
+    const formatDuration = (duration: number): string => {
+        if (duration === 0) {
+            return "0s";
         }
-        const totalSecondsInDay = 24 * 60 * 60;
-        const percentage = (value / totalSecondsInDay) * 100;
-        return percentage.toFixed(2);
-    }
 
-    const percentage = calculatePercentage(value);
+        const hours = Math.floor(duration / 3600);
+        const minutes = Math.floor((duration % 3600) / 60);
+        const seconds = duration % 60;
 
+        const hoursStr = hours > 0 ? `${hours}hr` : "";
+        const minutesStr = minutes > 0 ? `${minutes}min  ` : "";
+        const secondsStr = seconds > 0 ? ` ${seconds}s` : "";
+
+        return `${hoursStr} ${minutesStr}  ${secondsStr}`.trim();
+    };
+
+    const duration = formatDuration(value);
 
     return (
         <div className="col-span-2 flex h-full w-full flex-col items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4  lg:min-h-[130px] xl:col-span-1">
@@ -85,7 +91,7 @@ const MaintenancePercentage = ({title, subtitle, value, isLoading}: MaintenanceP
                         {isLoading ? (
                             <CircleNotch className="h-4 w-4 animate-spin text-green-900" />
                         ) : (
-                            <p className="font-bold">{percentage}%</p>
+                            <p className="font-bold">{duration}</p>
                         )}
                     </div>
                 </div>
