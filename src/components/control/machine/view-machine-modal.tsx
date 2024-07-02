@@ -88,14 +88,14 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                 placeholder="Fabricante"
                                 value={machine.fabricante || "Não informado"}
                             />
-                            <Input
+                            {false && <Input
                                 disabled
                                 Icon={GasPump}
                                 className="col-span-1 "
                                 id="capacidade_opercional"
                                 placeholder="Capacidade Operacional"
                                 value={machine.capacidade_operacional || "Não informado"}
-                            />
+                            />}
                             <Input
                                 disabled
                                 Icon={Calendar}
