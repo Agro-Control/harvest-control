@@ -31,6 +31,7 @@ export default function ViewFieldDetails({ children, field }: EditFieldProps) {
 
     const handleClose = () => {
         setOpen(false);
+        setIsTrienio(false);
     };
 
     const handleInitialDateChange = (date: Date | undefined) => {
@@ -83,7 +84,8 @@ export default function ViewFieldDetails({ children, field }: EditFieldProps) {
                             minDate={selectedInitialDate}
                             disabled={isTrienio}
                         />
-                        <Button onClick={handleSearchClick}>
+                        <Button disabled={isTrienio ? !isTrienio : !selectedInitialDate || !selectedFinalDate}
+                            onClick={handleSearchClick} className="font-regular rounded-xl max-w-[150px] bg-green-500 py-5 font-poppins text-green-950 ring-0 transition-colors hover:bg-green-600">
                             Buscar
                         </Button>
                     </div>
@@ -91,7 +93,7 @@ export default function ViewFieldDetails({ children, field }: EditFieldProps) {
                         <input
                             type="checkbox"
                             id="trienio"
-                            className="mr-2"
+                            className="mr-2 bg-green-500"
                             checked={isTrienio}
                             onChange={handleTrienioChange}
                         />
@@ -99,6 +101,7 @@ export default function ViewFieldDetails({ children, field }: EditFieldProps) {
                     </div>
                 </div>
                 <div className="grid w-full gap-6 md:grid-cols-1 xl:grid-cols-3">
+                <div style={{ height: 550, width: 1050}}>
                     {searchPerformed && !isTrienio && (
                         <FieldClimateChart
                             isAnual={!isTrienio}
@@ -115,6 +118,7 @@ export default function ViewFieldDetails({ children, field }: EditFieldProps) {
                             data_fim={format(new Date(), "yyyy-MM-dd")}
                         />
                     )}
+                    </div>
                 </div>
                 <DialogFooter>
                     <Button

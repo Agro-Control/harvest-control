@@ -11,7 +11,7 @@
         "npm": "please-use-pnpm"
     },
     "scripts": {
-        "dev": "next dev -p 80 ",
+        "dev": "next dev -p 8070 ",
         "build": "next build",
         "start": "next start -p 80",
         "lint": "next lint",

@@ -40,7 +40,7 @@ export default function Reports() {
     } = useGetOrderEvent(Number(query));
 
 
-    const isLoadingOrderEventData = isLoadingOrderEvent || isRefetchingOrderEvent;
+    const isLoadingOrderEventData = isLoadingOrderEvent;
     useEffect(() => {
         refetch();
     }, [eventos, tipoEvento]);
