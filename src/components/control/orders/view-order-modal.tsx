@@ -21,7 +21,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import OrdemServico from "@/types/ordem-de-servico";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
@@ -47,26 +47,39 @@ const ViewOrderModal = ({ children, ordem }: ViewOrderProps) => {
 
     const {
         data: unidade,
-        isLoading: isLoadingUnit
+        isLoading: isLoadingUnit,
+        refetch: refetchUnits
     } = useGetUnit(ordem.unidade_id!);
 
     const {
         data: empresa,
-        isLoading: isLoadingCompany
+        isLoading: isLoadingCompany,
+        refetch: refetchCompanies
     } = useGetCompany(ordem.empresa_id!);
 
     const {
         data: talhao,
-        isLoading: isLoadingField
+        isLoading: isLoadingField,
+        refetch: refetchFields
     } = useGetField(ordem.talhao_id!);
 
     const {
         data: maquina,
-        isLoading: isLoadingMachine
+        isLoading: isLoadingMachine,
+        refetch: refetchMachines
     } = useGetMachine(ordem.maquina_id!);
+
+    useEffect(() => {
+        refetchCompanies();
+        refetchFields();
+        refetchMachines();
+        refetchUnits();
+     
+    }, [open, onclose]);
 
     const handleClose = () => {
         setOpen(false);
+
     };
 
 

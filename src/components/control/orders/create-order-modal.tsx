@@ -155,6 +155,7 @@ const CreateOrderModal = ({ children, refetchOrders }: createOrderProps) => {
     );
 
     useEffect(() => {
+        queryClient.clear();
         if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined) setEnableFlag(true);
         if (watchIdUnit !== "" && watchIdUnit !== undefined) {
             setDerivedEnableFlag(true);
@@ -163,7 +164,7 @@ const CreateOrderModal = ({ children, refetchOrders }: createOrderProps) => {
             refetchOPT();
             refetchOPN();
         }
-    }, [
+    }, [open,
         queryClient,
         watchIdEmpresa,
         watchIdUnit,
@@ -219,7 +220,7 @@ const CreateOrderModal = ({ children, refetchOrders }: createOrderProps) => {
         setOpen(prev => !prev);
         invalidateOperatorsQueries(queryClient, derivedEnableFlag, watchIdUnit);
         form.reset();
-        queryCache.clear();
+        queryClient.clear();
         setEnableFlag(false);
         setDerivedEnableFlag(false);
 

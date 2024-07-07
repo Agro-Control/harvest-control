@@ -5,20 +5,21 @@ import { useEffect } from "react";
 import { format } from "date-fns";
 import { FieldClimateAnualData, useGetFieldClimateAnualDetail } from "@/utils/hooks/useGetFieldClimateAnualDetails";
 import formatDuration, { convertDurationToHoursFromSeconds } from "@/utils/functions/formatDuration";
+import { DialogDescription } from "@/components/ui/dialog";
 
-export const FieldClimateChart = ({ talhao_id, data_inicio, data_fim, isAnual }: { talhao_id: number, data_inicio: string, data_fim: string, isAnual: boolean }) => {
+export const FieldClimateChart = ({ talhao_id, data_inicio, data_fim, tipo, isAnual }: { talhao_id: number, data_inicio: string, data_fim: string, tipo: string, isAnual: boolean }) => {
   
    const { data,
     refetch,
     isLoading,
     isRefetching
-   } = useGetFieldClimateDetail(!isAnual, talhao_id, data_inicio, data_fim);
+   } = useGetFieldClimateDetail(!isAnual, talhao_id, data_inicio, data_fim, tipo);
   
    useEffect(() => {
    if(!isLoading && !isRefetching) {
         refetch(); 
     }
-}, [open , data_inicio, data_fim]);
+}, [open, data_inicio, data_fim]);
 
 function formatDateToDayMonth(event : string | number) {
   let date;
@@ -54,6 +55,7 @@ console.log ("data da api", data);
 
   return (
     <div style={{ height: 500, width: 1000}}>
+      <DialogDescription>Dados de eventos por Mês</DialogDescription>
       {!isLoading && formattedDataMonth.length > 0 && <MyResponsiveLine data={formattedDataMonth} colors={colors} legend="Dia" />}
     </div>
   );

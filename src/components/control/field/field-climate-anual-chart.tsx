@@ -6,12 +6,12 @@ import { format } from "date-fns";
 import { FieldClimateAnualData, useGetFieldClimateAnualDetail } from "@/utils/hooks/useGetFieldClimateAnualDetails";
 import formatDuration, { convertDurationToHoursFromSeconds } from "@/utils/functions/formatDuration";
 
-export const FieldAnualClimateChart = ({ talhao_id, data_inicio, data_fim, isAnual }: { talhao_id: number, data_inicio: string, data_fim: string, isAnual: boolean }) => {
+export const FieldAnualClimateChart = ({ talhao_id, data_inicio, data_fim, tipo,  isAnual }: { talhao_id: number, data_inicio: string, data_fim: string, tipo: string, isAnual: boolean }) => {
     const { data,
         refetch,
         isLoading,
         isRefetching
-    } = useGetFieldClimateAnualDetail(isAnual, talhao_id, data_inicio, data_fim);
+    } = useGetFieldClimateAnualDetail(isAnual, talhao_id, data_inicio, data_fim, tipo);
 
     useEffect(() => {
         if (!isLoading && !isRefetching) {
