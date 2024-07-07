@@ -55,7 +55,7 @@ console.log ("data da api", data);
 
   return (
     <div style={{ height: 500, width: 1000}}>
-      <DialogDescription>Dados de eventos por Mês</DialogDescription>
+      <DialogDescription>Dados de eventos por dia no Mês</DialogDescription>
       {!isLoading && formattedDataMonth.length > 0 && <MyResponsiveLine data={formattedDataMonth} colors={colors} legend="Dia" />}
     </div>
   );

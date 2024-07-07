@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { format } from "date-fns";
 import { FieldClimateAnualData, useGetFieldClimateAnualDetail } from "@/utils/hooks/useGetFieldClimateAnualDetails";
 import formatDuration, { convertDurationToHoursFromSeconds } from "@/utils/functions/formatDuration";
+import { DialogDescription } from "@/components/ui/dialog";
 
 export const FieldAnualClimateChart = ({ talhao_id, data_inicio, data_fim, tipo,  isAnual }: { talhao_id: number, data_inicio: string, data_fim: string, tipo: string, isAnual: boolean }) => {
     const { data,
@@ -47,6 +48,7 @@ export const FieldAnualClimateChart = ({ talhao_id, data_inicio, data_fim, tipo,
 
     return (
         <div style={{ height: 500, width: 800 }}>
+             <DialogDescription>Dados dos eventos por trienal por mês</DialogDescription>
             {!isLoading && formattedData.length > 0 && <MyResponsiveLine data={formattedData} colors={colors} legend="Mês" />}
         </div>
     );
