@@ -72,14 +72,14 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     const [operadoresManha, setOperadoresManha] = useState<Operador[]>([]);
     const [operadoresTarde, setOperadoresTarde] = useState<Operador[]>([]);
     const [operadoresNoite, setOperadoresNoite] = useState<Operador[]>([]);
-    
+
     const invalidateOperatorsQueries = (
-        queryClient: any, 
+        queryClient: any,
         derivedEnableFlag: boolean,
         IdUnit: number | undefined
     ) => {
         queryClient.invalidateQueries(['morningoperators', derivedEnableFlag, IdUnit!, "M", "A", null, true]);
-    
+
         queryClient.invalidateQueries(['afternoonoperators', derivedEnableFlag, IdUnit!, "T", "A", null, true]);
 
         queryClient.invalidateQueries(['nightoperators', derivedEnableFlag, IdUnit!, "N", "A", null, true]);
@@ -100,7 +100,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     });
 
     const { data: { operador: operadores_manha = [] } = {}, refetch: refetchOPM } = useGetMorningOperators(
-        true,
+        open,
         ordem.unidade_id!,
         "M",
         "A",
@@ -109,7 +109,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     );
 
     const { data: { operador: operadores_tarde = [] } = {}, refetch: refetchOPT } = useGetAfternoonOperators(
-        true,
+        open,
         ordem.unidade_id!,
         "T",
         "A",
@@ -119,7 +119,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
 
 
     const { data: { operador: operadores_noite = [] } = {}, refetch: refetchOPN } = useGetNightOperators(
-        true,
+        open,
         ordem.unidade_id!,
         "N",
         "A",
@@ -128,6 +128,9 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     );
 
     useEffect(() => {
+        refetchOPM();
+        refetchOPT();
+        refetchOPN();
         if (open && morningOperator && !operadores_manha.some(op => op.id === morningOperator.id)) {
             setOperadoresManha([...operadores_manha, morningOperator]);
         }
@@ -147,6 +150,9 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
         const { data } = await api.put("/ordens", putData);
         return data;
     };
+
+    console.log(operadoresManha);
+    console.log(operadoresTarde);
 
     const { mutate, isPending } = useMutation({
         mutationFn: editOrderRequest,
@@ -186,6 +192,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
 
     const handleOpenChange = useCallback(() => {
         setOpen(prev => !prev);
+        queryClient.clear();
         form.reset();
 
     }, []);
@@ -251,7 +258,11 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadoresManha.map((operador) => (
+                                                {operadoresManha.length > 0 ? operadoresManha.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
+                                                    </SelectItem>
+                                                )) : operadores_manha.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
@@ -283,7 +294,11 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadoresTarde.map((operador) => (
+                                                {operadoresTarde.length > 0 ? operadoresTarde.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
+                                                    </SelectItem>
+                                                )) : operadores_tarde.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
@@ -315,7 +330,11 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadoresNoite.map((operador) => (
+                                                {operadoresNoite.length > 0 ? operadoresNoite.map((operador) => (
+                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
+                                                        {operador.nome}
+                                                    </SelectItem>
+                                                )) : operadores_noite.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
@@ -421,5 +440,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     );
 };
 export default EditOrderModal;
+
+
 
 
