@@ -112,7 +112,7 @@ export default function Reports() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>ID</TableHead>
+                        <TableHead>Operador</TableHead>
                         <TableHead>Nome</TableHead>
                         <TableHead>Data Início</TableHead>
                         <TableHead>Data Fim</TableHead>
