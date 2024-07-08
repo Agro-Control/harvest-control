@@ -23,5 +23,6 @@ export const useGetOperativeMachinesByGroup = (grupo_id: number | null,  empresa
         queryKey: ["machines_by_group", grupo_id],
         enabled: true, 
         queryFn: () => getOperativeMachinesByGroup(grupo_id, empresa_id),
+        refetchInterval: 9000
     });
 };

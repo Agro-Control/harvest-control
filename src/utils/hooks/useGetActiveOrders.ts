@@ -20,5 +20,6 @@ export const useGetActiveOrders = (grupo_id: number | null, empresa_id: number |
         queryKey: ["orders_by_group", grupo_id],
         enabled: true, 
         queryFn: () => getActiveOrders(grupo_id, empresa_id),
+        refetchInterval: 9000,
     });
 };
