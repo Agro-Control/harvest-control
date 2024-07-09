@@ -14,7 +14,7 @@ const ReportRow = ({ evento}: EventRowProps) => {
 
     return (
         <TableRow key={evento.id}>
-            <TableCell className="font-medium">{evento.id}</TableCell>
+            <TableCell className="font-medium">{evento.operador_nome || "Não Informado"}</TableCell>
             <TableCell className="font-medium">{t(evento.nome!)}</TableCell>
             <TableCell className="font-medium">{formatDate(evento.data_inicio! as string | Date)}</TableCell>
             <TableCell className="font-medium">{formatDate(evento.data_fim!)}</TableCell>

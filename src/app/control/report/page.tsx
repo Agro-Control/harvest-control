@@ -112,8 +112,8 @@ export default function Reports() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead>Nome</TableHead>
+                        <TableHead>Nome do Operador</TableHead>
+                        <TableHead>Nome do Evento</TableHead>
                         <TableHead>Data Início</TableHead>
                         <TableHead>Data Fim</TableHead>
                         <TableHead>Duração</TableHead>
