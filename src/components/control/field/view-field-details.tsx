@@ -107,6 +107,8 @@ export default function ViewFieldDetails({ children, field }: EditFieldProps) {
 
     // Exemplo de uso da função
     const dataInicioDoAno = getInicioDoAnoAtual();
+    const dataAmanha = new Date();
+    dataAmanha.setDate(dataAmanha.getDate() + 1);
     console.log(Tipo);
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -152,7 +154,7 @@ export default function ViewFieldDetails({ children, field }: EditFieldProps) {
                     </div>
                 </div>
                 <div className="grid w-full gap-30 md:grid-cols-2 xl:grid-cols-2">
-                    <FieldEventsAnualChart talhao_id={field.id!} data_inicio={dataInicioDoAno} data_fim={format(new Date(), "yyyy-MM-dd")}></FieldEventsAnualChart>
+                    <FieldEventsAnualChart talhao_id={field.id!} data_inicio={dataInicioDoAno} data_fim={format(dataAmanha, "yyyy-MM-dd")}></FieldEventsAnualChart>
                     
                     <div style={{ height: 500, width: 800 }}>
                         {searchPerformed && !isTrienio && (
