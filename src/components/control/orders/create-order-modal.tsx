@@ -155,9 +155,11 @@ const CreateOrderModal = ({ children, refetchOrders }: createOrderProps) => {
     );
 
     useEffect(() => {
-        queryClient.clear();
+        refetchU();
+        refetchM();
         if (watchIdEmpresa !== "" && watchIdEmpresa !== undefined) setEnableFlag(true);
         if (watchIdUnit !== "" && watchIdUnit !== undefined) {
+            queryClient.clear();
             setDerivedEnableFlag(true);
             invalidateOperatorsQueries(queryClient, derivedEnableFlag, watchIdUnit);
             refetchOPM();

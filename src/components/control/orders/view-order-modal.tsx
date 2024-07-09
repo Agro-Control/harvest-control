@@ -48,34 +48,34 @@ const ViewOrderModal = ({ children, ordem }: ViewOrderProps) => {
     const {
         data: unidade,
         isLoading: isLoadingUnit,
-        refetch: refetchUnits
+        refetch: refetchU
     } = useGetUnit(ordem.unidade_id!);
 
     const {
         data: empresa,
         isLoading: isLoadingCompany,
-        refetch: refetchCompanies
+        refetch: refetchC
     } = useGetCompany(ordem.empresa_id!);
 
     const {
         data: talhao,
         isLoading: isLoadingField,
-        refetch: refetchFields
+        refetch: refetchF
     } = useGetField(ordem.talhao_id!);
 
     const {
         data: maquina,
         isLoading: isLoadingMachine,
-        refetch: refetchMachines
+        refetch: refetchM
     } = useGetMachine(ordem.maquina_id!);
 
     useEffect(() => {
-        refetchCompanies();
-        refetchFields();
-        refetchMachines();
-        refetchUnits();
+        refetchM();
+        refetchC();
+        refetchF();
+        refetchU();
      
-    }, [open, onclose]);
+    }, [open]);
 
     const handleClose = () => {
         setOpen(false);

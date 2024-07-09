@@ -6,7 +6,6 @@ import {useAuth} from "@/utils/hooks/useAuth";
 import Link from "next/link";
 import DoubleDataCard from "./double-data-card";
 
-
 const ActiveOrdersCard = () => {
     const {user} = useAuth();
     const isAdmin = user?.tipo === "D";
@@ -18,17 +17,17 @@ const ActiveOrdersCard = () => {
 
     return (
         <DoubleDataCard
-            title="Ordens de Serviço"
-            subtitle="Grupo empresarial"
-            Icon={Files}
-            isLoading={isLoadingData}
-            firstDataTitle="Ordens totais: "
-            firstDataValue={data?.ordens_totais || 0}
-            FirstDataIcon={Receipt}
-            secondDataTitle="Ordens ativas: "
-            secondDataValue={data?.ordens_ativas || 0}
-            SecondDataIcon={FileArrowUp}
-        ></DoubleDataCard>
+        title="Ordens de Serviço"
+        subtitle="Grupo empresarial"
+        Icon={Files}
+        isLoading={isLoadingData}
+        firstDataTitle="Ordens totais: "
+        firstDataValue={data?.ordens_totais || 0}
+        FirstDataIcon={Receipt}
+        secondDataTitle="Ordens ativas: "
+        secondDataValue={data?.ordens_ativas || 0}
+        SecondDataIcon={FileArrowUp}
+    ></DoubleDataCard>
     );
 };
 export default ActiveOrdersCard;

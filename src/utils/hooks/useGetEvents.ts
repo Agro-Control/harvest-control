@@ -32,5 +32,6 @@ export const useGetEvents = (id_ordem: number | null, nome: string | null) => {
             return true;
         },
         enabled: !!id_ordem,
+        refetchInterval: 9000
     });
 };

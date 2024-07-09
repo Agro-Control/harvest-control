@@ -69,9 +69,6 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
     const morningOperator = ordem.operadores!.find(operator => operator.turno === 'M');
     const afternoonOperator = ordem.operadores!.find(operator => operator.turno === 'T');
     const nightOperator = ordem.operadores!.find(operator => operator.turno === 'N');
-    const [operadoresManha, setOperadoresManha] = useState<Operador[]>([]);
-    const [operadoresTarde, setOperadoresTarde] = useState<Operador[]>([]);
-    const [operadoresNoite, setOperadoresNoite] = useState<Operador[]>([]);
 
     const invalidateOperatorsQueries = (
         queryClient: any,
@@ -131,19 +128,11 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
         refetchOPM();
         refetchOPT();
         refetchOPN();
-        if (open && morningOperator && !operadores_manha.some(op => op.id === morningOperator.id)) {
-            setOperadoresManha([...operadores_manha, morningOperator]);
-        }
-        if (open && afternoonOperator && !operadores_tarde.some(op => op.id === afternoonOperator.id)) {
-            setOperadoresTarde([...operadores_tarde, afternoonOperator])
-        }
-        if (open && nightOperator && !operadores_noite.some(op => op.id === nightOperator.id)) {
-            setOperadoresNoite([...operadores_noite, nightOperator]);
-        }
         if (onclose)
             form.reset();
-    }, [open, morningOperator, afternoonOperator, nightOperator, onclose]);
+    }, [open, onclose]);
 
+   
 
 
     const editOrderRequest = async (putData: OrdemServicoPost | null) => {
@@ -151,8 +140,6 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
         return data;
     };
 
-    console.log(operadoresManha);
-    console.log(operadoresTarde);
 
     const { mutate, isPending } = useMutation({
         mutationFn: editOrderRequest,
@@ -196,6 +183,8 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
         form.reset();
 
     }, []);
+
+    console.log("ordem", ordem.status);
 
     const onHandleSubmit = (data: Form) => {
         const operadoresSelecionados = [];
@@ -258,11 +247,8 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadoresManha.length > 0 ? operadoresManha.map((operador) => (
-                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
-                                                        {operador.nome}
-                                                    </SelectItem>
-                                                )) : operadores_manha.map((operador) => (
+                                                {ordem.status != "I" && morningOperator && <SelectItem key={morningOperator.id} value={morningOperator.id.toString()}>{morningOperator.nome}</SelectItem>}
+                                                {operadores_manha && operadores_manha.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
@@ -294,11 +280,8 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadoresTarde.length > 0 ? operadoresTarde.map((operador) => (
-                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
-                                                        {operador.nome}
-                                                    </SelectItem>
-                                                )) : operadores_tarde.map((operador) => (
+                                                {ordem.status != "I" && afternoonOperator && <SelectItem key={afternoonOperator.id} value={afternoonOperator.id.toString()}>{afternoonOperator.nome}</SelectItem>}
+                                                {operadores_tarde && operadores_tarde.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
@@ -330,11 +313,8 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {operadoresNoite.length > 0 ? operadoresNoite.map((operador) => (
-                                                    <SelectItem key={operador.id} value={operador.id!.toString()}>
-                                                        {operador.nome}
-                                                    </SelectItem>
-                                                )) : operadores_noite.map((operador) => (
+                                                {ordem.status != "I" && nightOperator && <SelectItem key={nightOperator.id} value={nightOperator.id.toString()}>{nightOperator.nome}</SelectItem>}
+                                                {operadores_noite && operadores_noite.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
                                                     </SelectItem>
