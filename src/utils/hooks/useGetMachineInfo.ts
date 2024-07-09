@@ -6,6 +6,27 @@ export interface EventInfo {
     nome: string;
     duracao: number | null;
     operador_id: number;
+    data_inicio: string | null;
+    data_fim: string | null;
+    ordem_servico_id: number;
+    maquina_id: number;
+    operador_nome: string | null;
+}
+
+export interface MachineInfoUser {
+    id: number;
+    nome: string | null;
+    email: string | null;
+    matricula: number;
+    cpf: string | null;
+    status: string | null;
+    turno: string | null;
+    tipo: string | null;
+    telefone: string | null;
+    data_contratacao: string | null;
+    gestor_id: number;
+    empresa_id: number;
+    unidade_id: number;
 }
 
 export interface MachineInfo {
@@ -14,6 +35,9 @@ export interface MachineInfo {
     tempo_total_manutencao_mes: number;
     qtd_manutencao_dia: number;
     tempo_total_manutencao_dia: number;
+    tempo_total_todos_eventos: number;
+    operador_conectado: any;
+    manutencao_eventos: EventInfo[];
 }
 
 const getMachineInfo = async (maquina_id: number | null) => {
@@ -28,3 +52,4 @@ export const useGetMachineInfo = (maquina_id: number | null) => {
         queryFn: () => getMachineInfo(maquina_id),
     });
 };
+

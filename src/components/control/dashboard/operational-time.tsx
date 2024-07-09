@@ -17,7 +17,7 @@ const OperationalTime = () => {
     const empresa_id = user && user?.empresa_id;
     const grupo_id = user && user?.grupo_id;
 
-    const {data, refetch} = useGetOperationalTime(grupo_id, isAdmin ? null : empresa_id);
+    const {data, refetch} = useGetOperationalTime(grupo_id, isAdmin ? null : empresa_id, null);
     
     const formatDuration = (duration: number): string => {
         if (duration === 0) {

@@ -26,5 +26,6 @@ export const useGetMachineMaintenance = (grupo_id: number | null,  empresa_id: n
         queryKey: ["machines_maintenance", grupo_id],
         enabled: true, 
         queryFn: () => getMachineMaintenance(grupo_id, empresa_id),
+        refetchInterval: 9000
     });
 };

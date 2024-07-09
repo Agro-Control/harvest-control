@@ -23,5 +23,6 @@ export const useGetOperatorsByGroup = (grupo_id: number | null,   empresa_id: nu
         queryKey: ["operators_by_group", grupo_id],
         enabled: true, 
         queryFn: () => getOperatorsByGroup(grupo_id, empresa_id),
+        refetchInterval: 9000,
     });
 };
