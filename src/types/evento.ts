@@ -6,6 +6,7 @@ interface Evento {
     duracao: number | null;
     ordem_servico_id: number | null;
     maquina_id: number | null;
+    operador_nome: string | null;
     operador_id: number | null;
 }
 

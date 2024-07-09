@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 interface OrdersByGroup {
+    ordens_totais: number;
     ordens_ativas: number;
 }
 

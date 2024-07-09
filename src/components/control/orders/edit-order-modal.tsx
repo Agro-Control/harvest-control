@@ -183,6 +183,8 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
 
     }, []);
 
+    console.log("ordem", ordem.status);
+
     const onHandleSubmit = (data: Form) => {
         const operadoresSelecionados = [];
 
@@ -244,7 +246,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {morningOperator && <SelectItem key={morningOperator.id} value={morningOperator.id.toString()}>{morningOperator.nome}</SelectItem>}
+                                                {ordem.status != "I" && morningOperator && <SelectItem key={morningOperator.id} value={morningOperator.id.toString()}>{morningOperator.nome}</SelectItem>}
                                                 {operadores_manha && operadores_manha.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
@@ -277,7 +279,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {afternoonOperator && <SelectItem key={afternoonOperator.id} value={afternoonOperator.id.toString()}>{afternoonOperator.nome}</SelectItem>}
+                                                {ordem.status != "I" && afternoonOperator && <SelectItem key={afternoonOperator.id} value={afternoonOperator.id.toString()}>{afternoonOperator.nome}</SelectItem>}
                                                 {operadores_tarde && operadores_tarde.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}
@@ -310,7 +312,7 @@ const EditOrderModal = ({ children, ordem, refetchOrders }: editOrderProps) => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value={"nenhum"}>Nenhum</SelectItem>
-                                                {nightOperator && <SelectItem key={nightOperator.id} value={nightOperator.id.toString()}>{nightOperator.nome}</SelectItem>}
+                                                {ordem.status != "I" && nightOperator && <SelectItem key={nightOperator.id} value={nightOperator.id.toString()}>{nightOperator.nome}</SelectItem>}
                                                 {operadores_noite && operadores_noite.map((operador) => (
                                                     <SelectItem key={operador.id} value={operador.id!.toString()}>
                                                         {operador.nome}

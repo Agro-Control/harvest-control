@@ -1,9 +1,10 @@
 "use client";
 import {useGetActiveOrders} from "@/utils/hooks/useGetActiveOrders";
-import {FileArrowUp, Files, ArrowRight} from "@phosphor-icons/react";
+import {FileArrowUp, Files, Receipt} from "@phosphor-icons/react";
 import SingleDataCard from "./single-data-card";
 import {useAuth} from "@/utils/hooks/useAuth";
 import Link from "next/link";
+import DoubleDataCard from "./double-data-card";
 
 const ActiveOrdersCard = () => {
     const {user} = useAuth();
@@ -15,41 +16,18 @@ const ActiveOrdersCard = () => {
     const isLoadingData = isLoading || isRefetching;
 
     return (
-        <SingleDataCard
-            title="Ordens de Serviço"
-            subtitle="Grupo empresarial"
-            Icon={Files}
-            isLoading={isLoadingData}
-            firstDataTitle="Ordens ativa: "
-            firstDataValue={data?.ordens_ativas || 0}
-            FirstDataIcon={FileArrowUp}
-        >
-           {!isAdmin &&  <Link
-             href="/control/orders"
-                    className="text-black flex h-9
-        w-full
-        flex-row
-        items-center
-        justify-center
-        gap-3
-        rounded-full
-        border border-divider   
-        bg-gray-500/10
-        px-3
-        text-base
-        font-normal
-       3xl:w-auto
-        cursor-pointer
-        hover:bg-gray-500/20
-        transition-colors
-"
-                >
-                    <ArrowRight className="h-5 w-5 text-green-950 " />
-                    
-                            <p className="font-bold"> Acessar ordens</p>
-                    </Link>
-}
-        </SingleDataCard>
+        <DoubleDataCard
+        title="Ordens de Serviço"
+        subtitle="Grupo empresarial"
+        Icon={Files}
+        isLoading={isLoadingData}
+        firstDataTitle="Ordens totais: "
+        firstDataValue={data?.ordens_totais || 0}
+        FirstDataIcon={Receipt}
+        secondDataTitle="Ordens ativas: "
+        secondDataValue={data?.ordens_ativas || 0}
+        SecondDataIcon={FileArrowUp}
+    ></DoubleDataCard>
     );
 };
 export default ActiveOrdersCard;
