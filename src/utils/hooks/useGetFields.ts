@@ -3,6 +3,9 @@ import { api } from "@/lib/api";
 import GetTalhao from "@/types/get-talhao";
 
 const getFieldsRequest = async (empresa_id: number | null, unidade_id: number | null, codigo: string | null, status: string | null) => {
+
+    
+    if(isNaN(Number(unidade_id))) return;
     const { data } = await api.get<GetTalhao>("/talhoes", {
         params: {
             empresa_id: empresa_id,

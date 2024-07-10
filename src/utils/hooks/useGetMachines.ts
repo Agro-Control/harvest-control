@@ -3,6 +3,9 @@ import { api } from "@/lib/api";
 import GetMaquina from "@/types/get-maquina";
 
 const getMachinesRequest = async (empresa_id: number | null, unidade_id: number | null, codigo: string | null, status: string | null) => {
+
+
+    if(isNaN(Number(unidade_id))) return;
     const { data } = await api.get<GetMaquina>("/maquinas", {
         params: {
             empresa_id: empresa_id,
