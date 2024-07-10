@@ -140,10 +140,10 @@ const Machines = () => {
 
                 {!isError &&
                     !isLoading &&
-                    maquinas.map((maquina: Maquina) => {
+                    maquinas.map((maquina: Maquina, index) => {
                         return (
-                            <TableBody>
-                                <MachineRow key={maquina.id} maquina={maquina} refetchMachines={refetchMachines} />
+                            <TableBody key={index}>
+                                <MachineRow key={index} maquina={maquina} refetchMachines={refetchMachines} />
                             </TableBody>
                         );
                     })}

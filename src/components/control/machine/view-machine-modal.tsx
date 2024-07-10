@@ -130,11 +130,11 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
         }
     }, [open]);
 
-    const handleEventRender = (event: EventInfo) => {
+    const handleEventRender = (event: EventInfo, index: number ) => {
         switch (event.nome) {
             case "manutencao":
                 return (
-                    <div className="flex w-full flex-row gap-4">
+                    <div key={index} className="flex w-full flex-row gap-4">
                                         <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-red-400 bg-red-300/50 ">
                                             <Wrench className="h-5 w-5 text-red-950 " />
                                         </div>
@@ -167,7 +167,7 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                 )
             case "deslocamento":
                 return (
-                    <div className="flex w-full flex-row gap-4">
+                    <div key={index} className="flex w-full flex-row gap-4">
                                         <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-green-500 bg-green-400/50 ">
                                             <TrendUp className="h-5 w-5 text-green-950 " />
                                         </div>
@@ -200,7 +200,7 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                 )
             case "operacao":
                 return (
-                    <div className="flex w-full flex-row gap-4">
+                    <div key={index} className="flex w-full flex-row gap-4">
                                         <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-green-500 bg-green-400/50 ">
                                             <TrendUp className="h-5 w-5 text-green-950 " />
                                         </div>
@@ -233,7 +233,7 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                 )
             case "clima":
                 return (
-                    <div className="flex w-full flex-row gap-4">
+                    <div key={index} className="flex w-full flex-row gap-4">
                                         <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-green-500 bg-green-400/50 ">
                                             <CloudRain className="h-5 w-5 text-green-950 " />
                                         </div>
@@ -266,7 +266,7 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                 )
             default:
                 return (
-                    <div className="flex w-full flex-row gap-4">
+                    <div key={index} className="flex w-full flex-row gap-4">
                                         <div className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg border border-green-500 bg-green-400/50 ">
                                             <Clock className="h-5 w-5 text-green-950 " />
                                         </div>
@@ -383,16 +383,16 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                                     Ultimo evento
                                                 </p>
                                                 <p className="line-clamp-1 text-xs font-normal leading-4 text-gray-500  ">
-                                                    {formatDate(data?.ultimos_eventos[0].data_inicio!) || ""}
+                                                    {formatDate(data?.ultimos_eventos[0]?.data_inicio!) || ""}
                                                 </p>
                                             </div>
                                             <p className="line-clamp-1 text-sm font-bold leading-5 text-green-950 ">
-                                                {t(data?.ultimos_eventos[0].nome!) || ""}
+                                                {t(data?.ultimos_eventos[0]?.nome!) || ""}
                                             </p>
                                         </div>
                                     </div>
                                     <p className="min-w-[200px] rounded-full text-end text-sm font-bold  text-green-950">
-                                        {formatDuration(data?.ultimos_eventos[0].duracao) || ""}
+                                        {formatDuration(data?.ultimos_eventos[0]?.duracao) || ""}
                                     </p>
                                 </div>
 
@@ -473,9 +473,9 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                     data?.ultimos_eventos.length === 0 ? (
                                         <p>Não foram encontrados eventos no dia</p>
                                     ) : (
-                                        data?.ultimos_eventos.map((evento) => {
+                                        data?.ultimos_eventos.map((evento, index) => {
                                             return (
-                                            handleEventRender(evento)
+                                            handleEventRender(evento, index)
                                             )
                                         })
                                     )
@@ -510,9 +510,9 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                        data?.manutencao_eventos.length === 0 ? (
                                            <p>Não foram encontradas manutenções no dia</p>
                                         ) : (
-                                            data?.manutencao_eventos.map((evento) => {
+                                            data?.manutencao_eventos.map((evento, index) => {
                                                 return (
-                                                    handleEventRender(evento)
+                                                    handleEventRender(evento, index)
                                                 )
                                             })
                                         )
