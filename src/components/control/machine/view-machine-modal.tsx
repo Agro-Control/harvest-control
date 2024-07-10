@@ -153,10 +153,10 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                             </div>
                                         </div>
                                         <div className="flex flex-row items-center gap-3">
-                                            <p className="text-sm">{getDate(event.data_inicio)}: </p>
-                                            <p className="text-sm">{getTime(event.data_inicio)} </p>
+                                            <p className="text-sm">{getDate(event?.data_inicio) || ""}: </p>
+                                            <p className="text-sm">{getTime(event?.data_inicio) || ""} </p>
                                             <ArrowFatLineRight className="h-5 w-5 text-red-800 " />
-                                            <p className="text-sm">{getTime(event.data_fim)} </p>
+                                            <p className="text-sm">{getTime(event?.data_fim) || ""} </p>
 
                                         <p className="text-sm rounded-full bg-red-200 px-2">
                                         {formatDuration(event.duracao)}
@@ -186,10 +186,10 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                             </div>
                                         </div>
                                         <div className="flex flex-row items-center gap-3">
-                                            <p className="text-sm">{getDate(event.data_inicio)}: </p>
-                                            <p className="text-sm">{getTime(event.data_inicio)} </p>
+                                            <p className="text-sm">{getDate(event?.data_inicio) || ""}: </p>
+                                            <p className="text-sm">{getTime(event?.data_inicio) || ""} </p>
                                             <ArrowFatLineRight className="h-5 w-5 text-green-700 " />
-                                            <p className="text-sm">{getTime(event.data_fim)} </p>
+                                            <p className="text-sm">{getTime(event?.data_fim) || ""} </p>
 
                                         <p className="text-sm rounded-full bg-green-200 px-2">
                                         {formatDuration(event.duracao)}
@@ -219,10 +219,10 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                             </div>
                                         </div>
                                         <div className="flex flex-row items-center gap-3">
-                                            <p className="text-sm">{getDate(event.data_inicio)}: </p>
-                                            <p className="text-sm">{getTime(event.data_inicio)} </p>
+                                            <p className="text-sm">{getDate(event?.data_inicio) || ""}: </p>
+                                            <p className="text-sm">{getTime(event?.data_inicio) || ""} </p>
                                             <ArrowFatLineRight className="h-5 w-5 text-green-700 " />
-                                            <p className="text-sm">{getTime(event.data_fim)} </p>
+                                            <p className="text-sm">{getTime(event?.data_fim) || ""} </p>
 
                                         <p className="text-sm rounded-full bg-green-200 px-2">
                                         {formatDuration(event.duracao)}
@@ -252,10 +252,10 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                             </div>
                                         </div>
                                         <div className="flex flex-row items-center gap-3">
-                                            <p className="text-sm">{getDate(event.data_inicio)}: </p>
-                                            <p className="text-sm">{getTime(event.data_inicio)} </p>
+                                            <p className="text-sm">{getDate(event?.data_inicio) || ""}: </p>
+                                            <p className="text-sm">{getTime(event?.data_inicio) || ""} </p>
                                             <ArrowFatLineRight className="h-5 w-5 text-green-700 " />
-                                            <p className="text-sm">{getTime(event.data_fim)} </p>
+                                            <p className="text-sm">{getTime(event?.data_fim) || ""} </p>
 
                                         <p className="text-sm rounded-full bg-green-200 px-2">
                                         {formatDuration(event.duracao)}
@@ -285,10 +285,10 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                             </div>
                                         </div>
                                         <div className="flex flex-row items-center gap-3">
-                                            <p className="text-sm">{getDate(event.data_inicio)}: </p>
-                                            <p className="text-sm">{getTime(event.data_inicio)} </p>
+                                            <p className="text-sm">{getDate(event?.data_inicio) || ""}: </p>
+                                            <p className="text-sm">{getTime(event?.data_inicio) || ""} </p>
                                             <ArrowFatLineRight className="h-5 w-5 text-green-700 " />
-                                            <p className="text-sm">{getTime(event.data_fim)} </p>
+                                            <p className="text-sm">{getTime(event?.data_fim) || ""} </p>
 
                                         <p className="text-sm rounded-full bg-green-200 px-2">
                                         {formatDuration(event.duracao)}
@@ -383,7 +383,7 @@ const ViewMachineModal = ({children, machine}: EditMachineProps) => {
                                                     Ultimo evento
                                                 </p>
                                                 <p className="line-clamp-1 text-xs font-normal leading-4 text-gray-500  ">
-                                                    {formatDate(data?.ultimos_eventos[0].data_inicio!)}
+                                                    {formatDate(data?.ultimos_eventos[0].data_inicio!) || ""}
                                                 </p>
                                             </div>
                                             <p className="line-clamp-1 text-sm font-bold leading-5 text-green-950 ">
