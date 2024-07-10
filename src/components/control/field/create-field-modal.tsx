@@ -38,7 +38,7 @@ import GetTalhao from "@/types/get-talhao";
 
 interface createFieldProps {
     children: ReactNode;
-    refetchFields: (options?: RefetchOptions) => Promise<QueryObserverResult<GetTalhao, Error>>
+    refetchFields: (options?: RefetchOptions) => Promise<QueryObserverResult<GetTalhao | undefined, Error>>
 }
 
 type Form = z.infer<typeof editFieldSchema>;

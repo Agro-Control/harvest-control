@@ -9,7 +9,7 @@ import GetTalhao from "@/types/get-talhao";
 
 interface FieldRowProps {
     talhao: Talhao;
-    refetchFields: (options?: RefetchOptions) => Promise<QueryObserverResult<GetTalhao, Error>>
+    refetchFields: (options?: RefetchOptions) => Promise<QueryObserverResult<GetTalhao | undefined, Error>>
 }
 const FieldRow = ({ talhao, refetchFields}: FieldRowProps) => {
     const {t} = useTranslation();
