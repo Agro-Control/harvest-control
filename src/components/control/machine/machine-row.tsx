@@ -10,7 +10,7 @@ import GetMaquina from "@/types/get-maquina";
 
 interface FieldRowProps {
     maquina: Maquina;
-    refetchMachines?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetMaquina, Error>>
+    refetchMachines?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetMaquina | undefined, Error>>
 }
 const MachineRow = ({ maquina, refetchMachines}: FieldRowProps) => {
     const { t } = useTranslation();

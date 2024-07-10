@@ -33,7 +33,7 @@ import GetMaquina from "@/types/get-maquina";
 
 interface CreateMachineModalProps {
     children: ReactNode;
-    refetchMachines?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetMaquina, Error>>
+    refetchMachines?: (options?: RefetchOptions) => Promise<QueryObserverResult<GetMaquina | undefined,  Error>>
 }
 
 type Form = z.infer<typeof createMachineSchema>;
