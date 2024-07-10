@@ -18,7 +18,7 @@ const Progress = React.forwardRef<
     {...props}
   >
     <ProgressPrimitive.Indicator
-      className="h-full w-full flex-1 bg-gray-900 transition-all dark:bg-gray-50"
+      className="h-full w-full flex-1 bg-red-800 transition-all dark:bg-gray-50"
       style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
     />
   </ProgressPrimitive.Root>
@@ -26,21 +26,3 @@ const Progress = React.forwardRef<
 Progress.displayName = ProgressPrimitive.Root.displayName
 
 export { Progress }
-
-export const CircleProgress = React.forwardRef<
-  React.ElementRef<typeof ProgressPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
->(({ className, value, ...props }, ref) => (
-  <ProgressPrimitive.Root
-    ref={ref}
-    className={cn(
-      `relative h-14 w-14 overflow-hidden rounded-full bg-transparent flex justify-center items-center border border-white`,
-      className
-    )}
-    {...props}
-    style={{ background: `radial-gradient(closest-side, #f0f1f2 79%, transparent 80% 100%), conic-gradient(#4ade81 ${(value || 0)}%, white 0)` }}
-  >
-    <div className="bg-transparent text-sm font-bold">{`${(value || 0)}%`}</div>
-
-  </ProgressPrimitive.Root>
-))

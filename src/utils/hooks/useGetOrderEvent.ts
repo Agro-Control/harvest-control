@@ -28,17 +28,17 @@ const getOrderEvent = async (ordem_id: number | null) => {
 export const useGetOrderEvent = (ordem_id: number | null) => {
     return useQuery({
         queryKey: ["ordem_eventos", ordem_id],
-        enabled: false,
+        enabled: !!ordem_id,
         queryFn: () => getOrderEvent(ordem_id),
-        refetchInterval: 9000,
         retry: (failureCount, error) => {
-
+            
             if (error instanceof Error && error.message.includes("404") || error.message.includes("400")  ) {
                 if (failureCount == 1)
                     return false;
             }
-
+            
             return true;
         },
+        refetchInterval: 9000
     });
 };

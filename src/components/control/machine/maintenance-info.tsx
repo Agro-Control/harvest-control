@@ -13,7 +13,7 @@ interface MaintenanceCardProps {
 
 const MaintenanceInfo = ({title, subtitle, value, isLoading}: MaintenanceCardProps) => {
     return (
-        <div className="col-span-1 flex h-full w-full flex-row items-start justify-between gap-6 rounded-2xl border border-divider bg-white p-4 lg:min-h-8 ">
+        <div className="col-span-1 flex w-full flex-row items-start justify-between gap-6 rounded-2xl p-4 ">
             <div className="flex w-full flex-row gap-4">
                 <div
                     className="flex  h-9 w-9  items-center justify-center overflow-hidden rounded-lg

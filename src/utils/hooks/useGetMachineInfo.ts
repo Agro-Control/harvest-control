@@ -1,6 +1,22 @@
 import {useQuery} from "@tanstack/react-query";
 import {api} from "@/lib/api";
 
+export interface LoggedUser {
+    id: number;
+    nome: string;
+    email:string;
+    matricula: string;
+    cpf: string;
+    status: string;
+    turno: string;
+    tipo: string;
+    telefone: string | null;
+    data_contratacao: string;
+    gestor_id: number;
+    empresa_id: number;
+    unidade_id: number;
+}
+
 export interface EventInfo {
     id: string;
     nome: string;
@@ -36,7 +52,7 @@ export interface MachineInfo {
     qtd_manutencao_dia: number;
     tempo_total_manutencao_dia: number;
     tempo_total_todos_eventos: number;
-    operador_conectado: any;
+    operador_conectado: LoggedUser | null;
     manutencao_eventos: EventInfo[];
 }
 
